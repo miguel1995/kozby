@@ -1,0 +1,17 @@
+{
+  "name": "kozby",
+  "version": "1.0.0",
+  "description": "proyecto kozby",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ./server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "jorge",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "mysql2": "^3.15.3"
+  }
+}
