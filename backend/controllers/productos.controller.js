@@ -6,7 +6,7 @@ const getProductos = async (req, res) => {
     const productos = await productosService.getProductos();
     res.json(productos);
   } catch (error) {
-    res.status(500).json({ message: 'Error al obtener productos' });
+    res.status(500).json({ message: 'Error al obtener productos',error:error });
   }
 };
 
@@ -26,7 +26,7 @@ const postProducto = async (req, res) => {
     });
   } catch (error) {
     console.error('Error al crear producto:', error); 
-    res.status(500).json({ message: 'Error al crear producto' });
+    res.status(500).json({ message: 'Error al crear producto',error:error });
   }
 };
 
@@ -48,7 +48,7 @@ const putProducto = async (req, res) => {
     res.status(200).json({ message: 'producto actualizado', producto: productoActualizado });
   } catch (error) {
     console.error('Error al actualizar producto:', error);
-    res.status(500).json({ message: 'Error al actualizar producto' });
+    res.status(500).json({ message: 'Error al actualizar producto',error:error });
   }
 };
 
@@ -56,4 +56,4 @@ module.exports = {
   getProductos,
   postProducto,
   putProducto,
-};
+}
