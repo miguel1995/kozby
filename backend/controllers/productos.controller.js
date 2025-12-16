@@ -20,7 +20,7 @@ const postProducto = async (req, res) => {
 
     const productoCreado = await productosService.createProducto(nuevoProducto);
 
-    res.status(201).json({
+    res.json({
       message: 'producto creado de manera exitosa', 
       producto: productoCreado
     });
