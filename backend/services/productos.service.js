@@ -31,9 +31,40 @@ const createProducto = async (nuevoProducto) => {
 
 
 
+const updateProducto = async (id, updates) => {
+  const fields = [];
+  const values = [];
+
+  const allowed = ['nombre', 'precio', 'descripcion', 'imagen', 'categoria_id'];
+
+  for (const key of Object.keys(updates)) {
+    if (allowed.includes(key)) {
+      fields.push(`${key} = ?`);
+      values.push(updates[key]);
+    }
+  }
+
+  if (fields.length === 0) {
+    throw new Error('No hay campos válidos para actualizar');
+  }
+
+  values.push(id);
+
+  const sql = `UPDATE productos SET ${fields.join(', ')} WHERE id = ?`;
+  const [result] = await db.query(sql, values);
+
+  if (result.affectedRows === 0) {
+    return null;
+  }
+
+  const [rows] = await db.query('SELECT * FROM productos WHERE id = ?', [id]);
+  return rows[0];
+};
+
 module.exports = {
   getProductos,
   createProducto,
+  updateProducto,
 };
 
 
