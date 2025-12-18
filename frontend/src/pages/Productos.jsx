@@ -7,11 +7,11 @@ import { useProductsHandler } from '../hooks/useProductsHandler';
 
 function Productos() {
 
-    const [columns,
+    const {columns,
         tableData,
         rowSelection,
         selectionType,
-        setSelectionType] = useProductsHandler();
+        setSelectionType} = useProductsHandler();
 
     return (
         <div>
