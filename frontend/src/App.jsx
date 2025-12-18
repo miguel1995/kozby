@@ -4,13 +4,6 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router";
 
 import Productos from './pages/Productos'
 function App() {
-  const [count, setCount] = useState(1)
-
-  const handleClick = () => {
-    console.log("count", count);
-    
-    setCount(count * 2);
-  }
 
   return (
     
