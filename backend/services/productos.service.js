@@ -61,10 +61,17 @@ const updateProducto = async (id, updates) => {
   return rows[0];
 };
 
+const deleteProducto = async (id) => {
+  const [result] = await db.query('DELETE FROM productos WHERE id = ?', [id]);
+  return result.affectedRows > 0;
+  
+}
+
 module.exports = {
   getProductos,
   createProducto,
   updateProducto,
+  deleteProducto,
 };
 
 
