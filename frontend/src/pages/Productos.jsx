@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Divider, Radio, Table } from 'antd';
+import { Button, Modal } from 'antd';
+
 
 
 import { useProductsHandler } from '../hooks/useProductsHandler';
@@ -7,11 +9,22 @@ import { useProductsHandler } from '../hooks/useProductsHandler';
 
 function Productos() {
 
-    const {columns,
+    const { columns,
         tableData,
         rowSelection,
         selectionType,
-        setSelectionType} = useProductsHandler();
+        error,
+        isModalOpen,
+        handleOk,
+        showModal,
+        setSelectionType } = useProductsHandler();
+    useEffect(() => {
+        if (error) {
+            showModal()
+        }
+    }, [error])
+    
+
 
     return (
         <div>
@@ -20,6 +33,17 @@ function Productos() {
             </Radio.Group>
             <Divider />
             <Table rowSelection={{ type: selectionType, ...rowSelection }} columns={columns} dataSource={tableData} pagination={{ pageSize: 4 }} />
+            <Modal
+                title="Fuera de servicio"
+                closable={false}
+                open={isModalOpen}
+                onOk={handleOk}
+                cancelButtonProps={{ style: { display: 'none' } }}
+            >
+                <p>Lo sentimos, en este momento el servicio no esta disponible</p>
+                <p>Por Favor intentelo mas tarde</p>
+            </Modal>
+
         </div>
     );
 }

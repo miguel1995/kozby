@@ -1,17 +1,29 @@
-import React, { useState } from 'react';
-import { productosIniciales } from '../utils/constants';
+import React, { useState, useEffect } from 'react';
 import { EllipsisOutlined } from '@ant-design/icons';
 import { Dropdown, message } from 'antd';
+import { getProductos } from '../services/productos.service';
 
 export const useProductsHandler = () => {
-    const [productos, setProductos] = useState(productosIniciales);
+    const [tableData, setTableData] = useState([]);
+    const [productos, setProductos] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
     const [selectionType, setSelectionType] = useState('checkbox');
+
 
     const items = [
         { label: 'Editar', key: 'edit' },
         { label: 'Eliminar', key: 'delete' },
         { label: 'Ver más', key: 'more' },
     ];
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const showModal = () => {
+        setIsModalOpen(true);
+    };
+    const handleOk = () => {
+        setIsModalOpen(false);
+    };
 
     function hacerClick({ key }) {
         if (key === 'edit') {
@@ -77,7 +89,33 @@ export const useProductsHandler = () => {
         },
     ];
 
-    const tableData = productos.map((p) => ({ key: p.id, ...p }));
+
+    useEffect(() => {
+
+        fetchProductos();
+    }, []);
+
+
+    useEffect(() => {
+        const productosMap = productos.map((p) => ({ key: p.id, ...p }));
+        setTableData(productosMap);
+    },[productos])
+
+
+   const fetchProductos = async () => {
+    setLoading(true);
+    try {
+        const data = await getProductos();
+        setProductos(data);
+    } catch (err) {
+        console.error('Error al obtener productos:', err);
+        setError(err.message || 'Error');
+        setProductos([]);
+    } finally {
+        setLoading(false);
+    }
+};
+
 
     const rowSelection = {
         onChange: (selectedRowKeys, selectedRows) => {
@@ -95,5 +133,10 @@ export const useProductsHandler = () => {
         rowSelection,
         selectionType,
         setSelectionType,
+        loading,
+        error,
+        showModal,
+        handleOk,
+        isModalOpen,
     };
 };
