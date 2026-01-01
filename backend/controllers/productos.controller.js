@@ -1,6 +1,25 @@
 // src/controllers/productos.controller.js
 const productosService = require('../services/productos.service');
 
+const getProductosArchivados = async (req, res) => {
+  try {
+    const productos = await productosService.getProductosArchivados();
+    res.json(productos);
+  } catch (error) {
+    res.status(500).json({ message: 'Error al obtener productos archivados', error: error });
+  }
+};
+
+const archiveProducto = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const productoArchivado = await productosService.archivarProducto(id);
+    res.json(productoArchivado);
+  } catch (error) {
+    res.status(500).json({ message: 'Error al archivar producto',error:error });
+  }
+};
+
 const getProductos = async (req, res) => {
   try {
     const productos = await productosService.getProductos();
@@ -74,4 +93,6 @@ module.exports = {
   postProducto,
   putProducto,
   deleteProducto,
+  archiveProducto,
+  getProductosArchivados,
 }

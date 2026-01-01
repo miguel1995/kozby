@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { EllipsisOutlined } from '@ant-design/icons';
 import { Dropdown, message } from 'antd';
-import { getProductos } from '../services/productos.service';
+import { getProductos, archiveProducto, deleteProducto } from '../services/productos.service';
 
 export const useProductsHandler = () => {
     const [tableData, setTableData] = useState([]);
@@ -10,12 +10,13 @@ export const useProductsHandler = () => {
     const [error, setError] = useState(null);
     const [selectionType, setSelectionType] = useState('checkbox');
 
-
     const items = [
         { label: 'Editar', key: 'edit' },
         { label: 'Eliminar', key: 'delete' },
-        { label: 'Ver más', key: 'more' },
     ];
+
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [selectedProduct, setSelectedProduct] = useState(null);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const showModal = () => {
@@ -25,24 +26,62 @@ export const useProductsHandler = () => {
         setIsModalOpen(false);
     };
 
-    function hacerClick({ key }) {
+    function hacerClick({ key }, record) {
         if (key === 'edit') {
             message.success('Editar producto');
             return;
         }
         if (key === 'delete') {
-            message.warning('Eliminar producto');
-            return;
-        }
-        if (key === 'more') {
-            message.info('Ver más');
+            setSelectedProduct(record);
+            setIsDeleteModalOpen(true);
             return;
         }
     }
 
+    const handleArchive = async () => {
+        if (!selectedProduct) return;
+        
+        setLoading(true);
+        try {
+            await archiveProducto(selectedProduct.id);
+            message.success('Producto archivado correctamente');
+            setIsDeleteModalOpen(false);
+            setSelectedProduct(null);
+            fetchProductos(); 
+        } catch (err) {
+            console.error('Error al archivar producto:', err);
+            message.error('Error al archivar el producto');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleDeletePermanent = async () => {
+        if (!selectedProduct) return;
+        
+        setLoading(true);
+        try {
+            await deleteProducto(selectedProduct.id);
+            message.success('Producto eliminado permanentemente');
+            setIsDeleteModalOpen(false);
+            setSelectedProduct(null);
+            fetchProductos(); // Recargar la lista
+        } catch (err) {
+            console.error('Error al eliminar producto:', err);
+            message.error('Error al eliminar el producto');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleCancelDelete = () => {
+        setIsDeleteModalOpen(false);
+        setSelectedProduct(null);
+    };
+
     const menuProps = {
         items,
-        onClick: hacerClick,
+        onClick: (e) => hacerClick(e, null), // Necesitamos pasar el record
     };
 
     const columns = [
@@ -82,25 +121,21 @@ export const useProductsHandler = () => {
             title: '',
             key: 'acciones',
             render: (_, record) => (
-                <Dropdown menu={menuProps} trigger={["click"]}>
+                <Dropdown menu={{ ...menuProps, onClick: (e) => hacerClick(e, record) }} trigger={["click"]}>
                     <EllipsisOutlined style={{ fontSize: '25px' }} />
                 </Dropdown>
             ),
         },
     ];
 
-
     useEffect(() => {
-
         fetchProductos();
     }, []);
-
 
     useEffect(() => {
         const productosMap = productos.map((p) => ({ key: p.id, ...p }));
         setTableData(productosMap);
     },[productos])
-
 
    const fetchProductos = async () => {
     setLoading(true);
@@ -115,7 +150,6 @@ export const useProductsHandler = () => {
         setLoading(false);
     }
 };
-
 
     const rowSelection = {
         onChange: (selectedRowKeys, selectedRows) => {
@@ -138,5 +172,12 @@ export const useProductsHandler = () => {
         showModal,
         handleOk,
         isModalOpen,
+        // Nuevos estados y funciones para el modal de eliminación
+        isDeleteModalOpen,
+        selectedProduct,
+        handleArchive,
+        handleDeletePermanent,
+        handleCancelDelete,
+
     };
 };
