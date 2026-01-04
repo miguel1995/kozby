@@ -18,6 +18,13 @@ export const useProductsHandler = () => {
     ];
 
     const [isModalOpen, setIsModalOpen] = useState(false);
+
+    useEffect(() => {
+        if (error) {
+            showModal()
+        }
+    }, [error])
+
     const showModal = () => {
         setIsModalOpen(true);
     };
@@ -134,8 +141,6 @@ export const useProductsHandler = () => {
         selectionType,
         setSelectionType,
         loading,
-        error,
-        showModal,
         handleOk,
         isModalOpen,
     };
