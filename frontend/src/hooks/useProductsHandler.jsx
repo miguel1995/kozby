@@ -13,8 +13,7 @@ export const useProductsHandler = () => {
 
     const items = [
         { label: 'Editar', key: 'edit' },
-        { label: 'Eliminar', key: 'delete' },
-        { label: 'Ver más', key: 'more' },
+        { label: 'Eliminar', key: 'delete' }
     ];
 
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -41,10 +40,7 @@ export const useProductsHandler = () => {
             message.warning('Eliminar producto');
             return;
         }
-        if (key === 'more') {
-            message.info('Ver más');
-            return;
-        }
+
     }
 
     const menuProps = {
@@ -106,22 +102,22 @@ export const useProductsHandler = () => {
     useEffect(() => {
         const productosMap = productos.map((p) => ({ key: p.id, ...p }));
         setTableData(productosMap);
-    },[productos])
+    }, [productos])
 
 
-   const fetchProductos = async () => {
-    setLoading(true);
-    try {
-        const data = await getProductos();
-        setProductos(data);
-    } catch (err) {
-        console.error('Error al obtener productos:', err);
-        setError(err.message || 'Error');
-        setProductos([]);
-    } finally {
-        setLoading(false);
-    }
-};
+    const fetchProductos = async () => {
+        setLoading(true);
+        try {
+            const data = await getProductos();
+            setProductos(data);
+        } catch (err) {
+            console.error('Error al obtener productos:', err);
+            setError(err.message || 'Error');
+            setProductos([]);
+        } finally {
+            setLoading(false);
+        }
+    };
 
 
     const rowSelection = {
