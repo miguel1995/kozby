@@ -6,6 +6,10 @@ const getProductos = async () => {
   return rows;
 };
 
+const getProductoById = async (id) => {
+  const [rows] = await db.query('SELECT * FROM productos WHERE id = ?', [id]);
+  return rows[0];
+};
 
 const createProducto = async (nuevoProducto) => {
   const { nombre, precio, descripcion = null, imagen, categoria_id } = nuevoProducto;
@@ -69,6 +73,7 @@ const deleteProducto = async (id) => {
 
 module.exports = {
   getProductos,
+  getProductoById,
   createProducto,
   updateProducto,
   deleteProducto,

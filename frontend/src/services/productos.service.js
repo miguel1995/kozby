@@ -11,6 +11,14 @@ export const getProductos = async () => {
     return await res.json();
 };
 
+export const getProductoById = async (id) => {
+    const res = await fetch(`${API_URL}/${id}`);
+    if (!res.ok) {
+        throw new Error(`HTTP ${res.status}`);
+    }
+    return await res.json();
+};
+
 
 export const postProducto = async (productoData) => {
     const res = await fetch(API_URL, {
@@ -28,3 +36,16 @@ export const postProducto = async (productoData) => {
     return await res.json();
 };
 
+export const putProducto = async (id, productoData) => {
+    const res = await fetch(`${API_URL}/${id}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(productoData)
+    });
+    if (!res.ok) {
+        throw new Error(`HTTP ${res.status}`);
+    }
+    return await res.json();
+};

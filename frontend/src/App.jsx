@@ -3,7 +3,7 @@ import './App.css'
 import { BrowserRouter, Routes, Route, Navigate } from "react-router";
 
 import Productos from './pages/Productos'
-import NuevoProducto from './pages/NuevoProducto'
+import FormProducto from './pages/FormProducto'
 
 function App() {
 
@@ -13,7 +13,9 @@ function App() {
         <Routes>
           <Route path="/" element={<Navigate to="/productos" />} />
           <Route path="/productos" element={<Productos />} />
-          <Route path="/nuevo-producto" element={<NuevoProducto />} />
+          <Route path="/nuevo-producto" element={<FormProducto />} />
+          <Route path="/editar-producto/:id" element={<FormProducto isEditMode={true} />} />
+
         </Routes>
     </BrowserRouter>
   );

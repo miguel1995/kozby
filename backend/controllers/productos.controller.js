@@ -10,6 +10,15 @@ const getProductos = async (req, res) => {
   }
 };
 
+const getProductoById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const producto = await productosService.getProductoById(id);
+    res.json(producto);
+  } catch (error) {
+    res.status(500).json({ message: 'Error al obtener producto',error:error });
+  }
+};
 const postProducto = async (req, res) => {
   try {
     const nuevoProducto = req.body;
@@ -71,6 +80,7 @@ const deleteProducto = async (req, res) => {
 
 module.exports = {
   getProductos,
+  getProductoById,
   postProducto,
   putProducto,
   deleteProducto,

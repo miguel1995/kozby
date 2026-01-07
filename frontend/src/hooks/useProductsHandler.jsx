@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { EllipsisOutlined } from '@ant-design/icons';
 import { Dropdown, message } from 'antd';
 import { getProductos } from '../services/productos.service';
+import { useNavigate } from 'react-router';
 
 export const useProductsHandler = () => {
     const [tableData, setTableData] = useState([]);
@@ -9,6 +10,8 @@ export const useProductsHandler = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [selectionType, setSelectionType] = useState('checkbox');
+
+    const navigate = useNavigate();
 
 
     const items = [
@@ -31,9 +34,13 @@ export const useProductsHandler = () => {
         setIsModalOpen(false);
     };
 
-    function hacerClick({ key }) {
-        if (key === 'edit') {
-            message.success('Editar producto');
+    function hacerClick(event, record) {
+        console.log('eventClick', event);
+        console.log('record', record);
+        const { key } = event;
+        const { id } = record;
+        if (key === 'edit') {            
+            navigate(`/editar-producto/${id}`);
             return;
         }
         if (key === 'delete') {
@@ -43,10 +50,6 @@ export const useProductsHandler = () => {
 
     }
 
-    const menuProps = {
-        items,
-        onClick: hacerClick,
-    };
 
     const columns = [
         {
@@ -85,8 +88,11 @@ export const useProductsHandler = () => {
             title: '',
             key: 'acciones',
             render: (_, record) => (
-                <Dropdown menu={menuProps} trigger={["click"]}>
-                    <EllipsisOutlined style={{ fontSize: '25px' }} />
+                <Dropdown menu={{ items, onClick: (event) => hacerClick(event, record) }} trigger={["click"]}>
+                    <EllipsisOutlined 
+                        style={{ fontSize: '25px' }} 
+                        onClick={(e) => e.stopPropagation()} 
+                    />
                 </Dropdown>
             ),
         },
@@ -94,7 +100,6 @@ export const useProductsHandler = () => {
 
 
     useEffect(() => {
-
         fetchProductos();
     }, []);
 
@@ -130,6 +135,15 @@ export const useProductsHandler = () => {
         }),
     };
 
+    const handleRowClick = (record) => {
+        return {
+            onClick: () => {
+                navigate(`/editar-producto/${record.id}`);
+            },
+            style: { cursor: 'pointer' }
+        };
+    };
+
     return {
         columns,
         tableData,
@@ -139,5 +153,6 @@ export const useProductsHandler = () => {
         loading,
         handleOk,
         isModalOpen,
+        handleRowClick,
     };
 };

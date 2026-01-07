@@ -16,7 +16,8 @@ function Productos() {
         selectionType,
         isModalOpen,
         handleOk,
-        setSelectionType } = useProductsHandler();
+        setSelectionType,
+        handleRowClick } = useProductsHandler();
 
         const navigate = useNavigate();
 
@@ -28,7 +29,13 @@ function Productos() {
 
             <Radio.Group onChange={(e) => setSelectionType(e.target.value)} value={selectionType}>
             </Radio.Group>
-            <Table rowSelection={{ type: selectionType, ...rowSelection }} columns={columns} dataSource={tableData} pagination={{ pageSize: 4 }} />
+            <Table 
+                rowSelection={{ type: selectionType, ...rowSelection }} 
+                columns={columns} 
+                dataSource={tableData} 
+                pagination={{ pageSize: 4 }}
+                onRow={handleRowClick}
+            />
             <Modal
                 title="Fuera de servicio"
                 closable={false}
@@ -36,8 +43,8 @@ function Productos() {
                 onOk={handleOk}
                 cancelButtonProps={{ style: { display: 'none' } }}
             >
-                <p>Lo sentimos, en este momento el servicio no esta disponible</p>
-                <p>Por Favor intentelo mas tarde</p>
+                <p>Lo sentimos, en este momento el servicio no está disponible</p>
+                <p>Por Favor intentelo más tarde</p>
             </Modal>
 
         </div>
