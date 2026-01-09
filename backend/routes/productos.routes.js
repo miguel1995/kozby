@@ -9,6 +9,8 @@ router.put('/:id', productosController.putProducto);
 router.delete('/:id', productosController.deleteProducto)
 router.patch('/:id/archive', productosController.archiveProducto);
 router.get('/archived', productosController.getProductosArchivados);
+router.put('/:id/restore', productosController.restaurarProducto);
+
 
 
 

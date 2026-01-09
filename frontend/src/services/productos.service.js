@@ -6,6 +6,14 @@ export const getProductosArchivados = async () => {
     return await res.json();
 };
 
+export const restaurarProducto = async (id) => {
+  const res = await fetch(`${API_URL}/${id}/restaurar`, {
+    method: 'PUT',
+  });
+  if (!res.ok) throw new Error('Error al restaurar');
+};
+    
+
 export const getProductos = async () => {
     console.log('Mensaje de prueba', API_URL);
     const res = await fetch(API_URL);

@@ -14,6 +14,9 @@ function Productos() {
         handleOk,
         showModal,
         setSelectionType,
+        verArchivados,
+        setVerArchivados,
+
         isDeleteModalOpen,
         selectedProduct,
         handleArchive,
@@ -30,9 +33,21 @@ function Productos() {
     return (
         <div>
             <h1>Productos</h1>
-            <Radio.Group onChange={(e) => setSelectionType(e.target.value)} value={selectionType}>
-            </Radio.Group>
+            <Button
+                type={verArchivados ? 'default' : 'primary'}
+                style={{ marginBottom: 16 }}
+                onClick={() => setVerArchivados(!verArchivados)}
+            >
+                {verArchivados ? 'Ver productos activos' : 'Ver productos archivados'}
+            </Button>
+
+            <Radio.Group
+                onChange={(e) => setSelectionType(e.target.value)}
+                value={selectionType}
+            />
+
             <Divider />
+
             <Table 
                 rowSelection={{ type: selectionType, ...rowSelection }} 
                 columns={columns} 
@@ -40,7 +55,6 @@ function Productos() {
                 pagination={{ pageSize: 4 }} 
             />
             
-            {/* Modal de error de servicio */}
             <Modal
                 title="Fuera de servicio"
                 closable={false}
@@ -52,7 +66,7 @@ function Productos() {
                 <p>Por Favor intentelo mas tarde</p>
             </Modal>
 
-            {/* Modal de confirmación de eliminación */}
+
             <Modal
                 title={
                     <Space>

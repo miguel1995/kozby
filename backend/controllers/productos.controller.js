@@ -1,53 +1,48 @@
-// src/controllers/productos.controller.js
 const productosService = require('../services/productos.service');
 
-const getProductosArchivados = async (req, res) => {
-  try {
-    const productos = await productosService.getProductosArchivados();
-    res.json(productos);
-  } catch (error) {
-    res.status(500).json({ message: 'Error al obtener productos archivados', error: error });
-  }
-};
-
-const archiveProducto = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const productoArchivado = await productosService.archivarProducto(id);
-    res.json(productoArchivado);
-  } catch (error) {
-    res.status(500).json({ message: 'Error al archivar producto',error:error });
-  }
-};
 
 const getProductos = async (req, res) => {
   try {
     const productos = await productosService.getProductos();
-    res.json(productos);
+    res.status(200).json(productos);
   } catch (error) {
-    res.status(500).json({ message: 'Error al obtener productos',error:error });
+    console.error('Error al obtener productos:', error);
+    res.status(500).json({ message: 'Error al obtener productos' });
   }
 };
+
+
+const getProductosArchivados = async (req, res) => {
+  try {
+    const productos = await productosService.getProductosArchivados();
+    res.status(200).json(productos);
+  } catch (error) {
+    console.error('Error al obtener productos archivados:', error);
+    res.status(500).json({ message: 'Error al obtener productos archivados' });
+  }
+};
+
 
 const postProducto = async (req, res) => {
   try {
     const nuevoProducto = req.body;
 
-    if (!nuevoProducto.nombre || !nuevoProducto.precio){
-      return res.status(400).json({ message: 'faltan campos que son obligatorios'});
+    if (!nuevoProducto.nombre || !nuevoProducto.precio) {
+      return res.status(400).json({ message: 'Faltan campos obligatorios' });
     }
 
     const productoCreado = await productosService.createProducto(nuevoProducto);
 
-    res.status(200).json({
-      message: 'producto creado de manera exitosa', 
-      producto: productoCreado
+    res.status(201).json({
+      message: 'Producto creado correctamente',
+      producto: productoCreado,
     });
   } catch (error) {
-    console.error('Error al crear producto:', error); 
-    res.status(500).json({ message: 'Error al crear producto',error:error });
+    console.error('Error al crear producto:', error);
+    res.status(500).json({ message: 'Error al crear producto' });
   }
 };
+
 
 const putProducto = async (req, res) => {
   try {
@@ -55,7 +50,7 @@ const putProducto = async (req, res) => {
     const updates = req.body;
 
     if (!updates || Object.keys(updates).length === 0) {
-      return res.status(400).json({ message: 'No se proporcionaron campos para actualizar' });
+      return res.status(400).json({ message: 'No se enviaron campos para actualizar' });
     }
 
     const productoActualizado = await productosService.updateProducto(id, updates);
@@ -64,10 +59,48 @@ const putProducto = async (req, res) => {
       return res.status(404).json({ message: 'Producto no encontrado' });
     }
 
-    res.status(200).json({ message: 'producto actualizado', producto: productoActualizado });
+    res.status(200).json({
+      message: 'Producto actualizado correctamente',
+      producto: productoActualizado,
+    });
   } catch (error) {
     console.error('Error al actualizar producto:', error);
-    res.status(500).json({ message: 'Error al actualizar producto',error:error });
+    res.status(500).json({ message: 'Error al actualizar producto' });
+  }
+};
+
+
+const archiveProducto = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const ok = await productosService.archivarProducto(id);
+
+    if (!ok) {
+      return res.status(404).json({ message: 'Producto no encontrado' });
+    }
+
+    res.status(200).json({ message: 'Producto archivado correctamente' });
+  } catch (error) {
+    console.error('Error al archivar producto:', error);
+    res.status(500).json({ message: 'Error al archivar producto' });
+  }
+};
+
+const restaurarProducto = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const ok = await productosService.restaurarProducto(id);
+
+    if (!ok) {
+      return res.status(404).json({ message: 'Producto no encontrado' });
+    }
+
+    res.status(200).json({ message: 'Producto restaurado correctamente' });
+  } catch (error) {
+    console.error('Error al restaurar producto:', error);
+    res.status(500).json({ message: 'Error al restaurar producto' });
   }
 };
 
@@ -75,24 +108,25 @@ const deleteProducto = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const productoEliminado = await productosService.deleteProducto(id);
+    const eliminado = await productosService.deleteProducto(id);
 
-    if (!productoEliminado) {
+    if (!eliminado) {
       return res.status(404).json({ message: 'Producto no encontrado' });
     }
 
     res.status(200).json({ message: 'Producto eliminado correctamente' });
   } catch (error) {
     console.error('Error al eliminar producto:', error);
-    res.status(500).json({ message: 'Error al eliminar producto', error:error });
+    res.status(500).json({ message: 'Error al eliminar producto' });
   }
 };
 
 module.exports = {
   getProductos,
+  getProductosArchivados,
   postProducto,
   putProducto,
-  deleteProducto,
   archiveProducto,
-  getProductosArchivados,
-}
+  deleteProducto,
+  restaurarProducto,
+};

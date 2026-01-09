@@ -1,35 +1,33 @@
 // src/services/productos.service.js
 const db = require('../config/database');
 
+
 const getProductosArchivados = async () => {
-  const [rows] = await db.query('SELECT * FROM productos WHERE archivado = 1');
+  const [rows] = await db.query('SELECT * FROM productos WHERE archivado = TRUE');
   return rows;
-}
+};
 
 const getProductos = async () => {
-  try {
-    const [rows] = await db.query('SELECT * FROM productos WHERE archivado = 0 OR archivado IS NULL');
-    return rows;
-  } catch (error) {
-    if (error.message.includes('archivado')) {
-      const [rows] = await db.query('SELECT * FROM productos');
-      return rows;
-    }
-    throw error;
-  }
+  const [rows] = await db.query('SELECT * FROM productos WHERE archivado = FALSE');
+  return rows;
 };
 
 const archivarProducto = async (id) => {
-  try {
-    const [result] = await db.query('UPDATE productos SET archivado = 1 WHERE id = ?', [id]);
-    return result.affectedRows > 0;
-  } catch (error) {
-    if (error.message.includes('archivado')) {
-      throw new Error('El campo "archivado" no existe en la tabla productos. Por favor, agrega la columna: ALTER TABLE productos ADD COLUMN archivado TINYINT(1) DEFAULT 0;');
-    }
-    throw error;
-  }
+  const [result] = await db.query(
+    'UPDATE productos SET archivado = TRUE WHERE id = ?',
+    [id]
+  );
+  return result.affectedRows > 0;
 };
+
+const restaurarProducto = async (id) => {
+  const [result] = await db.query(
+    'UPDATE productos SET archivado = FALSE WHERE id = ?',
+    [id]
+  );
+  return result.affectedRows > 0;
+};
+
 
 const deleteProducto = async (id) => {
   const productoId = parseInt(id);
@@ -106,4 +104,5 @@ module.exports = {
   deleteProducto,
   archivarProducto,
   getProductosArchivados,
+  restaurarProducto,
 };
