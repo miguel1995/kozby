@@ -1,6 +1,6 @@
 import FloatLabel from "./FloatLabel";
-import { Input }from "antd";
-
+import { Input } from "antd";
+import { ImageUpload } from "./ImageUpload";
 
 export const ProductForm = ({ values, handleChange }) => {
 
@@ -16,8 +16,11 @@ export const ProductForm = ({ values, handleChange }) => {
             <FloatLabel label="Descripcion" name="descripcion" value={values.descripcion.value}>
                 <Input value={values.descripcion.value} name="descripcion" onChange={e => handleChange(e)} />
             </FloatLabel>
-            <FloatLabel label="Imagen" name="imagen" value={values.imagen}>
-                <Input value={values.imagen.value} name="imagen" onChange={e => handleChange(e)} />
+            <FloatLabel label="Imagen" name="imagen" value={values.imagen.value instanceof File ? '' : (values.imagen.value || '')}>
+                <ImageUpload 
+                    value={values.imagen.value} 
+                    onChange={handleChange} 
+                />
             </FloatLabel>
         </div>);
 }

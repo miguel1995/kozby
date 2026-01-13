@@ -21,12 +21,26 @@ export const getProductoById = async (id) => {
 
 
 export const postProducto = async (productoData) => {
+    const formData = new FormData();
+    
+    // Agregar todos los campos de texto
+    Object.keys(productoData).forEach(key => {
+        if (key === 'imagen') {
+            // Si imagen es un File, agregarlo como archivo
+            if (productoData[key] instanceof File) {
+                formData.append('imagen', productoData[key]);
+            } else if (productoData[key]) {
+                // Si es una URL (string), agregarlo como texto
+                formData.append('imagen', productoData[key]);
+            }
+        } else {
+            formData.append(key, productoData[key]);
+        }
+    });
+
     const res = await fetch(API_URL, {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(productoData)
+        body: formData // No establecer Content-Type, el navegador lo hace automáticamente
     });
 
     if (!res.ok) {
@@ -37,15 +51,31 @@ export const postProducto = async (productoData) => {
 };
 
 export const putProducto = async (id, productoData) => {
+    const formData = new FormData();
+    
+    // Agregar todos los campos de texto
+    Object.keys(productoData).forEach(key => {
+        if (key === 'imagen') {
+            // Si imagen es un File, agregarlo como archivo
+            if (productoData[key] instanceof File) {
+                formData.append('imagen', productoData[key]);
+            } else if (productoData[key]) {
+                // Si es una URL (string), agregarlo como texto
+                formData.append('imagen', productoData[key]);
+            }
+        } else {
+            formData.append(key, productoData[key]);
+        }
+    });
+
     const res = await fetch(`${API_URL}/${id}`, {
         method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(productoData)
+        body: formData // No establecer Content-Type, el navegador lo hace automáticamente
     });
+    
     if (!res.ok) {
         throw new Error(`HTTP ${res.status}`);
     }
+    
     return await res.json();
 };

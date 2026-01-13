@@ -29,7 +29,15 @@ export const useFormProductoHandler = (isEditMode = false) => {
 
     useEffect(() => {
         console.log(values);
-        setIsFormValue(Object.values(values).every(field => field.valid === true));
+        // Validar que todos los campos requeridos tengan valores válidos
+        setIsFormValue(Object.values(values).every(field => {
+            // Para imagen: puede ser File o string (URL)
+            if (field.value instanceof File || (typeof field.value === 'string' && field.value !== '')) {
+                return true;
+            }
+            // Para otros campos: string no vacío
+            return field.valid === true;
+        }));
     }, [values]);
 
     const showModal = () => {
@@ -87,11 +95,34 @@ export const useFormProductoHandler = (isEditMode = false) => {
 
     const handleChange = (e) => {
         console.log(e);
+        // Manejar tanto inputs normales como File objects
+        const fieldName = e.target.name;
+        let fieldValue;
+        let isValid;
+        
+        if (e.target.files && e.target.files[0]) {
+            // Si es un input de tipo file
+            fieldValue = e.target.files[0];
+            isValid = true; // Un archivo seleccionado es válido
+        } else if (e.target.value !== undefined) {
+            // Si es un input normal
+            fieldValue = e.target.value;
+            isValid = fieldValue != "";
+        } else if (e.target instanceof File || e.target?.value instanceof File) {
+            // Si se pasa directamente un File object (desde ImageUpload)
+            fieldValue = e.target.value || e.target;
+            isValid = true;
+        } else {
+            // Fallback: usar e.target.value
+            fieldValue = e.target.value;
+            isValid = fieldValue != "";
+        }
+        
         setValues({
             ...values,
-            [e.target.name]: {
-                value: e.target.value,
-                valid: e.target.value != ""
+            [fieldName]: {
+                value: fieldValue,
+                valid: isValid
             }
         });
     }
