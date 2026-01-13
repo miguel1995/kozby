@@ -1,0 +1,59 @@
+.products-page {
+    padding: 32px;
+}
+
+.products-page-filters-and-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 16px;    
+    margin-bottom: 16px;
+    padding-right: 16px;
+}
+
+.create-product-button {
+    background-color: #000;
+    color: #fff;
+    border: none;
+    border-radius: 24px;
+    padding: 12px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    height: auto;
+}
+
+.create-product-button:hover {
+    background-color: #333;
+}
+.products-page-search-input {
+    width: auto;
+    padding: 12px 20px;
+    border-radius: 24px;
+    border: 1px solid #e0e0e0;
+}
+
+.css-var-root.ant-input-css-var {
+        --ant-input-hover-border-color: #000;
+        --ant-input-focus-border-color: #000;
+        --ant-input-active-border-color: #000;
+        --ant-input-border-color: #000;
+        --ant-input-border-color-hover: #000;
+        --ant-input-border-color-focus: #000;
+        --ant-input-border-color-active: #000;
+        --ant-input-border-color-disabled: #000;
+        --ant-input-border-color-error: #000;
+        --ant-input-border-color-success: #000;
+    }
+
+
+.products-page-search-input input {
+    border: none;
+    border-radius: 24px;
+    padding: 12px 20px;
+    font-size: 16px;
+    font-weight: 400;
+    margin-left: 12px;
+
+}
+

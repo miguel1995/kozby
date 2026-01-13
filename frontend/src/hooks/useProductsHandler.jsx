@@ -53,15 +53,16 @@ export const useProductsHandler = () => {
 
     const columns = [
         {
-            title: 'Imagen',
+            title: '',
             dataIndex: 'imagen',
             key: 'imagen',
+            width: 42,
             render: (src) => (
                 <img src={src} alt="" style={{ width: 39, height: 'auto', objectFit: 'cover' }} />
             ),
         },
         {
-            title: 'Nombre',
+            title: 'Artículo',
             dataIndex: 'nombre',
             key: 'nombre',
             render: (text) => text,
@@ -70,6 +71,12 @@ export const useProductsHandler = () => {
             title: 'Categoría',
             dataIndex: 'categoria_nombre',
             key: 'categoria_nombre',
+            render: (text) => "En construcción",
+        },
+        {
+            title: 'Disponibilidad',
+            dataIndex: 'disponibilidad_producto',
+            key: 'disponibilidad_producto',
             render: (text) => text,
         },
         {
@@ -77,12 +84,6 @@ export const useProductsHandler = () => {
             dataIndex: 'precio',
             key: 'precio',
             render: (p) => `$${p}`,
-        },
-        {
-            title: 'Disponibilidad',
-            dataIndex: 'disponibilidad_producto',
-            key: 'disponibilidad_producto',
-            render: (text) => text,
         },
         {
             title: '',

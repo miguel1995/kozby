@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { Divider, Radio, Table } from 'antd';
+import { Divider, Radio, Table, Space, Input } from 'antd';
 import { Button, Modal } from 'antd';
 
 
 
 import { useProductsHandler } from '../hooks/useProductsHandler';
 import { useNavigate } from 'react-router';
+import { SearchOutlined, CloseOutlined } from '@ant-design/icons';
 
 
 function Productos() {
+
+    const [search, setSearch] = useState('');
 
     const { columns,
         tableData,
@@ -19,23 +22,36 @@ function Productos() {
         setSelectionType,
         handleRowClick } = useProductsHandler();
 
-        const navigate = useNavigate();
+    const navigate = useNavigate();
 
 
     return (
-        <div>
-            <h1>Productos</h1>
-            <Button onClick={() => navigate('/nuevo-producto')}>Crear Artículo</Button>
+        <div className="products-page">
+            <div className="products-page-filters-and-actions">
+                <Input placeholder="Buscar" 
+                        className="products-page-search-input"
+                        prefix={<SearchOutlined />}
+                        suffix={search ? <CloseOutlined onClick={() => setSearch('')} /> : null}
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                        />
 
-            <Radio.Group onChange={(e) => setSelectionType(e.target.value)} value={selectionType}>
-            </Radio.Group>
-            <Table 
-                rowSelection={{ type: selectionType, ...rowSelection }} 
-                columns={columns} 
-                dataSource={tableData} 
-                pagination={{ pageSize: 4 }}
-                onRow={handleRowClick}
-            />
+                <Button 
+                onClick={() => navigate('/nuevo-producto')}
+                className="create-product-button"
+                >Crear Artículo</Button>
+            </div>
+
+
+            <div className="products-table">
+                <Table
+                    rowSelection={{ type: selectionType, ...rowSelection }}
+                    columns={columns}
+                    dataSource={tableData}
+                    pagination={{ pageSize: 10 }}
+                    onRow={handleRowClick}
+                />
+            </div>
             <Modal
                 title="Fuera de servicio"
                 closable={false}
