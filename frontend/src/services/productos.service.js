@@ -15,13 +15,150 @@ export const restaurarProducto = async (id) => {
     
 
 export const getProductos = async () => {
-    console.log('Mensaje de prueba', API_URL);
     const res = await fetch(API_URL);
 
     if (!res.ok) {
         throw new Error(`HTTP ${res.status}`);
     }
 
+    return await res.json();
+};
+
+export const getProductoById = async (id) => {
+    const res = await fetch(`${API_URL}/${id}`);
+    if (!res.ok) {
+        throw new Error(`HTTP ${res.status}`);
+    }
+    return await res.json();
+};
+
+
+export const postProducto = async (productoData) => {
+    const formData = new FormData();
+    
+    // Agregar todos los campos de texto
+    Object.keys(productoData).forEach(key => {
+        if (key === 'imagen') {
+            // Si imagen es un File, agregarlo como archivo
+            if (productoData[key] instanceof File) {
+                formData.append('imagen', productoData[key]);
+            } else if (productoData[key]) {
+                // Si es una URL (string), agregarlo como texto
+                formData.append('imagen', productoData[key]);
+            }
+        } else {
+            formData.append(key, productoData[key]);
+        }
+    });
+
+    const res = await fetch(API_URL, {
+        method: 'POST',
+        body: formData // No establecer Content-Type, el navegador lo hace automáticamente
+    });
+
+    if (!res.ok) {
+        throw new Error(`HTTP ${res.status}`);
+    }
+
+    return await res.json();
+};
+
+export const putProducto = async (id, productoData) => {
+    const formData = new FormData();
+    
+    // Agregar todos los campos de texto
+    Object.keys(productoData).forEach(key => {
+        if (key === 'imagen') {
+            // Si imagen es un File, agregarlo como archivo
+            if (productoData[key] instanceof File) {
+                formData.append('imagen', productoData[key]);
+            } else if (productoData[key]) {
+                // Si es una URL (string), agregarlo como texto
+                formData.append('imagen', productoData[key]);
+            }
+        } else {
+            formData.append(key, productoData[key]);
+        }
+    });
+
+    const res = await fetch(`${API_URL}/${id}`, {
+        method: 'PUT',
+        body: formData // No establecer Content-Type, el navegador lo hace automáticamente
+    });
+    
+    if (!res.ok) {
+        throw new Error(`HTTP ${res.status}`);
+    }
+    
+    return await res.json();
+};
+
+export const getProductoById = async (id) => {
+    const res = await fetch(`${API_URL}/${id}`);
+    if (!res.ok) {
+        throw new Error(`HTTP ${res.status}`);
+    }
+    return await res.json();
+};
+
+
+export const postProducto = async (productoData) => {
+    const formData = new FormData();
+    
+    // Agregar todos los campos de texto
+    Object.keys(productoData).forEach(key => {
+        if (key === 'imagen') {
+            // Si imagen es un File, agregarlo como archivo
+            if (productoData[key] instanceof File) {
+                formData.append('imagen', productoData[key]);
+            } else if (productoData[key]) {
+                // Si es una URL (string), agregarlo como texto
+                formData.append('imagen', productoData[key]);
+            }
+        } else {
+            formData.append(key, productoData[key]);
+        }
+    });
+
+    const res = await fetch(API_URL, {
+        method: 'POST',
+        body: formData // No establecer Content-Type, el navegador lo hace automáticamente
+    });
+
+    if (!res.ok) {
+        throw new Error(`HTTP ${res.status}`);
+    }
+
+    return await res.json();
+};
+
+export const putProducto = async (id, productoData) => {
+    const formData = new FormData();
+    
+    // Agregar todos los campos de texto
+    Object.keys(productoData).forEach(key => {
+        if (key === 'imagen') {
+            // Si imagen es un File, agregarlo como archivo
+            if (productoData[key] instanceof File) {
+                formData.append('imagen', productoData[key]);
+            } else if (productoData[key]) {
+                // Si es una URL (string), agregarlo como texto
+                formData.append('imagen', productoData[key]);
+            }
+        } else {
+            formData.append(key, productoData[key]);
+        }
+    });
+
+    const res = await fetch(`${API_URL}/${id}`, {
+        method: 'PUT',
+        body: formData // No establecer Content-Type, el navegador lo hace automáticamente
+    });
+    
+    if (!res.ok) {
+        throw new Error(`HTTP ${res.status}`);
+    }
+    
     return await res.json();
 };
 

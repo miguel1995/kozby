@@ -8,6 +8,7 @@ import {
   restaurarProducto,
   deleteProducto,
 } from '../services/productos.service';
+import { useNavigate } from 'react-router';
 
 export const useProductsHandler = () => {
   const [tableData, setTableData] = useState([]);

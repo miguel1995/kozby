@@ -22,32 +22,120 @@ const getProductosArchivados = async (req, res) => {
   }
 };
 
+const getProductoById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const producto = await productosService.getProductoById(id);
+    res.json(producto);
+  } catch (error) {
+    res.status(500).json({ message: 'Error al obtener producto',error:error });
+  }
+};
 
 const postProducto = async (req, res) => {
+
+  console.log("postProducto controller called");
+  //console.log("req: ", req);
+  //console.log("req.file: ", req.file);
+  //console.log("req.body: ", req.body);
+
   try {
-    const nuevoProducto = req.body;
+    let imagenUrl = req.body.imagen;
+
+    // Si hay un archivo subido, subirlo a Cloudinary
+    if (req.file) {
+      const cloudinary = require('../config/cloudinary');
+      const { Readable } = require('stream');
+      
+      // Promesa para manejar la subida a Cloudinary
+      imagenUrl = await new Promise((resolve, reject) => {
+        console.log("antes de subir a cloudinary");
+
+        const stream = cloudinary.uploader.upload_stream(
+          {
+            folder: 'kozby/products',
+            resource_type: 'image',
+            transformation: [{ width: 800, height: 800, crop: 'limit' }]
+          },
+          (error, result) => {
+            if (error) {
+              reject(error);
+            } else {
+              resolve(result.secure_url);
+            }
+          }
+        );
+
+         // console.log("imagenUrl: ", imagenUrl);
+
+
+        const bufferStream = Readable.from(req.file.buffer);
+        bufferStream.pipe(stream);
+      });
+    }
+
+    const nuevoProducto = {
+      ...req.body,
+      imagen: imagenUrl
+    };
+    
+    console.log("nuevoProducto: ", nuevoProducto);
 
     if (!nuevoProducto.nombre || !nuevoProducto.precio) {
       return res.status(400).json({ message: 'Faltan campos obligatorios' });
     }
 
+
     const productoCreado = await productosService.createProducto(nuevoProducto);
+    console.log("productoCreado: ", productoCreado);
 
     res.status(201).json({
       message: 'Producto creado correctamente',
       producto: productoCreado,
     });
   } catch (error) {
-    console.error('Error al crear producto:', error);
-    res.status(500).json({ message: 'Error al crear producto' });
+    console.error('Error al crear producto:', error); 
+    res.status(500).json({ message: 'Error al crear producto', error: error.message });
   }
 };
 
 
-const putProducto = async (req, res) => {
+const putProducto = async (req, res) => { 
   try {
     const { id } = req.params;
-    const updates = req.body;
+    let imagenUrl = req.body.imagen;
+
+    // Si hay un archivo subido, subirlo a Cloudinary
+    if (req.file) {
+      const cloudinary = require('../config/cloudinary');
+      const { Readable } = require('stream');
+      
+      // Promesa para manejar la subida a Cloudinary
+      imagenUrl = await new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          {
+            folder: 'kozby/products',
+            resource_type: 'image',
+            transformation: [{ width: 800, height: 800, crop: 'limit' }]
+          },
+          (error, result) => {
+            if (error) {
+              reject(error);
+            } else {
+              resolve(result.secure_url);
+            }
+          }
+        );
+
+        const bufferStream = Readable.from(req.file.buffer);
+        bufferStream.pipe(stream);
+      });
+    }
+
+    const updates = {
+      ...req.body,
+      imagen: imagenUrl
+    };
 
     if (!updates || Object.keys(updates).length === 0) {
       return res.status(400).json({ message: 'No se enviaron campos para actualizar' });
@@ -124,6 +212,7 @@ const deleteProducto = async (req, res) => {
 module.exports = {
   getProductos,
   getProductosArchivados,
+  getProductoById,
   postProducto,
   putProducto,
   archiveProducto,

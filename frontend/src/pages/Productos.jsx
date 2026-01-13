@@ -1,15 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { Divider, Radio, Table, Modal, Button, Space } from 'antd';
+import { Divider, Radio, Table, Modal, Button, Space, Space, Input } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { useProductsHandler } from '../hooks/useProductsHandler';
+import { useNavigate } from 'react-router';
+import { SearchOutlined, CloseOutlined } from '@ant-design/icons';
+import MenuBar from '../components/MenuBar';
+import SubmitButton from '../components/SubmitButton';
 
 function Productos() {
+
+    const [search, setSearch] = useState('');
     const { 
         columns,
         tableData,
         rowSelection,
         selectionType,
-        error,
         isModalOpen,
         handleOk,
         showModal,
@@ -31,40 +36,44 @@ function Productos() {
     }, [error]);
 
     return (
-        <div>
-            <h1>Productos</h1>
-            <Button
-                type={verArchivados ? 'default' : 'primary'}
-                style={{ marginBottom: 16 }}
-                onClick={() => setVerArchivados(!verArchivados)}
-            >
-                {verArchivados ? 'Ver productos activos' : 'Ver productos archivados'}
-            </Button>
+        <div className="page-container">
+            <MenuBar />
+            <div className="products-page">
+                <div className="products-page-filters-and-actions">
+                    <Input placeholder="Buscar"
+                        className="products-page-search-input"
+                        prefix={<SearchOutlined />}
+                        suffix={search ? <CloseOutlined onClick={() => setSearch('')} /> : null}
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                    />
 
-            <Radio.Group
-                onChange={(e) => setSelectionType(e.target.value)}
-                value={selectionType}
-            />
+                    <SubmitButton
+                        text="Crear Artículo"
+                        onClick={() => navigate('/nuevo-producto')}
+                    >Crear Artículo</SubmitButton>
+                </div>
 
-            <Divider />
 
-            <Table 
-                rowSelection={{ type: selectionType, ...rowSelection }} 
-                columns={columns} 
-                dataSource={tableData} 
-                pagination={{ pageSize: 4 }} 
-            />
-            
-            <Modal
-                title="Fuera de servicio"
-                closable={false}
-                open={isModalOpen}
-                onOk={handleOk}
-                cancelButtonProps={{ style: { display: 'none' } }}
-            >
-                <p>Lo sentimos, en este momento el servicio no esta disponible</p>
-                <p>Por Favor intentelo mas tarde</p>
-            </Modal>
+                <div className="products-table">
+                    <Table
+                        rowSelection={{ type: selectionType, ...rowSelection }}
+                        columns={columns}
+                        dataSource={tableData}
+                        pagination={{ pageSize: 10 }}
+                        onRow={handleRowClick}
+                    />
+                </div>
+                <Modal
+                    title="Fuera de servicio"
+                    closable={false}
+                    open={isModalOpen}
+                    onOk={handleOk}
+                    cancelButtonProps={{ style: { display: 'none' } }}
+                >
+                    <p>Lo sentimos, en este momento el servicio no está disponible</p>
+                    <p>Por Favor intentelo más tarde</p>
+                </Modal>
 
 
             <Modal
@@ -118,6 +127,7 @@ function Productos() {
                 </div>
             </Modal>
         </div>
+
     );
 }
 
