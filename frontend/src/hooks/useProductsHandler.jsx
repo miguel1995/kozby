@@ -15,43 +15,101 @@ export const useProductsHandler = () => {
   const [productos, setProductos] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
-
   const [verArchivados, setVerArchivados] = useState(false);
-
-  
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
- 
+
   const items = selectedProduct?.archivado
     ? [
-        { label: 'Restaurar', key: 'restore' },
-        { label: 'Eliminar', key: 'delete' },
-      ]
+      { label: 'Restaurar', key: 'restore' },
+      { label: 'Eliminar', key: 'delete' },
+    ]
     : [
-        { label: 'Editar', key: 'edit' },
-        { label: 'Archivar', key: 'archive' },
-      ];
+      { label: 'Editar', key: 'edit' },
+      { label: 'Archivar', key: 'archive' },
+    ];
 
- 
-  const hacerClick = async ({ key }, record) => {
+
+  const columns = [
+    {
+      title: '',
+      dataIndex: 'imagen',
+      key: 'imagen',
+      width: 42,
+      render: (src) => (
+        <img src={src} alt="" style={{ width: 39, height: 'auto', objectFit: 'cover' }} />
+      ),
+    },
+    {
+      title: 'Artículo',
+      dataIndex: 'nombre',
+      key: 'nombre',
+      render: (text) => text,
+    },
+    {
+      title: 'Categoría',
+      dataIndex: 'categoria_nombre',
+      key: 'categoria_nombre',
+      render: (text) => "En construcción",
+    },
+    {
+      title: 'Disponibilidad',
+      dataIndex: 'disponibilidad_producto',
+      key: 'disponibilidad_producto',
+      render: (text) => text,
+    },
+    {
+      title: 'Precio',
+      dataIndex: 'precio',
+      key: 'precio',
+      render: (p) => `$${p}`,
+    },
+    {
+      title: '',
+      key: 'acciones',
+      render: (_, record) => (
+        <Dropdown menu={{ items, onClick: (event) => hacerClick(event, record) }} trigger={["click"]}>
+          <EllipsisOutlined
+            style={{ fontSize: '25px' }}
+            onClick={(e) => e.stopPropagation()}
+          />
+        </Dropdown>
+      ),
+    },
+  ];
+
+  const navigate = useNavigate();
+
+
+  useEffect(() => {
+    fetchProductos();
+  }, [verArchivados]);
+
+  useEffect(() => {
+    setTableData(productos.map((p) => ({ key: p.id, ...p })));
+  }, [productos]);
+
+  const hacerClick = async (event, record) => {
     setSelectedProduct(record);
 
+    const { key } = event;
+    const { id } = record;
+
     if (key === 'edit') {
-      message.info('Editar producto');
+      navigate(`/editar-producto/${id}`);
       return;
     }
 
     if (key === 'archive') {
-      await archiveProducto(record.id);
+      await archiveProducto(id);
       message.success('Producto archivado');
       fetchProductos();
       return;
     }
 
     if (key === 'restore') {
-      await restaurarProducto(record.id);
+      await restaurarProducto(id);
       message.success('Producto restaurado');
       fetchProductos();
       return;
@@ -63,7 +121,7 @@ export const useProductsHandler = () => {
     }
   };
 
-  
+
   const handleDeletePermanent = async () => {
     if (!selectedProduct) return;
 
@@ -86,38 +144,6 @@ export const useProductsHandler = () => {
     setSelectedProduct(null);
   };
 
- 
-  const columns = [
-    {
-      title: 'Imagen',
-      dataIndex: 'imagen',
-      key: 'imagen',
-      render: (src) => (
-        <img src={src} alt="" style={{ width: 40, objectFit: 'cover' }} />
-      ),
-    },
-    { title: 'Nombre', dataIndex: 'nombre', key: 'nombre' },
-    { title: 'Precio', dataIndex: 'precio', key: 'precio' },
-    {
-      title: 'Estado',
-      dataIndex: 'archivado',
-      key: 'archivado',
-      render: (v) => (v ? 'Archivado' : 'Activo'),
-    },
-    {
-      title: '',
-      key: 'acciones',
-      render: (_, record) => (
-        <Dropdown
-          menu={{ items, onClick: (e) => hacerClick(e, record) }}
-          trigger={['click']}
-        >
-          <EllipsisOutlined style={{ fontSize: 22 }} />
-        </Dropdown>
-      ),
-    },
-  ];
-
   const fetchProductos = async () => {
     setLoading(true);
     try {
@@ -134,15 +160,16 @@ export const useProductsHandler = () => {
     }
   };
 
-  useEffect(() => {
-    fetchProductos();
-  }, [verArchivados]);
+  const handleRowClick = (record) => {
+    return {
+      onClick: () => {
+        navigate(`/editar-producto/${record.id}`);
+      },
+      style: { cursor: 'pointer' }
+    };
+  };
 
-  useEffect(() => {
-    setTableData(productos.map((p) => ({ key: p.id, ...p })));
-  }, [productos]);
 
- 
   return {
     columns,
     tableData,
@@ -153,5 +180,6 @@ export const useProductsHandler = () => {
     isDeleteModalOpen,
     handleDeletePermanent,
     handleCancelDelete,
+    handleRowClick
   };
 };

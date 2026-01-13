@@ -30,6 +30,8 @@ function Productos() {
         handleRowClick
     } = useProductsHandler();
 
+    const navigate = useNavigate();
+
     useEffect(() => {
         if (error) {
             showModal();
