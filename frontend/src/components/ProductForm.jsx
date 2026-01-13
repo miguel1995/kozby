@@ -16,11 +16,9 @@ export const ProductForm = ({ values, handleChange }) => {
             <FloatLabel label="Descripcion" name="descripcion" value={values.descripcion.value}>
                 <Input value={values.descripcion.value} name="descripcion" onChange={e => handleChange(e)} />
             </FloatLabel>
-            <FloatLabel label="Imagen" name="imagen" value={values.imagen.value instanceof File ? '' : (values.imagen.value || '')}>
-                <ImageUpload 
-                    value={values.imagen.value} 
-                    onChange={handleChange} 
-                />
-            </FloatLabel>
+            <ImageUpload
+                value={values.imagen.value}
+                onChange={handleChange}
+            />
         </div>);
 }

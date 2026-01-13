@@ -1,0 +1,35 @@
+.form-producto-close-icon {
+   
+    color: #000;
+    cursor: pointer;
+    background-color: #f0f0f0;
+    padding: 12px;                     
+    border-radius: 50%;
+}                                       
+
+.form-producto-container {
+    margin: 0 200px;   
+}
+
+.form-producto-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 16px;
+}
+
+.form-producto-save-button {
+    background-color: #000;
+    color: #fff;
+    border-radius: 5px;
+    padding: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.form-producto-title {
+    font-size: 25px;
+    font-weight: 700;
+    margin: 32px 215px 32px 215px;
+}

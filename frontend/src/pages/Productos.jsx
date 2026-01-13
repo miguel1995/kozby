@@ -8,7 +8,7 @@ import { useProductsHandler } from '../hooks/useProductsHandler';
 import { useNavigate } from 'react-router';
 import { SearchOutlined, CloseOutlined } from '@ant-design/icons';
 import MenuBar from '../components/MenuBar';
-
+import SubmitButton from '../components/SubmitButton';
 
 function Productos() {
 
@@ -39,10 +39,10 @@ function Productos() {
                         onChange={(e) => setSearch(e.target.value)}
                     />
 
-                    <Button
+                    <SubmitButton
+                        text="Crear Artículo"
                         onClick={() => navigate('/nuevo-producto')}
-                        className="create-product-button"
-                    >Crear Artículo</Button>
+                    >Crear Artículo</SubmitButton>
                 </div>
 
 
