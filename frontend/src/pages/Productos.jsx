@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Divider, Radio, Table, Modal, Button, Space, Space, Input } from 'antd';
+import { Divider, Radio, Table, Modal, Button,  Space, Input } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { useProductsHandler } from '../hooks/useProductsHandler';
 import { useNavigate } from 'react-router';
@@ -21,12 +21,13 @@ function Productos() {
         setSelectionType,
         verArchivados,
         setVerArchivados,
-
+        error,
         isDeleteModalOpen,
         selectedProduct,
         handleArchive,
         handleDeletePermanent,
         handleCancelDelete,
+        handleRowClick
     } = useProductsHandler();
 
     useEffect(() => {
@@ -126,6 +127,7 @@ function Productos() {
                     </p>
                 </div>
             </Modal>
+        </div>
         </div>
 
     );

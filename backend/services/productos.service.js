@@ -44,46 +44,11 @@ const deleteProducto = async (id) => {
   return true;
 };
 
-const archivarProducto = async (id) => {
-  const [result] = await db.query(
-    'UPDATE productos SET archivado = TRUE WHERE id = ?',
-    [id]
-  );
-  return result.affectedRows > 0;
-};
-
-const restaurarProducto = async (id) => {
-  const [result] = await db.query(
-    'UPDATE productos SET archivado = FALSE WHERE id = ?',
-    [id]
-  );
-  return result.affectedRows > 0;
-};
-
-
-const deleteProducto = async (id) => {
-  const productoId = parseInt(id);
-  if (isNaN(productoId) || productoId <= 0) {
-    throw new Error('ID de producto inválido');
-  }
-
-  const [result] = await db.query('DELETE FROM productos WHERE id = ?', [productoId]);
-
-  if (result.affectedRows === 0) {
-    throw new Error('Producto no encontrado');
-  }
-
-  return true;
-};
-
 const getProductoById = async (id) => {
   const [rows] = await db.query('SELECT * FROM productos WHERE id = ?', [id]);
   return rows[0];
 };
-const getProductoById = async (id) => {
-  const [rows] = await db.query('SELECT * FROM productos WHERE id = ?', [id]);
-  return rows[0];
-};
+
 const createProducto = async (nuevoProducto) => {
   const { nombre, precio, descripcion = null, imagen, categoria_id } = nuevoProducto;
 
