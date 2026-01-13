@@ -1,5 +1,14 @@
+.page-container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 100%;
+}
+
+
 .products-page {
     padding: 32px;
+    width: 100%;
 }
 
 .products-page-filters-and-actions {
