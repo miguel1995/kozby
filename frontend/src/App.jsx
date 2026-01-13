@@ -3,15 +3,19 @@ import './App.css'
 import { BrowserRouter, Routes, Route, Navigate } from "react-router";
 
 import Productos from './pages/Productos'
-function App() {
 
+function App() {
   return (
-    
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Navigate to="/productos" />} />
-          <Route path="/productos" element={<Productos />} />
-        </Routes>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Navigate to="/productos" />} />
+
+
+        <Route path="/productos" element={<Productos />} />
+
+
+        <Route path="/productos/archivados" element={<Productos />} />
+      </Routes>
     </BrowserRouter>
   );
 }
