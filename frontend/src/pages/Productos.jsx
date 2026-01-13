@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Divider, Radio, Table, Modal, Button,  Space, Input } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { useProductsHandler } from '../hooks/useProductsHandler';
@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router';
 import { SearchOutlined, CloseOutlined } from '@ant-design/icons';
 import MenuBar from '../components/MenuBar';
 import SubmitButton from '../components/SubmitButton';
+import { useLocation, useNavigate } from 'react-router';
 
 function Productos() {
 
@@ -30,7 +31,30 @@ function Productos() {
         handleRowClick
     } = useProductsHandler();
 
+
+
+    const location = useLocation();
     const navigate = useNavigate();
+
+
+    const esArchivados = location.pathname.includes('archivados');
+
+
+    useEffect(() => {
+        setVerArchivados(esArchivados);
+    }, [esArchivados]);
+
+
+    const location = useLocation();
+    const navigate = useNavigate();
+
+
+    const esArchivados = location.pathname.includes('archivados');
+
+
+    useEffect(() => {
+        setVerArchivados(esArchivados);
+    }, [esArchivados]);
 
     useEffect(() => {
         if (error) {
@@ -111,9 +135,12 @@ function Productos() {
             >
                 <div style={{ marginBottom: '16px' }}>
                     <p>
-                        <strong>¿Qué desea hacer con el producto "{selectedProduct?.nombre}"?</strong>
+                        <strong>
+                            ¿Qué desea hacer con el producto "{selectedProduct?.nombre}"?
+                        </strong>
                     </p>
                 </div>
+
                 <div style={{ marginBottom: '16px' }}>
                     <p><strong>Opción 1: Archivar</strong></p>
                     <p style={{ marginLeft: '16px', color: '#666' }}>
@@ -121,9 +148,23 @@ function Productos() {
                         Podrás recuperarlo más tarde.
                     </p>
                 </div>
-                <div style={{ marginBottom: '16px', padding: '12px', backgroundColor: '#fff2e8', borderRadius: '4px' }}>
+
+                <div
+                    style={{
+                        marginBottom: '16px',
+                        padding: '12px',
+                        backgroundColor: '#fff2e8',
+                        borderRadius: '4px',
+                    }}
+                >
                     <p><strong>Opción 2: Eliminar permanentemente</strong></p>
-                    <p style={{ marginLeft: '16px', color: '#d4380d', fontWeight: 'bold' }}>
+                    <p
+                        style={{
+                            marginLeft: '16px',
+                            color: '#d4380d',
+                            fontWeight: 'bold',
+                        }}
+                    >
                         ⚠️ ADVERTENCIA: Si decides eliminar permanentemente este producto, 
                         todas las transacciones relacionadas serán eliminadas y NO se podrán recuperar.
                     </p>
