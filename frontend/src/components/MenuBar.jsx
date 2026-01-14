@@ -22,10 +22,17 @@ const MenuBar = () => {
         { key: '1', 
           label: 'Surtido de Artículos',
           onClick: () => {
-            console.log('Surtido de Artículos');
-            navigate('/productos');
+            navigate('/productos', { replace: false });
+            navigate(0);        
           }
         },
+        { key: '2', 
+          label: 'Artículos Archivados',
+          onClick: () => {
+            navigate('/productos/archivados', { replace: false });
+            navigate(0);
+          }
+        }
        
       ],
     }

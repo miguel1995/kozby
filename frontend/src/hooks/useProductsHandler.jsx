@@ -15,12 +15,16 @@ export const useProductsHandler = () => {
   const [productos, setProductos] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [verArchivados, setVerArchivados] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [verArchivados, setVerArchivados] = useState(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState({
+    open: false,
+    nombre: '',
+  });
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
 
-  const items = selectedProduct?.archivado
+  const items = verArchivados
     ? [
       { label: 'Restaurar', key: 'restore' },
       { label: 'Eliminar', key: 'delete' },
@@ -28,6 +32,7 @@ export const useProductsHandler = () => {
     : [
       { label: 'Editar', key: 'edit' },
       { label: 'Archivar', key: 'archive' },
+      { label: 'Eliminar', key: 'delete' }
     ];
 
 
@@ -83,15 +88,31 @@ export const useProductsHandler = () => {
 
 
   useEffect(() => {
-    fetchProductos();
+    if (verArchivados !== null) {
+      fetchProductos();
+    }
   }, [verArchivados]);
 
   useEffect(() => {
     setTableData(productos.map((p) => ({ key: p.id, ...p })));
   }, [productos]);
 
+  useEffect(() => {
+    if (error) {
+      showModal();
+    }
+  }, [error]);
+  
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+  const handleOk = () => {
+      setIsModalOpen(false);
+  };
+
   const hacerClick = async (event, record) => {
-    setSelectedProduct(record);
+    console.log('hacerClick: ', event, record);
+     setSelectedProduct(record);
 
     const { key } = event;
     const { id } = record;
@@ -116,7 +137,10 @@ export const useProductsHandler = () => {
     }
 
     if (key === 'delete') {
-      setIsDeleteModalOpen(true);
+      setIsDeleteModalOpen({
+        open: true,
+        nombre: record.nombre,
+      });
       return;
     }
   };
@@ -129,7 +153,10 @@ export const useProductsHandler = () => {
     try {
       await deleteProducto(selectedProduct.id);
       message.success('Producto eliminado definitivamente');
-      setIsDeleteModalOpen(false);
+      setIsDeleteModalOpen({
+        open: false,
+        nombre: '',
+      });
       setSelectedProduct(null);
       fetchProductos();
     } catch (err) {
@@ -140,7 +167,10 @@ export const useProductsHandler = () => {
   };
 
   const handleCancelDelete = () => {
-    setIsDeleteModalOpen(false);
+        setIsDeleteModalOpen({
+          open: false,
+          nombre: '',
+        });
     setSelectedProduct(null);
   };
 
@@ -169,6 +199,19 @@ export const useProductsHandler = () => {
     };
   };
 
+  const handleArchive = async () => {
+    if (!selectedProduct) return;
+    await archiveProducto(selectedProduct.id);
+    message.success('Producto archivado');
+    fetchProductos();
+    setIsDeleteModalOpen({
+      open: false,
+      nombre: '',
+    });
+    setSelectedProduct(null);
+
+  };
+
 
   return {
     columns,
@@ -180,6 +223,9 @@ export const useProductsHandler = () => {
     isDeleteModalOpen,
     handleDeletePermanent,
     handleCancelDelete,
-    handleRowClick
+    handleRowClick,
+    isModalOpen,
+    handleOk,
+    handleArchive
   };
 };

@@ -13,6 +13,7 @@ const getProductos = async (req, res) => {
 
 
 const getProductosArchivados = async (req, res) => {
+
   try {
     const productos = await productosService.getProductosArchivados();
     res.status(200).json(productos);
@@ -34,10 +35,6 @@ const getProductoById = async (req, res) => {
 
 const postProducto = async (req, res) => {
 
-  console.log("postProducto controller called");
-  //console.log("req: ", req);
-  //console.log("req.file: ", req.file);
-  //console.log("req.body: ", req.body);
 
   try {
     let imagenUrl = req.body.imagen;
@@ -49,7 +46,6 @@ const postProducto = async (req, res) => {
       
       // Promesa para manejar la subida a Cloudinary
       imagenUrl = await new Promise((resolve, reject) => {
-        console.log("antes de subir a cloudinary");
 
         const stream = cloudinary.uploader.upload_stream(
           {
@@ -66,8 +62,6 @@ const postProducto = async (req, res) => {
           }
         );
 
-         // console.log("imagenUrl: ", imagenUrl);
-
 
         const bufferStream = Readable.from(req.file.buffer);
         bufferStream.pipe(stream);
@@ -79,7 +73,6 @@ const postProducto = async (req, res) => {
       imagen: imagenUrl
     };
     
-    console.log("nuevoProducto: ", nuevoProducto);
 
     if (!nuevoProducto.nombre || !nuevoProducto.precio) {
       return res.status(400).json({ message: 'Faltan campos obligatorios' });
@@ -87,7 +80,6 @@ const postProducto = async (req, res) => {
 
 
     const productoCreado = await productosService.createProducto(nuevoProducto);
-    console.log("productoCreado: ", productoCreado);
 
     res.status(201).json({
       message: 'Producto creado correctamente',
