@@ -7,8 +7,8 @@ export const getProductosArchivados = async () => {
 };
 
 export const restaurarProducto = async (id) => {
-  const res = await fetch(`${API_URL}/${id}/restaurar`, {
-    method: 'PUT',
+  const res = await fetch(`${API_URL}/${id}/restore`, {
+    method: 'PATCH',
   });
   if (!res.ok) throw new Error('Error al restaurar');
 };

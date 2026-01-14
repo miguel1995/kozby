@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { Divider, Radio, Table, Modal, Button, Space, Input, message } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { useProductsHandler } from '../hooks/useProductsHandler';
@@ -10,8 +10,6 @@ import { useLocation, useNavigate } from 'react-router';
 function Productos() {
 
     const [search, setSearch] = useState('');
-    const [modalFotterActions, setModalFotterActions] = useState([]);
-  
 
     const {
         columns,
@@ -29,21 +27,17 @@ function Productos() {
         handleRowClick
     } = useProductsHandler();
 
-
-
     const location = useLocation();
     const navigate = useNavigate();
-
-
 
     useEffect(() => {
         const esArchivos = location.pathname.includes('archivados');
         setVerArchivados(esArchivos);
-    }, []);
+    }, [location.pathname, setVerArchivados]);
 
-    useEffect(() => {
+    const modalFotterActions = useMemo(() => {
         if (verArchivados) {
-            setModalFotterActions([
+            return [
                 <Button key="cancel" onClick={handleCancelDelete}>
                     Cancelar
                 </Button>,
@@ -55,9 +49,9 @@ function Productos() {
                 >
                     Eliminar permanentemente
                 </Button>,
-            ]);
+            ];
         } else {
-            setModalFotterActions([
+            return [
                 <Button key="cancel" onClick={handleCancelDelete}>
                     Cancelar
                 </Button>,
@@ -76,9 +70,9 @@ function Productos() {
                 >
                     Eliminar permanentemente
                 </Button>,
-            ]);
+            ];
         }
-    }, [verArchivados, handleDeletePermanent, handleArchive]);
+    }, [verArchivados, handleCancelDelete, handleDeletePermanent, handleArchive]);
 
 
 
@@ -109,12 +103,14 @@ function Productos() {
                         dataSource={tableData}
                         pagination={{ pageSize: 10 }}
                         onRow={(record) => {
-                            /*if (verArchivados) {
+                           /* if (verArchivados) {
                                 return null
                             } else {
                                 return handleRowClick(record)
                             }*/
-                           console.log('En construcción');
+                           console.log('record: ', record);
+                           return null;
+        
                         }}
                     />
                 </div>

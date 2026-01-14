@@ -10,10 +10,10 @@ router.get('/archived', productosController.getProductosArchivados); // ✅ Move
 
 // Rutas con parámetros al final
 router.get('/:id', productosController.getProductoById);
+router.patch('/:id/restore', productosController.restaurarProducto);
 router.put('/:id', upload.single('imagen'), productosController.putProducto);
 router.delete('/:id', productosController.deleteProducto);
 router.patch('/:id/archive', productosController.archiveProducto);
-router.put('/:id/restore', productosController.restaurarProducto);
 
 
 module.exports = router;

@@ -123,17 +123,34 @@ export const useProductsHandler = () => {
     }
 
     if (key === 'archive') {
-      await archiveProducto(id);
+      setLoading(true);
+      try {
+        await archiveProducto(id);
+        message.success('Producto archivado');
+        fetchProductos();
+        return;
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
       message.success('Producto archivado');
       fetchProductos();
       return;
     }
 
     if (key === 'restore') {
-      await restaurarProducto(id);
-      message.success('Producto restaurado');
-      fetchProductos();
-      return;
+      setLoading(true);
+      try {
+        await restaurarProducto(id);
+        message.success('Producto restaurado');
+        fetchProductos();
+        return;
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
     }
 
     if (key === 'delete') {
@@ -161,6 +178,8 @@ export const useProductsHandler = () => {
       fetchProductos();
     } catch (err) {
       message.error('Error al eliminar');
+      setError(err.message);
+
     } finally {
       setLoading(false);
     }
