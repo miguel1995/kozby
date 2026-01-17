@@ -105,8 +105,8 @@ export const archiveProducto = async (id) => {
     return await res.json();
 };
 
-export const deleteProducto = async (id) => {
-    const res = await fetch(`${API_URL}/${id}`, {
+export const deleteProducto = async (id,imageId) => {
+    const res = await fetch(`${API_URL}/${id}?imageId=${imageId}`, {
         method: 'DELETE',
     });
 

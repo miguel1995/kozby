@@ -187,6 +187,14 @@ const restaurarProducto = async (req, res) => {
 const deleteProducto = async (req, res) => {
   try {
     const { id } = req.params;
+    const imageId = req.query.imageId;
+    console.log('Iniciando eliminación de producto', req);
+    console.log("obteniendo imagen de prueba",imageId);
+    const cloudinary = require('../config/cloudinary');
+    const result = await cloudinary.uploader.destroy(imageId);
+    console.log(result);
+    
+
 
     const eliminado = await productosService.deleteProducto(id);
 
@@ -198,6 +206,8 @@ const deleteProducto = async (req, res) => {
   } catch (error) {
     console.error('Error al eliminar producto:', error);
     res.status(500).json({ message: 'Error al eliminar producto' });
+
+
   }
 };
 
