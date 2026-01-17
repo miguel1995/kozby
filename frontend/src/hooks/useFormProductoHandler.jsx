@@ -9,9 +9,10 @@ export const useFormProductoHandler = (isEditMode = false) => {
     const { id } = useParams();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const [isFormValid, setIsFormValue] = useState(false);
+    const [isFormValid, setIsFormValid] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [values, setValues] = useState(initialFormValues);
+    const [showFormErrors, setShowFormErrors] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -30,15 +31,15 @@ export const useFormProductoHandler = (isEditMode = false) => {
     useEffect(() => {
         console.log(values);
         // Validar que todos los campos requeridos tengan valores válidos
-        setIsFormValue(Object.values(values).every(field => {
-            // Para imagen: puede ser File o string (URL)
-            if (field.value instanceof File || (typeof field.value === 'string' && field.value !== '')) {
+        setIsFormValid(Object.values(values).every(field => {
+            if (field.required===true) {
+                return field.valid===true;
+            } else {
                 return true;
-            }
-            // Para otros campos: string no vacío
-            return field.valid === true;
+            }   
         }));
     }, [values]);
+
 
     const showModal = () => {
         setIsModalOpen(true);
@@ -57,7 +58,6 @@ export const useFormProductoHandler = (isEditMode = false) => {
                 descripcion: { value: data.descripcion, valid: true },
                 imagen: { value: data.imagen, valid: true }
             });
-            setIsFormValue(true);
         } catch (err) {
             setError(err.message || 'Error');
         } finally {
@@ -95,57 +95,78 @@ export const useFormProductoHandler = (isEditMode = false) => {
 
     const handleChange = (e) => {
         console.log(e);
+        setShowFormErrors(false);
+
         // Manejar tanto inputs normales como File objects
         const fieldName = e.target.name;
         let fieldValue;
         let isValid;
+        let error;
+
         
+
         if (e.target.files && e.target.files[0]) {
             // Si es un input de tipo file
             fieldValue = e.target.files[0];
             isValid = true; // Un archivo seleccionado es válido
+            error = null;
         } else if (e.target.value !== undefined) {
             // Si es un input normal
             fieldValue = e.target.value;
             isValid = fieldValue != "";
+            error = (fieldValue != "") ? null : "Ingrese un valor valido en " + fieldName;
         } else if (e.target instanceof File || e.target?.value instanceof File) {
             // Si se pasa directamente un File object (desde ImageUpload)
             fieldValue = e.target.value || e.target;
             isValid = true;
+            error = null;
+
         } else {
             // Fallback: usar e.target.value
             fieldValue = e.target.value;
             isValid = fieldValue != "";
+            error = (fieldValue != "") ? null : "Ingrese un valor valido en " + fieldName;
         }
+
+
+        const isFieldRequired = values[fieldName].required;
         
+
         setValues({
             ...values,
             [fieldName]: {
                 value: fieldValue,
-                valid: isValid
+                valid: isFieldRequired ? isValid : true,
+                error: isFieldRequired ? error : null,
+                required: isFieldRequired
             }
         });
     }
 
     const handleSubmit = () => {
+        console.log("Guardar producto: ");
+        console.log(isFormValid);
 
-
-        if (isEditMode) {
-            updateProduct(id, {
-                nombre: values.nombre.value,
-                precio: values.precio.value,
-                descripcion: values.descripcion.value,
-                imagen: values.imagen.value,
-                categoria_id: 1 // TODO: get categoria_id from the dropdown
-            });
+        if (isFormValid) {
+            if (isEditMode) {
+                updateProduct(id, {
+                    nombre: values.nombre.value,
+                    precio: values.precio.value,
+                    descripcion: values.descripcion.value,
+                    imagen: values.imagen.value,
+                    categoria_id: 1 // TODO: get categoria_id from the dropdown
+                });
+            } else {
+                createNewProduct({
+                    nombre: values.nombre.value,
+                    precio: values.precio.value,
+                    descripcion: values.descripcion.value,
+                    imagen: values.imagen.value,
+                    categoria_id: 1 // TODO: get categoria_id from the dropdown
+                });
+            }
         } else {
-            createNewProduct({
-                nombre: values.nombre.value,
-                precio: values.precio.value,
-                descripcion: values.descripcion.value,
-                imagen: values.imagen.value,
-                categoria_id: 1 // TODO: get categoria_id from the dropdown
-            });
+            setShowFormErrors(true);
         }
     }
 
@@ -157,6 +178,7 @@ export const useFormProductoHandler = (isEditMode = false) => {
         isFormValid,
         handleChange,
         handleSubmit,
-        values
+        values,
+        showFormErrors
     };
 };

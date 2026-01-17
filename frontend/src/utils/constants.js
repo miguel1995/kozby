@@ -1,18 +1,26 @@
 export const initialFormValues = {
     nombre: {
       value: "",
-      valid: null
+      valid: null,
+      required: true,
+      error: "Ingrese un nombre del artículo"
     },
     precio: {
       value: "",
-      valid: null
+      valid: null,
+      required: true,
+      error: "Ingrese un precio valido"
     },
     descripcion: {
       value: "",
-      valid: null
+      valid: null,
+      required: false,
+      error: null
     },
     imagen: {
       value: "",
-      valid: null
+      valid: null,
+      required: false,
+      error: null
     }
   }

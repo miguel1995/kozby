@@ -33,3 +33,33 @@
     font-weight: 700;
     margin: 32px 215px 32px 215px;
 }
+
+
+
+.error-messages {
+    color: #bf0020;
+    font-size: 16px;
+    font-weight: 400;
+    margin: 16px;
+
+    background-color: #ffe5ea;
+    padding: 16px;
+    border-radius: 5px;
+    border: 1px solid #ffccd5;
+}
+
+.error-messages-title {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.error-messages-title .anticon-exclamation-circle {
+ color: #bf0020;
+}
+
+.error-messages-title span {
+    display: flex;
+    font-weight: 600;
+    color: #000;
+}

@@ -39,30 +39,34 @@ export const ImageUpload = ({ value, onChange }) => {
   };
 
   return (
-    <div>
+    <div className="image-upload-container">
       <Dragger
         beforeUpload={() => false} // Prevenir subida automática
         onChange={handleChange}
         showUploadList={false}
         accept="image/*"
+        maxSize={1024}
       >
         <p className="ant-upload-drag-icon">
           <InboxOutlined />
         </p>
         <p className="ant-upload-text">
-          Haz clic o arrastra una imagen aquí para subirla
+          Haz clic o arrastra una imagen ( max 1MB )  aquí para subirla
         </p>
         <p className="ant-upload-hint">
           La imagen se subirá cuando guardes el producto
         </p>
       </Dragger>
       {previewUrl && (
+        <div>
         <div style={{ marginTop: 16 }}>
           <img 
             src={previewUrl} 
             alt="Preview" 
-            style={{ maxWidth: '100%', maxHeight: 200, borderRadius: 8, objectFit: 'cover' }} 
+            style={{ maxWidth: '100%', maxHeight: 150, borderRadius: 8, objectFit: 'cover' }} 
           />
+        </div>
+        
         </div>
       )}
     </div>
