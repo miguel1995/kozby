@@ -12,6 +12,8 @@ export const useFormProductoHandler = (isEditMode = false) => {
     const [isFormValid, setIsFormValid] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [values, setValues] = useState(initialFormValues);
+    const [fechaCreacion, setFechaCreacion] = useState('');
+    const [fechaModificacion, setFechaModificacion] = useState('');
     const [showFormErrors, setShowFormErrors] = useState(false);
     const navigate = useNavigate();
 
@@ -58,6 +60,10 @@ export const useFormProductoHandler = (isEditMode = false) => {
                 descripcion: { value: data.descripcion, valid: true },
                 imagen: { value: data.imagen, valid: true }
             });
+
+            setFechaCreacion(data.fecha_creacion);
+            setFechaModificacion(data.fecha_modificacion);
+
         } catch (err) {
             setError(err.message || 'Error');
         } finally {
@@ -179,6 +185,8 @@ export const useFormProductoHandler = (isEditMode = false) => {
         handleChange,
         handleSubmit,
         values,
-        showFormErrors
+        showFormErrors,
+        fechaCreacion,
+        fechaModificacion
     };
 };

@@ -4,10 +4,13 @@ import { useNavigate } from 'react-router';
 import { ProductForm } from '../components/ProductForm';
 import { CloseOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import SubmitButton from '../components/SubmitButton';
+import { formatDate } from '../utils/dateUtils';
 
 const FormProducto = ({ isEditMode = false }) => {
 
   const { values,
+    fechaCreacion,
+    fechaModificacion,
     isFormValid,
     isModalOpen,
     handleChange,
@@ -16,6 +19,9 @@ const FormProducto = ({ isEditMode = false }) => {
     showFormErrors } = useFormProductoHandler(isEditMode);
 
   const navigate = useNavigate();
+
+
+  console.log(values);
 
   return (
     <>
@@ -27,7 +33,15 @@ const FormProducto = ({ isEditMode = false }) => {
           />
           <SubmitButton text="Guardar" onClick={handleSubmit} />
         </div>
-        {isEditMode ? <div className="form-producto-title">Editar artículo</div> : <div className="form-producto-title">Crear artículo</div>}
+        {isEditMode ? 
+        <>
+          <div className="form-producto-title">Editar artículo</div>
+          <div className="form-producto-subtitle">
+            <span>Artículo creado el {formatDate(fechaCreacion)}</span>
+            <span>Última modificación el {formatDate(fechaModificacion)}</span>
+          </div>
+        </>
+        : <div className="form-producto-title">Crear artículo</div>}
 
        
 

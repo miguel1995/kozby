@@ -31,7 +31,16 @@
 .form-producto-title {
     font-size: 25px;
     font-weight: 700;
-    margin: 32px 215px 32px 215px;
+    margin: 32px 215px 8px 215px;
+}
+
+.form-producto-subtitle {
+    display: flex;
+    flex-direction: column;
+    font-size: 10px;
+    font-weight: 400;
+    margin: 0px 215px 16px 215px;
+    color: #4d4646;
 }
 
 
