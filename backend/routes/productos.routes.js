@@ -16,4 +16,5 @@ router.delete('/:id', productosController.deleteProducto);
 router.patch('/:id/archive', productosController.archiveProducto);
 
 
+
 module.exports = router;

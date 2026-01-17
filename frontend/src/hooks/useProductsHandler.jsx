@@ -168,7 +168,10 @@ export const useProductsHandler = () => {
 
     setLoading(true);
     try {
-      await deleteProducto(selectedProduct.id);
+      console.log(selectedProduct,"borrando imagen de prueba");
+      const fullFileName = selectedProduct.imagen.split('/').pop(); // "o8vyvxdh2zhwsl8gmlyo.png"
+      const imageId = "kozby/products/" + fullFileName.split('.')[0];     // "o8vyvxdh2zhwsl8gmlyo"
+      await deleteProducto(selectedProduct.id,imageId);
       message.success('Producto eliminado definitivamente');
       setIsDeleteModalOpen({
         open: false,
