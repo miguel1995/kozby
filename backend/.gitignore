@@ -1,12 +1,7 @@
 # Dependencies
 node_modules/
 
-# Environment variables
-.env
 
-# Firebase credentials
-firebase-service-account.json
-*-service-account.json
 
 # Logs
 *.log
