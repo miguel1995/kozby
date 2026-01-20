@@ -9,10 +9,58 @@ if (!admin.apps.length) {
     // Opción 1: Usar credenciales individuales desde variables de entorno (PRIORIDAD - para producción)
     if (process.env.FIREBASE_PROJECT_ID && process.env.FIREBASE_PRIVATE_KEY && process.env.FIREBASE_CLIENT_EMAIL) {
       console.log('🔧 Usando variables de entorno para Firebase...');
+      
+      // Procesar la clave privada correctamente
+      let privateKey = process.env.FIREBASE_PRIVATE_KEY;
+      
+      // Quitar comillas al inicio y final si existen
+      privateKey = privateKey.trim();
+      if ((privateKey.startsWith('"') && privateKey.endsWith('"')) || 
+          (privateKey.startsWith("'") && privateKey.endsWith("'"))) {
+        privateKey = privateKey.slice(1, -1);
+      }
+      
+      // Normalizar los saltos de línea - CRITICO para el formato PEM
+      // Reemplazar cualquier variación de \n por saltos de línea reales
+      privateKey = privateKey.replace(/\\n/g, '\n');
+      privateKey = privateKey.replace(/\\\\n/g, '\n');
+      privateKey = privateKey.replace(/\\r\\n/g, '\n');
+      privateKey = privateKey.replace(/\\r/g, '\n');
+      
+      // Asegurar que los headers/footers PEM tengan saltos de línea correctos
+      privateKey = privateKey.replace(/-----BEGIN PRIVATE KEY-----[\r\n]*/g, '-----BEGIN PRIVATE KEY-----\n');
+      privateKey = privateKey.replace(/[\r\n]*-----END PRIVATE KEY-----/g, '\n-----END PRIVATE KEY-----\n');
+      
+      // Limpiar saltos de línea múltiples pero mantener estructura PEM
+      privateKey = privateKey.replace(/\n{3,}/g, '\n\n');
+      
+      // Quitar espacios extras al final
+      privateKey = privateKey.trim();
+      
+      // Verificar formato PEM
+      if (!privateKey.includes('BEGIN PRIVATE KEY') || !privateKey.includes('END PRIVATE KEY')) {
+        throw new Error('La clave privada no tiene el formato PEM correcto. Debe incluir -----BEGIN PRIVATE KEY----- y -----END PRIVATE KEY-----');
+      }
+      
+      // Verificar que la clave tenga el formato base64 correcto entre los headers
+      const keyMatch = privateKey.match(/-----BEGIN PRIVATE KEY-----\n([\s\S]+)\n-----END PRIVATE KEY-----/);
+      if (!keyMatch || !keyMatch[1].trim()) {
+        throw new Error('La clave privada no contiene datos base64 válidos entre los headers PEM');
+      }
+      
+      // Log de diagnóstico (solo primeros y últimos caracteres por seguridad)
+      console.log('🔍 Diagnóstico clave privada:');
+      console.log('- Longitud:', privateKey.length);
+      console.log('- Empieza con:', privateKey.substring(0, 35));
+      console.log('- Termina con:', privateKey.substring(privateKey.length - 35));
+      console.log('- Contiene saltos de línea reales:', privateKey.includes('\n'));
+      console.log('- Número de líneas:', privateKey.split('\n').length);
+      console.log('- Formato PEM válido:', privateKey.match(/-----BEGIN PRIVATE KEY-----\n[\s\S]+\n-----END PRIVATE KEY-----/) !== null);
+      
       admin.initializeApp({
         credential: admin.credential.cert({
           projectId: process.env.FIREBASE_PROJECT_ID,
-          privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+          privateKey: privateKey,
           clientEmail: process.env.FIREBASE_CLIENT_EMAIL
         }),
         databaseURL: process.env.FIREBASE_DATABASE_URL || `https://${process.env.FIREBASE_PROJECT_ID}-default-rtdb.firebaseio.com`
