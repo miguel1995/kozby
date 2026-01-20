@@ -9,6 +9,22 @@ if (!admin.apps.length) {
     try {
       const serviceAccountPath = path.join(__dirname, '..', 'firebase-service-account.json');
       const serviceAccount = require(serviceAccountPath);
+      
+      // Logs de diagnóstico para verificar la clave privada
+      console.log('🔍 DIAGNÓSTICO - Verificando clave privada:');
+      console.log('Private key ID:', serviceAccount.private_key_id);
+      console.log('Private key length:', serviceAccount.private_key ? serviceAccount.private_key.length : 'NULL');
+      console.log('Private key starts with:', serviceAccount.private_key ? serviceAccount.private_key.substring(0, 50) : 'NULL');
+      console.log('Private key contains \\n (string):', serviceAccount.private_key ? serviceAccount.private_key.includes('\\n') : false);
+      console.log('Private key contains actual newline:', serviceAccount.private_key ? serviceAccount.private_key.includes('\n') && !serviceAccount.private_key.includes('\\n') : false);
+      console.log('Private key ends with:', serviceAccount.private_key ? serviceAccount.private_key.substring(serviceAccount.private_key.length - 50) : 'NULL');
+      
+      // Intentar corregir los saltos de línea si es necesario
+      if (serviceAccount.private_key && serviceAccount.private_key.includes('\\n')) {
+        console.log('⚠️  Detectado: La clave contiene \\n como string literal, corrigiendo...');
+        serviceAccount.private_key = serviceAccount.private_key.replace(/\\n/g, '\n');
+      }
+      
       admin.initializeApp({
         credential: admin.credential.cert(serviceAccount),
         databaseURL: process.env.FIREBASE_DATABASE_URL || `https://${serviceAccount.project_id}-default-rtdb.firebaseio.com`
