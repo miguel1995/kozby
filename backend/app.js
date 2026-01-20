@@ -11,6 +11,12 @@ app.use(cors());
 // Estos middlewares NO interfieren con multipart/form-data cuando multer está en la ruta
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.get("/", (req, res) => {
+  res.status(200).send("Hello World");
+});
+app.get("/health", (req, res) => {
+  res.status(200).send("ok");
+});
 
 app.use('/productos', require('./routes/productos.routes'));
 
