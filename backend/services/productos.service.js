@@ -50,21 +50,27 @@ const getProductoById = async (id) => {
 };
 
 const createProducto = async (nuevoProducto) => {
-  const { nombre, precio, descripcion = null, imagen, categoria_id } = nuevoProducto;
+  const { nombre, precio, cantidad, descripcion = null, imagen, categoria_id } = nuevoProducto;
 
-  if (!nombre || !precio || !imagen || !categoria_id) {
-    throw new Error('Faltan campos obligatorios');
-  }
+if (nombre == null || precio == null || cantidad == null || !imagen || !categoria_id) {
+  throw new Error('Faltan campos obligatorios');
+}
 
-  const [result] = await db.query(
-    'INSERT INTO productos (nombre, precio, descripcion, imagen, categoria_id) VALUES (?, ?, ?, ?, ?)',
-    [nombre, precio, descripcion, imagen, categoria_id]
-  );
+if (cantidad < 0) {
+  throw new Error('La cantidad no puede ser negativa');
+}
+
+ const [result] = await db.query(
+  'INSERT INTO productos (nombre, precio, cantidad, descripcion, imagen, categoria_id) VALUES (?, ?, ?, ?, ?, ?)',
+  [nombre, precio, cantidad, descripcion, imagen, categoria_id]
+);
+
 
   return {
     id: result.insertId,
     nombre,
     precio,
+    cantidad,
     descripcion,
     imagen,
     categoria_id
@@ -75,7 +81,7 @@ const updateProducto = async (id, updates) => {
   const fields = [];
   const values = [];
 
-  const allowed = ['nombre', 'precio', 'descripcion', 'imagen', 'categoria_id'];
+  const allowed = ['nombre', 'precio', 'cantidad', 'descripcion', 'imagen', 'categoria_id'];
 
   for (const key of Object.keys(updates)) {
     if (allowed.includes(key)) {

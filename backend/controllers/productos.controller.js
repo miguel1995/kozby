@@ -74,8 +74,12 @@ const postProducto = async (req, res) => {
     };
     
 
-    if (!nuevoProducto.nombre || !nuevoProducto.precio) {
+    if (!nuevoProducto.nombre || !nuevoProducto.precio || nuevoProducto.cantidad == null) {
       return res.status(400).json({ message: 'Faltan campos obligatorios' });
+    }
+
+    if (nuevoProducto.cantidad < 0 ) {
+      return res.status(400).json({ message: 'La cantidad no puede ser negativa' });
     }
 
 
@@ -128,6 +132,10 @@ const putProducto = async (req, res) => {
       ...req.body,
       imagen: imagenUrl
     };
+
+    if (updates.cantidad != null && updates.cantidad < 0) {
+      return res.status(400).json({ message: 'La cantidad no puede ser negativa' });
+    }
 
     if (!updates || Object.keys(updates).length === 0) {
       return res.status(400).json({ message: 'No se enviaron campos para actualizar' });
