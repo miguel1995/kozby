@@ -5,6 +5,11 @@ const Producto = require('../models/Producto');
 // Obtener todos los productos no archivados
 const getProductos = async () => {
   try {
+    // Verificar que la conexión esté lista
+    if (mongoose.connection.readyState !== 1) {
+      throw new Error(`La conexión a MongoDB no está lista. Estado: ${mongoose.connection.readyState} (0=disconnected, 1=connected, 2=connecting, 3=disconnecting)`);
+    }
+
     const productos = await Producto.find({ archivado: false })
       .sort({ createdAt: -1 })
       .lean(); // lean() retorna objetos JavaScript planos en lugar de documentos Mongoose
@@ -22,6 +27,7 @@ const getProductos = async () => {
     }));
   } catch (error) {
     console.error('Error al obtener productos:', error);
+    console.error('Stack trace:', error.stack);
     throw error;
   }
 };

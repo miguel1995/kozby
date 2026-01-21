@@ -13,9 +13,11 @@ if (!MONGODB_URI) {
 mongoose.connect(MONGODB_URI)
   .then(() => {
     console.log('✅ Conectado a MongoDB Atlas exitosamente');
+    console.log('📍 Base de datos:', mongoose.connection.db?.databaseName || 'conectando...');
   })
   .catch((error) => {
     console.error('❌ Error al conectar a MongoDB Atlas:', error.message);
+    console.error('Error completo:', error);
     throw error;
   });
 

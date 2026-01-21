@@ -7,7 +7,14 @@ const getProductos = async (req, res) => {
     res.status(200).json(productos);
   } catch (error) {
     console.error('Error al obtener productos:', error);
-    res.status(500).json({ message: 'Error al obtener productos' });
+    console.error('Error stack:', error.stack);
+    
+    // En desarrollo o en producción, mostrar detalles del error
+    res.status(500).json({ 
+      message: 'Error al obtener productos',
+      error: error.message || 'Error desconocido',
+      details: process.env.NODE_ENV !== 'production' ? error.stack : undefined
+    });
   }
 };
 
