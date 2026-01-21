@@ -3,6 +3,9 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 
+// Inicializar conexión a MongoDB Atlas
+require('./config/database');
+
 const app = express();
 
 app.use(cors());

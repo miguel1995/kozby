@@ -1,29 +1,25 @@
 // src/services/productos.service.js
-const db = require('../config/database');
-
-const PRODUCTOS_REF = 'productos';
+const mongoose = require('mongoose');
+const Producto = require('../models/Producto');
 
 // Obtener todos los productos no archivados
 const getProductos = async () => {
   try {
-    const snapshot = await db.ref(`${PRODUCTOS_REF}`)
-      .orderByChild('archivado')
-      .equalTo(false)
-      .once('value');
+    const productos = await Producto.find({ archivado: false })
+      .sort({ createdAt: -1 })
+      .lean(); // lean() retorna objetos JavaScript planos en lugar de documentos Mongoose
     
-    if (!snapshot.exists()) {
-      return [];
-    }
-    
-    const productos = [];
-    snapshot.forEach((childSnapshot) => {
-      productos.push({
-        id: childSnapshot.key,
-        ...childSnapshot.val()
-      });
-    });
-    
-    return productos;
+    return productos.map(producto => ({
+      id: producto._id.toString(),
+      nombre: producto.nombre,
+      precio: producto.precio,
+      descripcion: producto.descripcion,
+      imagen: producto.imagen,
+      categoria_id: producto.categoria_id,
+      archivado: producto.archivado,
+      createdAt: producto.createdAt,
+      updatedAt: producto.updatedAt
+    }));
   } catch (error) {
     console.error('Error al obtener productos:', error);
     throw error;
@@ -33,24 +29,21 @@ const getProductos = async () => {
 // Obtener todos los productos archivados
 const getProductosArchivados = async () => {
   try {
-    const snapshot = await db.ref(`${PRODUCTOS_REF}`)
-      .orderByChild('archivado')
-      .equalTo(true)
-      .once('value');
+    const productos = await Producto.find({ archivado: true })
+      .sort({ createdAt: -1 })
+      .lean();
     
-    if (!snapshot.exists()) {
-      return [];
-    }
-    
-    const productos = [];
-    snapshot.forEach((childSnapshot) => {
-      productos.push({
-        id: childSnapshot.key,
-        ...childSnapshot.val()
-      });
-    });
-    
-    return productos;
+    return productos.map(producto => ({
+      id: producto._id.toString(),
+      nombre: producto.nombre,
+      precio: producto.precio,
+      descripcion: producto.descripcion,
+      imagen: producto.imagen,
+      categoria_id: producto.categoria_id,
+      archivado: producto.archivado,
+      createdAt: producto.createdAt,
+      updatedAt: producto.updatedAt
+    }));
   } catch (error) {
     console.error('Error al obtener productos archivados:', error);
     throw error;
@@ -64,15 +57,27 @@ const getProductoById = async (id) => {
       throw new Error('ID de producto inválido');
     }
 
-    const snapshot = await db.ref(`${PRODUCTOS_REF}/${id}`).once('value');
+    // Verificar si el ID es válido para MongoDB
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return null;
+    }
+
+    const producto = await Producto.findById(id).lean();
     
-    if (!snapshot.exists()) {
+    if (!producto) {
       return null;
     }
     
     return {
-      id: snapshot.key,
-      ...snapshot.val()
+      id: producto._id.toString(),
+      nombre: producto.nombre,
+      precio: producto.precio,
+      descripcion: producto.descripcion,
+      imagen: producto.imagen,
+      categoria_id: producto.categoria_id,
+      archivado: producto.archivado,
+      createdAt: producto.createdAt,
+      updatedAt: producto.updatedAt
     };
   } catch (error) {
     console.error('Error al obtener producto por ID:', error);
@@ -92,6 +97,11 @@ const createProducto = async (nuevoProducto) => {
     // Convertir precio a número si viene como string
     const precioNum = typeof precio === 'string' ? parseFloat(precio) : precio;
     
+    // Validar que el precio sea un número válido
+    if (isNaN(precioNum) || precioNum < 0) {
+      throw new Error('El precio debe ser un número válido mayor o igual a 0');
+    }
+    
     // Convertir categoria_id a string si viene como número
     const categoriaIdStr = String(categoria_id);
 
@@ -101,17 +111,22 @@ const createProducto = async (nuevoProducto) => {
       descripcion,
       imagen,
       categoria_id: categoriaIdStr,
-      archivado: false,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      archivado: false
     };
 
-    // Crear nuevo producto (push genera un ID único automáticamente)
-    const newProductRef = await db.ref(PRODUCTOS_REF).push(productoData);
+    const nuevoProductoDoc = new Producto(productoData);
+    const productoGuardado = await nuevoProductoDoc.save();
     
     return {
-      id: newProductRef.key,
-      ...productoData
+      id: productoGuardado._id.toString(),
+      nombre: productoGuardado.nombre,
+      precio: productoGuardado.precio,
+      descripcion: productoGuardado.descripcion,
+      imagen: productoGuardado.imagen,
+      categoria_id: productoGuardado.categoria_id,
+      archivado: productoGuardado.archivado,
+      createdAt: productoGuardado.createdAt,
+      updatedAt: productoGuardado.updatedAt
     };
   } catch (error) {
     console.error('Error al crear producto:', error);
@@ -124,6 +139,11 @@ const updateProducto = async (id, updates) => {
   try {
     if (!id) {
       throw new Error('ID de producto inválido');
+    }
+
+    // Verificar si el ID es válido para MongoDB
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return null;
     }
 
     const allowed = ['nombre', 'precio', 'descripcion', 'imagen', 'categoria_id'];
@@ -145,6 +165,10 @@ const updateProducto = async (id, updates) => {
       updateData.precio = typeof updateData.precio === 'string' 
         ? parseFloat(updateData.precio) 
         : updateData.precio;
+      
+      if (isNaN(updateData.precio) || updateData.precio < 0) {
+        throw new Error('El precio debe ser un número válido mayor o igual a 0');
+      }
     }
 
     // Convertir categoria_id a string si está presente
@@ -152,25 +176,27 @@ const updateProducto = async (id, updates) => {
       updateData.categoria_id = String(updateData.categoria_id);
     }
 
-    // Agregar timestamp de actualización
-    updateData.updatedAt = new Date().toISOString();
+    // Actualizar el producto (findByIdAndUpdate retorna el documento actualizado)
+    const productoActualizado = await Producto.findByIdAndUpdate(
+      id,
+      { $set: updateData },
+      { new: true, runValidators: true }
+    ).lean();
 
-    const productoRef = db.ref(`${PRODUCTOS_REF}/${id}`);
-    
-    // Verificar que el producto existe
-    const snapshot = await productoRef.once('value');
-    if (!snapshot.exists()) {
+    if (!productoActualizado) {
       return null;
     }
 
-    // Actualizar solo los campos especificados
-    await productoRef.update(updateData);
-
-    // Obtener el producto actualizado
-    const updatedSnapshot = await productoRef.once('value');
     return {
-      id: updatedSnapshot.key,
-      ...updatedSnapshot.val()
+      id: productoActualizado._id.toString(),
+      nombre: productoActualizado.nombre,
+      precio: productoActualizado.precio,
+      descripcion: productoActualizado.descripcion,
+      imagen: productoActualizado.imagen,
+      categoria_id: productoActualizado.categoria_id,
+      archivado: productoActualizado.archivado,
+      createdAt: productoActualizado.createdAt,
+      updatedAt: productoActualizado.updatedAt
     };
   } catch (error) {
     console.error('Error al actualizar producto:', error);
@@ -185,19 +211,18 @@ const archivarProducto = async (id) => {
       throw new Error('ID de producto inválido');
     }
 
-    const productoRef = db.ref(`${PRODUCTOS_REF}/${id}`);
-    const snapshot = await productoRef.once('value');
-
-    if (!snapshot.exists()) {
+    // Verificar si el ID es válido para MongoDB
+    if (!mongoose.Types.ObjectId.isValid(id)) {
       return false;
     }
 
-    await productoRef.update({
-      archivado: true,
-      updatedAt: new Date().toISOString()
-    });
+    const producto = await Producto.findByIdAndUpdate(
+      id,
+      { $set: { archivado: true } },
+      { new: true }
+    );
 
-    return true;
+    return producto !== null;
   } catch (error) {
     console.error('Error al archivar producto:', error);
     throw error;
@@ -211,19 +236,18 @@ const restaurarProducto = async (id) => {
       throw new Error('ID de producto inválido');
     }
 
-    const productoRef = db.ref(`${PRODUCTOS_REF}/${id}`);
-    const snapshot = await productoRef.once('value');
-
-    if (!snapshot.exists()) {
+    // Verificar si el ID es válido para MongoDB
+    if (!mongoose.Types.ObjectId.isValid(id)) {
       return false;
     }
 
-    await productoRef.update({
-      archivado: false,
-      updatedAt: new Date().toISOString()
-    });
+    const producto = await Producto.findByIdAndUpdate(
+      id,
+      { $set: { archivado: false } },
+      { new: true }
+    );
 
-    return true;
+    return producto !== null;
   } catch (error) {
     console.error('Error al restaurar producto:', error);
     throw error;
@@ -237,14 +261,17 @@ const deleteProducto = async (id) => {
       throw new Error('ID de producto inválido');
     }
 
-    const productoRef = db.ref(`${PRODUCTOS_REF}/${id}`);
-    const snapshot = await productoRef.once('value');
-
-    if (!snapshot.exists()) {
+    // Verificar si el ID es válido para MongoDB
+    if (!mongoose.Types.ObjectId.isValid(id)) {
       throw new Error('Producto no encontrado');
     }
 
-    await productoRef.remove();
+    const producto = await Producto.findByIdAndDelete(id);
+
+    if (!producto) {
+      throw new Error('Producto no encontrado');
+    }
+
     return true;
   } catch (error) {
     console.error('Error al eliminar producto:', error);
