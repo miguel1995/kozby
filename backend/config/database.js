@@ -70,12 +70,43 @@ if (!admin.apps.length) {
     // Opción 2: Usar archivo de credenciales de servicio como JSON string
     else if (process.env.FIREBASE_SERVICE_ACCOUNT_KEY) {
       console.log('🔧 Usando FIREBASE_SERVICE_ACCOUNT_KEY...');
-      const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
-      admin.initializeApp({
-        credential: admin.credential.cert(serviceAccount),
-        databaseURL: process.env.FIREBASE_DATABASE_URL || `https://${serviceAccount.project_id}-default-rtdb.firebaseio.com`
-      });
-      console.log('✅ Firebase Realtime Database inicializado con FIREBASE_SERVICE_ACCOUNT_KEY');
+      
+      try {
+        const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
+        
+        // Diagnóstico detallado
+        console.log('🔍 Diagnóstico FIREBASE_SERVICE_ACCOUNT_KEY:');
+        console.log('- Server time (UTC):', new Date().toISOString());
+        console.log('- Project ID:', serviceAccount.project_id);
+        console.log('- Private Key ID:', serviceAccount.private_key_id);
+        console.log('- Client Email:', serviceAccount.client_email);
+        console.log('- Private key length:', serviceAccount.private_key ? serviceAccount.private_key.length : 'NULL');
+        console.log('- Private key starts with:', serviceAccount.private_key ? serviceAccount.private_key.substring(0, 30) : 'NULL');
+        console.log('- Private key ends with:', serviceAccount.private_key ? serviceAccount.private_key.substring(serviceAccount.private_key.length - 30) : 'NULL');
+        console.log('- Private key contains \\n (string):', serviceAccount.private_key ? serviceAccount.private_key.includes('\\n') : false);
+        console.log('- Private key contains actual newline:', serviceAccount.private_key ? (serviceAccount.private_key.includes('\n') && !serviceAccount.private_key.includes('\\n')) : false);
+        console.log('- Private key lines count:', serviceAccount.private_key ? serviceAccount.private_key.split('\n').length : 0);
+        
+        // Verificar si la clave privada tiene formato correcto
+        if (!serviceAccount.private_key || !serviceAccount.private_key.includes('BEGIN PRIVATE KEY')) {
+          throw new Error('La clave privada en el JSON no tiene el formato correcto');
+        }
+        
+        // Si la clave tiene \n como string literal, corregirla
+        if (serviceAccount.private_key.includes('\\n')) {
+          console.log('⚠️  Detectado: La clave contiene \\n como string literal, corrigiendo...');
+          serviceAccount.private_key = serviceAccount.private_key.replace(/\\n/g, '\n');
+        }
+        
+        admin.initializeApp({
+          credential: admin.credential.cert(serviceAccount),
+          databaseURL: process.env.FIREBASE_DATABASE_URL || `https://${serviceAccount.project_id}-default-rtdb.firebaseio.com`
+        });
+        console.log('✅ Firebase Realtime Database inicializado con FIREBASE_SERVICE_ACCOUNT_KEY');
+      } catch (parseError) {
+        console.error('❌ Error al parsear FIREBASE_SERVICE_ACCOUNT_KEY:', parseError.message);
+        throw parseError;
+      }
     }
     // Opción 3: Usar ruta a archivo JSON desde variable de entorno
     else if (process.env.FIREBASE_SERVICE_ACCOUNT_PATH) {
