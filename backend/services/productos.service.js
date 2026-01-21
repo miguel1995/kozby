@@ -93,12 +93,15 @@ const getProductoById = async (id) => {
 
 // Crear un nuevo producto
 const createProducto = async (nuevoProducto) => {
-  try {
-    const { nombre, precio, descripcion = null, imagen = null, categoria_id } = nuevoProducto;
+  const { nombre, precio, cantidad, descripcion = null, imagen, categoria_id } = nuevoProducto;
 
-    if (!nombre || !precio || !categoria_id) {
-      throw new Error('Faltan campos obligatorios');
-    }
+if (nombre == null || precio == null || cantidad == null || !imagen || !categoria_id) {
+  throw new Error('Faltan campos obligatorios');
+}
+
+if (cantidad < 0) {
+  throw new Error('La cantidad no puede ser negativa');
+}
 
     // Convertir precio a número si viene como string
     const precioNum = typeof precio === 'string' ? parseFloat(precio) : precio;
@@ -152,7 +155,7 @@ const updateProducto = async (id, updates) => {
       return null;
     }
 
-    const allowed = ['nombre', 'precio', 'descripcion', 'imagen', 'categoria_id'];
+    const allowed = ['nombre', 'precio', 'cantidad', 'descripcion', 'imagen', 'categoria_id'];
     const updateData = {};
 
     // Filtrar solo campos permitidos
