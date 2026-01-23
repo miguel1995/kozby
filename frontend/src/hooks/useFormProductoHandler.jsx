@@ -57,6 +57,7 @@ export const useFormProductoHandler = (isEditMode = false) => {
             setValues({
                 nombre: { value: data.nombre, valid: true },
                 precio: { value: data.precio, valid: true },
+                cantidad: { value: data.cantidad, valid: true },
                 descripcion: { value: data.descripcion, valid: true },
                 imagen: { value: data.imagen, valid: true }
             });
@@ -158,6 +159,7 @@ export const useFormProductoHandler = (isEditMode = false) => {
                 updateProduct(id, {
                     nombre: values.nombre.value,
                     precio: values.precio.value,
+                    cantidad: values.cantidad.value,
                     descripcion: values.descripcion.value,
                     imagen: values.imagen.value,
                     categoria_id: 1 // TODO: get categoria_id from the dropdown
@@ -166,6 +168,7 @@ export const useFormProductoHandler = (isEditMode = false) => {
                 createNewProduct({
                     nombre: values.nombre.value,
                     precio: values.precio.value,
+                    cantidad: values.cantidad.value,
                     descripcion: values.descripcion.value,
                     imagen: values.imagen.value,
                     categoria_id: 1 // TODO: get categoria_id from the dropdown

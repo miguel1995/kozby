@@ -60,8 +60,8 @@ export const useProductsHandler = () => {
     },
     {
       title: 'Disponibilidad',
-      dataIndex: 'disponibilidad_producto',
-      key: 'disponibilidad_producto',
+      dataIndex: 'cantidad',
+      key: 'cantidad',
       render: (text) => text,
     },
     {

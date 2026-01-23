@@ -18,6 +18,7 @@ const getProductos = async () => {
       id: producto._id.toString(),
       nombre: producto.nombre,
       precio: producto.precio,
+      cantidad: producto.cantidad, 
       descripcion: producto.descripcion,
       imagen: producto.imagen,
       categoria_id: producto.categoria_id,
@@ -43,6 +44,7 @@ const getProductosArchivados = async () => {
       id: producto._id.toString(),
       nombre: producto.nombre,
       precio: producto.precio,
+      cantidad: producto.cantidad,
       descripcion: producto.descripcion,
       imagen: producto.imagen,
       categoria_id: producto.categoria_id,
@@ -78,6 +80,7 @@ const getProductoById = async (id) => {
       id: producto._id.toString(),
       nombre: producto.nombre,
       precio: producto.precio,
+      cantidad: producto.cantidad,
       descripcion: producto.descripcion,
       imagen: producto.imagen,
       categoria_id: producto.categoria_id,
@@ -93,6 +96,7 @@ const getProductoById = async (id) => {
 
 // Crear un nuevo producto
 const createProducto = async (nuevoProducto) => {
+  try {
   const { nombre, precio, cantidad, descripcion = null, imagen, categoria_id } = nuevoProducto;
 
 if (nombre == null || precio == null || cantidad == null || !imagen || !categoria_id) {
@@ -117,6 +121,7 @@ if (cantidad < 0) {
     const productoData = {
       nombre,
       precio: precioNum,
+      cantidad,
       descripcion,
       imagen,
       categoria_id: categoriaIdStr,
@@ -131,6 +136,7 @@ if (cantidad < 0) {
       nombre: productoGuardado.nombre,
       precio: productoGuardado.precio,
       descripcion: productoGuardado.descripcion,
+      cantidad: productoGuardado.cantidad,
       imagen: productoGuardado.imagen,
       categoria_id: productoGuardado.categoria_id,
       archivado: productoGuardado.archivado,
@@ -196,10 +202,15 @@ const updateProducto = async (id, updates) => {
       return null;
     }
 
+    if (productoActualizado.cantidad < 0) {
+      throw new Error('La cantidad no puede ser negativa');
+    }
+
     return {
       id: productoActualizado._id.toString(),
       nombre: productoActualizado.nombre,
       precio: productoActualizado.precio,
+      cantidad: productoActualizado.cantidad,
       descripcion: productoActualizado.descripcion,
       imagen: productoActualizado.imagen,
       categoria_id: productoActualizado.categoria_id,

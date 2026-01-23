@@ -37,6 +37,15 @@ export const ProductForm = ({ values, handleChange }) => {
                 />
             </FloatLabel>
 
+            <FloatLabel label="Cantidad" name="cantidad" value={values.cantidad?.value || ''}>           
+           
+           <NumericInput 
+           value={values.cantidad?.value} 
+           onChange={e => handleChange(e)} 
+           name="cantidad" 
+           maxLength={10}
+           /> </FloatLabel>
+
             <ImageUpload
                 value={values.imagen.value}
                 onChange={handleChange}

@@ -11,6 +11,12 @@ export const initialFormValues = {
       required: true,
       error: "Ingrese un precio valido"
     },
+    cantidad:{
+      value: "",
+      valid: null,
+      required: true,
+      error: "Ingrese una cantidad valida"
+    },
     descripcion: {
       value: "",
       valid: null,
