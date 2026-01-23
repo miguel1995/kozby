@@ -106,6 +106,10 @@ export const useFormProductoHandler = (isEditMode = false) => {
 
         // Manejar tanto inputs normales como File objects
         const fieldName = e.target.name;
+        if (!fieldName) {
+            console.warn("El evento de cambio no tiene un nombre de campo válido.");
+            return;
+        }
         let fieldValue;
         let isValid;
         let error;
