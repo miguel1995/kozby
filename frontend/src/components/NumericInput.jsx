@@ -2,7 +2,7 @@ import React from 'react';
 import { Input } from 'antd';
 const formatNumber = value => new Intl.NumberFormat().format(value);
 export const NumericInput = props => {
-  const { value, onChange, name } = props;
+  const { value, onChange, name, maxLength } = props;
   const handleChange = e => {
     const { value: inputValue } = e.target;
     const reg = /^-?\d*(\.\d*)?$/;
@@ -25,7 +25,7 @@ export const NumericInput = props => {
         onChange={handleChange}
         onBlur={handleBlur}
         placeholder=""
-        maxLength={8}
+        maxLength={maxLength || 8}
       />
   );
 };

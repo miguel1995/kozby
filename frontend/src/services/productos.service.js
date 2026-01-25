@@ -46,6 +46,15 @@ export const postProducto = async (productoData) => {
                 // Si es una URL (string), agregarlo como texto
                 formData.append('imagen', productoData[key]);
             }
+        } else if (key === 'variantes') {
+            const variantes = productoData[key].map(variante => {
+                return{
+                    nombre: variante.nombre.value,
+                    precio: variante.precio.value,
+                    cantidad: variante.cantidad.value,
+                }
+            });
+            formData.append('variantes', JSON.stringify(variantes));
         } else {
             formData.append(key, productoData[key]);
         }

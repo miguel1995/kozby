@@ -1,69 +1,136 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Modal } from 'antd';
+import FloatLabel from './FloatLabel';
+import { Input } from 'antd';
+import { NumericInput } from './NumericInput';
+import { Button } from 'antd';
+import { VARIANTES_ACTIONS, initialVariantesValues } from '../utils/constants';
 
-const Variantes = ({ variantes, handleChange } = { variantes: [], handleChange: () => {} }) => {
+
+const Variantes = ({ variantes, handleChange } = { variantes: [], handleChange: () => { } }) => {
 
 
+    const [isFormValid, setIsFormValid] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [values, setValues] = useState(initialVariantesValues);
+
+
+
+    useEffect(() => {
+        setIsFormValid(Object.values(values).every(value => value.valid));
+    }, [values]);
+
     const showModal = () => {
         setIsModalOpen(true);
     };
-    const handleOk = () => {
+    const handleVariantOk = () => {
         setIsModalOpen(false);
     };
-    const [values, setValues] = useState({ 
-        
-        nombre: {
-            value: "",
-            valid: null,
-            required: true,
-            error: "Ingrese un nombre del artículo"
-      },
-      precio: {
-        value: "",
-        valid: null,
-        required: true,
-        error: "Ingrese un precio valido"
-      },
-      cantidad: {
-        value: "0",
-        valid: true,
-        required: true,
-        error: "Ingrese una cantidad valida"
-      }
-    });
+
+    const handleVariantChange = (e) => {
+        if (e.target?.name) {
+            setValues({
+                ...values,
+                [e.target.name]: {
+                    ...values[e.target.name],
+                    value: e.target.value,
+                    valid: e.target.value != ""
+                }
+            });
+        }
+
+    };
+    const handleVariantCreate = () => {
+        handleChange(
+
+            {
+                target: {
+                    name: "variantes",
+                    action: VARIANTES_ACTIONS.CREATE,
+                    value: values,
+                    valid: isFormValid
+                }
+            });
+        handleVariantOk();
+        resetValues();
+    };
 
 
-    const handleChange = (e) => {
-        setValues({
-            ...values,
-            [e.target.name]: {
-                ...values[e.target.name],
-                value: e.target.value
-            }
-        });
-    };
-    const handleCreate = () => {
-        console.log(values);
-    };
+const resetValues = () => {
+    setValues(initialVariantesValues);
+    setIsFormValid(false);
+    setIsModalOpen(false);
+}
+
     return (
         <div className="variantes-container">
-            
+
             <div className="variantes-title">Variantes</div>
             <div className="variantes-subtitle">Establece los precios y la disponibilidad por variantes, como tamaños o colores.</div>
             <div className="variantes-add-button" onClick={showModal}>Agregar</div>
-            {variantes.map((variante, index) => (
-                <div key={index} className="variante-item" onClick={() => setIsModalOpen(true)}>
-                    <div className="variante-item-name">{variante.nombre}</div>
-                    <div className="variante-item-price">{variante.precio}</div>
-                    <div className="variante-item-cantidad">{variante.cantidad}</div>
+
+            <Modal open={isModalOpen} onCancel={handleVariantOk}
+                title={
+
+                    <div>
+                        <div className="modal-title">
+                            <div style={{ marginBottom: '20px' }}>
+                                <Button type="primary" onClick={handleVariantOk}>
+                                    Cerrar
+                                </Button>
+                            </div>
+                            <div>
+                                Agregar Variante
+                            </div>
+                            <div style={{ marginBottom: '20px' }}>
+                                <Button type="primary" onClick={handleVariantCreate} disabled={!isFormValid} block>
+                                    Listo
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
+
+                }
+
+
+                footer={null}
+                closable={false}>
+
+                <div className="example">
+
+
+
+                    <FloatLabel label="Nombre (requerido)" name="nombre" value={values.nombre.value}>
+                        <Input
+                            value={values.nombre.value}
+                            name="nombre"
+                            maxLength={45}
+                            onChange={(e) => handleVariantChange(e)} />
+
+                    </FloatLabel>
+                    <FloatLabel label="Precio" name="precio" value={values.precio.value}>
+
+                        <NumericInput
+                            value={values.precio.value}
+                            onChange={e => handleVariantChange(e)}
+                            name="precio"
+                            maxLength={10}
+                        />
+
+
+                    </FloatLabel>
+
+                    <FloatLabel label="Cantidad" name="cantidad" value={values.cantidad.value}>
+
+                        <NumericInput
+                            value={values.cantidad?.value}
+                            onChange={e => handleVariantChange(e)}
+                            name="cantidad"
+                            maxLength={3}
+                        />
+                    </FloatLabel>
+
                 </div>
-            ))}
-            <Modal open={isModalOpen} onCancel={handleOk} title="Agregar Variante">
-                nombre
-                precio
-                cantidad
-                <Button onClick={handleCreate}>Crear Variante</Button>
             </Modal>
         </div>
     );

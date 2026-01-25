@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { postProducto, getProductoById, putProducto } from '../services/productos.service';
-import { initialFormValues } from '../utils/constants';
+import { initialFormValues, VARIANTES_ACTIONS } from '../utils/constants';
 import { useNavigate } from 'react-router';
 import { useParams } from 'react-router';
 
@@ -31,12 +31,13 @@ export const useFormProductoHandler = (isEditMode = false) => {
 
 
     useEffect(() => {
+        console.log(values);
         setIsFormValid(Object.values(values).every(field => {
-            if (field.required===true) {
-                return field.valid===true;
+            if (field.required === true) {
+                return field.valid === true;
             } else {
                 return true;
-            }   
+            }
         }));
     }, [values]);
 
@@ -57,7 +58,8 @@ export const useFormProductoHandler = (isEditMode = false) => {
                 precio: { value: data.precio, valid: true },
                 cantidad: { value: data.cantidad, valid: true },
                 descripcion: { value: data.descripcion, valid: true },
-                imagen: { value: data.imagen, valid: true }
+                imagen: { value: data.imagen, valid: true },
+                variantes: { value: data.variantes, valid: true }
             });
 
             setFechaCreacion(data.fecha_creacion);
@@ -111,44 +113,55 @@ export const useFormProductoHandler = (isEditMode = false) => {
         let isValid;
         let error;
 
-        
-
-        if (e.target.files && e.target.files[0]) {
-            // Si es un input de tipo file
-            fieldValue = e.target.files[0];
-            isValid = true; // Un archivo seleccionado es válido
-            error = null;
-        } else if (e.target.value !== undefined) {
-            // Si es un input normal
-            fieldValue = e.target.value;
-            isValid = fieldValue != "";
-            error = (fieldValue != "") ? null : "Ingrese un valor valido en " + fieldName;
-        } else if (e.target instanceof File || e.target?.value instanceof File) {
-            // Si se pasa directamente un File object (desde ImageUpload)
-            fieldValue = e.target.value || e.target;
-            isValid = true;
-            error = null;
-
+        if (fieldName === "variantes") {
+           if (e.target.action === VARIANTES_ACTIONS.CREATE) {
+            setValues({
+                ...values,
+                [fieldName]: {
+                    value: [...values.variantes.value, e.target.value],
+                    valid: e.target.valid
+                }
+            });
+           }
         } else {
-            // Fallback: usar e.target.value
-            fieldValue = e.target.value;
-            isValid = fieldValue != "";
-            error = (fieldValue != "") ? null : "Ingrese un valor valido en " + fieldName;
-        }
+            if (e.target.files && e.target.files[0]) {
+                // Si es un input de tipo file
+                fieldValue = e.target.files[0];
+                isValid = true; // Un archivo seleccionado es válido
+                error = null;
+            } else if (e.target.value !== undefined) {
+                // Si es un input normal
+                fieldValue = e.target.value;
+                isValid = fieldValue != "";
+                error = (fieldValue != "") ? null : "Ingrese un valor valido en " + fieldName;
+            } else if (e.target instanceof File || e.target?.value instanceof File) {
+                // Si se pasa directamente un File object (desde ImageUpload)
+                fieldValue = e.target.value || e.target;
+                isValid = true;
+                error = null;
 
-
-        const isFieldRequired = values[fieldName].required;
-        
-
-        setValues({
-            ...values,
-            [fieldName]: {
-                value: fieldValue,
-                valid: isFieldRequired ? isValid : true,
-                error: isFieldRequired ? error : null,
-                required: isFieldRequired
+            } else {
+                // Fallback: usar e.target.value
+                fieldValue = e.target.value;
+                isValid = fieldValue != "";
+                error = (fieldValue != "") ? null : "Ingrese un valor valido en " + fieldName;
             }
-        });
+
+
+            const isFieldRequired = values[fieldName].required;
+
+
+
+            setValues({
+                ...values,
+                [fieldName]: {
+                    value: fieldValue,
+                    valid: isFieldRequired ? isValid : true,
+                    error: isFieldRequired ? error : null,
+                    required: isFieldRequired
+                }
+            });
+        }
     }
 
     const handleSubmit = () => {
@@ -161,6 +174,7 @@ export const useFormProductoHandler = (isEditMode = false) => {
                     cantidad: values.cantidad.value,
                     descripcion: values.descripcion.value,
                     imagen: values.imagen.value,
+                    variantes: values.variantes.value,
                     categoria_id: 1 // TODO: get categoria_id from the dropdown
                 });
             } else {
@@ -170,6 +184,7 @@ export const useFormProductoHandler = (isEditMode = false) => {
                     cantidad: values.cantidad.value,
                     descripcion: values.descripcion.value,
                     imagen: values.imagen.value,
+                    variantes: values.variantes.value,
                     categoria_id: 1 // TODO: get categoria_id from the dropdown
                 });
             }

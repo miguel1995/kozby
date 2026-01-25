@@ -28,5 +28,34 @@ export const initialFormValues = {
       valid: null,
       required: false,
       error: null
+    },
+    variantes: {
+      value: [],
+      valid: true,
+      required: false,
+      error: "Ingrese una variante valida"
     }
+  }
+
+  export const initialVariantesValues = {
+
+    nombre: {
+        value: "",
+        valid: null
+    },
+    precio: {
+        value: "",
+        valid: null,
+    },
+    cantidad: {
+        value: "0",
+        valid: true
+    }
+}
+
+
+  export const VARIANTES_ACTIONS = {
+    CREATE: "create",
+    UPDATE: "update",
+    DELETE: "delete"
   }

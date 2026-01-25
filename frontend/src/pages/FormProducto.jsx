@@ -5,6 +5,7 @@ import { ProductForm } from '../components/ProductForm';
 import { CloseOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import SubmitButton from '../components/SubmitButton';
 import { formatDate } from '../utils/dateUtils';
+import Variantes from '../components/Variantes';
 
 const FormProducto = ({ isEditMode = false }) => {
 
@@ -64,7 +65,7 @@ const FormProducto = ({ isEditMode = false }) => {
           }
 
           <ProductForm values={values} handleChange={handleChange} />
-          <Variantes variantes={values.variantes} handleChange={handleChange} />
+          <Variantes variantes={values.variantes.value} handleChange={handleChange} />
 
        
       </div>
