@@ -65,20 +65,10 @@ const FormProducto = ({ isEditMode = false }) => {
           </div>
           }
 
+          <ProductForm values={values} handleChange={handleChange} />
+          <Variantes variantes={values.variantes} handleChange={handleChange} />
 
-        <Row
-          gutter={[32, 32]}
-          justify="center"
-        >
-          <Col span={16}>
-            <ProductForm values={values} handleChange={handleChange} />
-          </Col>
-          <Col span={8}>
-            <div>Categorías</div>
-            <div>En construcción...</div>
-          </Col>
-
-        </Row>
+       
       </div>
       <Modal
         title="Fuera de servicio"
