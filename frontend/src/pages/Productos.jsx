@@ -36,37 +36,65 @@ function Productos() {
     }, [location.pathname, setVerArchivados]);
 
     const modalFotterActions = useMemo(() => {
+
+        const bottonDeleteStyle = {
+            borderRadius: 40,
+            padding: '12px 16px',
+            backgroundColor: '#cf070a',
+            borderColor: '#e00004',
+            color: '#ffffff',
+            fontSize: '15px',
+            fontWeight: 'bold'
+
+        };
+
+        const bottonStyle = {
+            borderRadius: 40,
+            padding: '12px 16px',
+            backgroundColor: '#eeeded',
+            borderColor: '#e9e2e2',
+            fontSize: '15px',
+            fontWeight: 'bold'
+
+        };
+
+
         if (verArchivados) {
             return [
-                <Button key="cancel" onClick={handleCancelDelete}>
+                <Button key="cancel" onClick={handleCancelDelete} style={bottonStyle}>
                     Cancelar
+
                 </Button>,
                 <Button
                     key="delete"
                     type="primary"
-                    danger
+                    color='red'
                     onClick={handleDeletePermanent}
+                    style={bottonDeleteStyle}
                 >
                     Eliminar permanentemente
                 </Button>,
             ];
         } else {
             return [
-                <Button key="cancel" onClick={handleCancelDelete}>
+                <Button key="cancel" onClick={handleCancelDelete} style={bottonStyle}>
                     Cancelar
+
                 </Button>,
                 <Button
                     key="archive"
                     type="default"
                     onClick={handleArchive}
+                    style={bottonStyle}
                 >
                     Archivar
                 </Button>,
                 <Button
                     key="delete"
                     type="primary"
-                    danger
+                    color='red'
                     onClick={handleDeletePermanent}
+                    style={bottonDeleteStyle}
                 >
                     Eliminar permanentemente
                 </Button>,
@@ -103,14 +131,13 @@ function Productos() {
                         dataSource={tableData}
                         pagination={{ pageSize: 10 }}
                         onRow={(record) => {
-                           /* if (verArchivados) {
-                                return null
-                            } else {
-                                return handleRowClick(record)
-                            }*/
-                           console.log('record: ', record);
-                           return null;
-        
+                            /* if (verArchivados) {
+                                 return null
+                             } else {
+                                 return handleRowClick(record)
+                             }*/
+                            return null;
+
                         }}
                     />
                 </div>
@@ -129,50 +156,37 @@ function Productos() {
                 <Modal
                     title={
                         <Space>
-                            <ExclamationCircleOutlined style={{ color: '#faad14', fontSize: '20px' }} />
-                            <span>Confirmar eliminación</span>
+                            <span style={{ color: '#000000', fontSize: 20, fontWeight: 'bold' }}>Eliminar Articulo</span>
                         </Space>
                     }
+                    closable={false}
                     open={isDeleteModalOpen.open}
                     onCancel={handleCancelDelete}
                     footer={modalFotterActions}
+                    modalRender={modal => (
+                        <div style={{ borderRadius: 20, overflow: 'hidden' }}>
+                            {modal}
+                        </div>
+                    )}
                 >
+
+
+                    <div style={{ marginBottom: '20px' }}>
+                        <p>
+                            ¿Está seguro que desea eliminar el artículo <strong>{isDeleteModalOpen.nombre}</strong>? Las transacciones asociadas a este artículo se perderán.
+                        </p>
+
+                    </div>
+
                     <div style={{ marginBottom: '16px' }}>
                         <p>
-                            <strong>
-                                ¿Qué desea hacer con el producto "{isDeleteModalOpen.nombre}"?
-                            </strong>
+                            Si desea archivar el producto, este se ocultará de la lista, pero no perderá ningún dato asociado; podrá restaurarlo en cualquier momento.
                         </p>
+
+
                     </div>
 
-                    <div style={{ marginBottom: '16px' }}>
-                        <p><strong>Opción 1: Archivar</strong></p>
-                        <p style={{ marginLeft: '16px', color: '#666' }}>
-                            El producto se ocultará de la lista pero se conservará en el sistema.
-                            Podrás recuperarlo más tarde.
-                        </p>
-                    </div>
 
-                    <div
-                        style={{
-                            marginBottom: '16px',
-                            padding: '12px',
-                            backgroundColor: '#fff2e8',
-                            borderRadius: '4px',
-                        }}
-                    >
-                        <p><strong>Opción 2: Eliminar permanentemente</strong></p>
-                        <p
-                            style={{
-                                marginLeft: '16px',
-                                color: '#d4380d',
-                                fontWeight: 'bold',
-                            }}
-                        >
-                            ⚠️ ADVERTENCIA: Si decides eliminar permanentemente este producto,
-                            todas las transacciones relacionadas serán eliminadas y NO se podrán recuperar.
-                        </p>
-                    </div>
                 </Modal>
             </div>
         </div>

@@ -31,8 +31,6 @@ export const useFormProductoHandler = (isEditMode = false) => {
 
 
     useEffect(() => {
-        console.log(values);
-        // Validar que todos los campos requeridos tengan valores válidos
         setIsFormValid(Object.values(values).every(field => {
             if (field.required===true) {
                 return field.valid===true;
@@ -57,6 +55,7 @@ export const useFormProductoHandler = (isEditMode = false) => {
             setValues({
                 nombre: { value: data.nombre, valid: true },
                 precio: { value: data.precio, valid: true },
+                cantidad: { value: data.cantidad, valid: true },
                 descripcion: { value: data.descripcion, valid: true },
                 imagen: { value: data.imagen, valid: true }
             });
@@ -100,11 +99,14 @@ export const useFormProductoHandler = (isEditMode = false) => {
 
 
     const handleChange = (e) => {
-        console.log(e);
         setShowFormErrors(false);
 
         // Manejar tanto inputs normales como File objects
         const fieldName = e.target.name;
+        if (!fieldName) {
+            console.warn("El evento de cambio no tiene un nombre de campo válido.");
+            return;
+        }
         let fieldValue;
         let isValid;
         let error;
@@ -150,14 +152,13 @@ export const useFormProductoHandler = (isEditMode = false) => {
     }
 
     const handleSubmit = () => {
-        console.log("Guardar producto: ");
-        console.log(isFormValid);
-
+        console.log(values)
         if (isFormValid) {
             if (isEditMode) {
                 updateProduct(id, {
                     nombre: values.nombre.value,
                     precio: values.precio.value,
+                    cantidad: values.cantidad.value,
                     descripcion: values.descripcion.value,
                     imagen: values.imagen.value,
                     categoria_id: 1 // TODO: get categoria_id from the dropdown
@@ -166,6 +167,7 @@ export const useFormProductoHandler = (isEditMode = false) => {
                 createNewProduct({
                     nombre: values.nombre.value,
                     precio: values.precio.value,
+                    cantidad: values.cantidad.value,
                     descripcion: values.descripcion.value,
                     imagen: values.imagen.value,
                     categoria_id: 1 // TODO: get categoria_id from the dropdown

@@ -1,4 +1,4 @@
-// src/app.js
+
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
@@ -9,8 +9,7 @@ const app = express();
 
 app.use(cors());
 
-// Middleware para parsear JSON (para otras rutas que no usan multer)
-// Estos middlewares NO interfieren con multipart/form-data cuando multer está en la ruta
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.get("/", (req, res) => {
@@ -22,7 +21,8 @@ app.get("/health", (req, res) => {
 
 app.use('/productos', require('./routes/productos.routes'));
 
-// Middleware para manejar errores de Multer
+
+
 app.use((error, req, res, next) => {
   if (error instanceof require('multer').MulterError) {
     if (error.code === 'LIMIT_FILE_SIZE') {

@@ -53,6 +53,11 @@ const productoSchema = new mongoose.Schema({
     required: true,
     min: 0
   },
+  cantidad: {
+    type: Number,
+    required: true,
+    min: 0
+  },
   descripcion: {
     type: String,
     default: null,

@@ -18,6 +18,7 @@ const getProductos = async () => {
       id: producto._id.toString(),
       nombre: producto.nombre,
       precio: producto.precio,
+      cantidad: producto.cantidad, 
       descripcion: producto.descripcion,
       imagen: producto.imagen,
       categoria_id: producto.categoria_id,
@@ -44,6 +45,7 @@ const getProductosArchivados = async () => {
       id: producto._id.toString(),
       nombre: producto.nombre,
       precio: producto.precio,
+      cantidad: producto.cantidad,
       descripcion: producto.descripcion,
       imagen: producto.imagen,
       categoria_id: producto.categoria_id,
@@ -80,6 +82,7 @@ const getProductoById = async (id) => {
       id: producto._id.toString(),
       nombre: producto.nombre,
       precio: producto.precio,
+      cantidad: producto.cantidad,
       descripcion: producto.descripcion,
       imagen: producto.imagen,
       categoria_id: producto.categoria_id,
@@ -166,11 +169,15 @@ const validarYProcesarVariantes = (variantes) => {
 // Crear un nuevo producto
 const createProducto = async (nuevoProducto) => {
   try {
-    const { nombre, precio, descripcion = null, imagen = null, categoria_id, variantes } = nuevoProducto;
+  const { nombre, precio, cantidad, imagen = null, descripcion = null, categoria_id, variantes } = nuevoProducto;
 
-    if (!nombre || !precio || !categoria_id) {
-      throw new Error('Faltan campos obligatorios');
-    }
+if (nombre == null || precio == null || cantidad == null || !categoria_id) {
+  throw new Error('Faltan campos obligatorios');
+}
+
+if (cantidad < 0) {
+  throw new Error('La cantidad no puede ser negativa');
+}
 
     // Convertir precio a número si viene como string
     const precioNum = typeof precio === 'string' ? parseFloat(precio) : precio;
@@ -189,6 +196,7 @@ const createProducto = async (nuevoProducto) => {
     const productoData = {
       nombre,
       precio: precioNum,
+      cantidad,
       descripcion,
       imagen,
       categoria_id: categoriaIdStr,
@@ -204,6 +212,7 @@ const createProducto = async (nuevoProducto) => {
       nombre: productoGuardado.nombre,
       precio: productoGuardado.precio,
       descripcion: productoGuardado.descripcion,
+      cantidad: productoGuardado.cantidad,
       imagen: productoGuardado.imagen,
       categoria_id: productoGuardado.categoria_id,
       archivado: productoGuardado.archivado,
@@ -229,7 +238,7 @@ const updateProducto = async (id, updates) => {
       return null;
     }
 
-    const allowed = ['nombre', 'precio', 'descripcion', 'imagen', 'categoria_id', 'variantes'];
+    const allowed = ['nombre', 'precio', 'cantidad', 'descripcion', 'imagen', 'categoria_id', 'variantes'];
     const updateData = {};
 
     // Filtrar solo campos permitidos
@@ -275,10 +284,15 @@ const updateProducto = async (id, updates) => {
       return null;
     }
 
+    if (productoActualizado.cantidad < 0) {
+      throw new Error('La cantidad no puede ser negativa');
+    }
+
     return {
       id: productoActualizado._id.toString(),
       nombre: productoActualizado.nombre,
       precio: productoActualizado.precio,
+      cantidad: productoActualizado.cantidad,
       descripcion: productoActualizado.descripcion,
       imagen: productoActualizado.imagen,
       categoria_id: productoActualizado.categoria_id,

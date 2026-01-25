@@ -21,8 +21,6 @@ const FormProducto = ({ isEditMode = false }) => {
   const navigate = useNavigate();
 
 
-  console.log(values);
-
   return (
     <>
       <div>
@@ -56,9 +54,9 @@ const FormProducto = ({ isEditMode = false }) => {
               <span>Corrige estos errores para guardar este artículo:</span>
             </div>
             <ul>
-            {Object.values(values).map(field => {
-              if (field.error) {
-                return <li key={field.name}>{field.error}</li>
+            {Object.entries(values).map(field => {
+              if (field[1].error) {
+                return <li key={field[0]}>{field[1].error}</li>
               }
             })}
             </ul>
