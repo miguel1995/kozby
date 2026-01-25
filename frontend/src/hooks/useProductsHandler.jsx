@@ -62,7 +62,13 @@ export const useProductsHandler = () => {
       title: 'Disponibilidad',
       dataIndex: 'cantidad',
       key: 'cantidad',
-      render: (text) => text,
+      render: (text) => {
+        const available = text > 0;
+        text = available ? "Disponible (" + (text) + ")" : 'Agotado (' + (text) + ")";;
+
+        return <div className={available ? 'productos-page-cantidad-disponible' : 'productos-page-cantidad-no-disponible'}>{text}</div>;    
+
+      },
     },
     {
       title: 'Precio',
@@ -111,7 +117,6 @@ export const useProductsHandler = () => {
   };
 
   const hacerClick = async (event, record) => {
-    console.log('hacerClick: ', event, record);
      setSelectedProduct(record);
 
     const { key } = event;
@@ -168,7 +173,6 @@ export const useProductsHandler = () => {
 
     setLoading(true);
     try {
-      console.log(selectedProduct,"borrando imagen de prueba");
       const fullFileName = selectedProduct.imagen.split('/').pop(); // "o8vyvxdh2zhwsl8gmlyo.png"
       const imageId = "kozby/products/" + fullFileName.split('.')[0];     // "o8vyvxdh2zhwsl8gmlyo"
       await deleteProducto(selectedProduct.id,imageId);

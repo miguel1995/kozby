@@ -31,8 +31,6 @@ export const useFormProductoHandler = (isEditMode = false) => {
 
 
     useEffect(() => {
-        console.log(values);
-        // Validar que todos los campos requeridos tengan valores válidos
         setIsFormValid(Object.values(values).every(field => {
             if (field.required===true) {
                 return field.valid===true;
@@ -101,7 +99,6 @@ export const useFormProductoHandler = (isEditMode = false) => {
 
 
     const handleChange = (e) => {
-        console.log(e);
         setShowFormErrors(false);
 
         // Manejar tanto inputs normales como File objects
@@ -155,9 +152,7 @@ export const useFormProductoHandler = (isEditMode = false) => {
     }
 
     const handleSubmit = () => {
-        console.log("Guardar producto: ");
-        console.log(isFormValid);
-
+        console.log(values)
         if (isFormValid) {
             if (isEditMode) {
                 updateProduct(id, {

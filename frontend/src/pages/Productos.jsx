@@ -136,7 +136,6 @@ function Productos() {
                              } else {
                                  return handleRowClick(record)
                              }*/
-                            console.log('record: ', record);
                             return null;
 
                         }}

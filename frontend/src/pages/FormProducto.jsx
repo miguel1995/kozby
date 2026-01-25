@@ -21,8 +21,6 @@ const FormProducto = ({ isEditMode = false }) => {
   const navigate = useNavigate();
 
 
-  console.log(values);
-
   return (
     <>
       <div>

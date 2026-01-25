@@ -97,9 +97,9 @@ const getProductoById = async (id) => {
 // Crear un nuevo producto
 const createProducto = async (nuevoProducto) => {
   try {
-  const { nombre, precio, cantidad, descripcion = null, imagen, categoria_id } = nuevoProducto;
+  const { nombre, precio, cantidad, imagen = null, descripcion = null, categoria_id } = nuevoProducto;
 
-if (nombre == null || precio == null || cantidad == null || !imagen || !categoria_id) {
+if (nombre == null || precio == null || cantidad == null || !categoria_id) {
   throw new Error('Faltan campos obligatorios');
 }
 
