@@ -1,11 +1,14 @@
 import { Button } from 'antd';
 
-const SubmitButton = ({ text, onClick }) => {
+const SubmitButton = ({ text, onClick, disabled }) => {
     return (
         <Button
             onClick={onClick}
             className="create-product-button"
-        >{text}</Button>
+            disabled={disabled}  // <-- aquí el cambio
+        >
+            {text}
+        </Button>
     );
 };
 

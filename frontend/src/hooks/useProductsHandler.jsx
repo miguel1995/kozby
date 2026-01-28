@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { EllipsisOutlined } from '@ant-design/icons';
 import { Dropdown, message } from 'antd';
+
 import {
   getProductos,
   getProductosArchivados,
@@ -13,7 +14,7 @@ import { useNavigate } from 'react-router';
 export const useProductsHandler = () => {
   const [tableData, setTableData] = useState([]);
   const [productos, setProductos] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [verArchivados, setVerArchivados] = useState(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState({
