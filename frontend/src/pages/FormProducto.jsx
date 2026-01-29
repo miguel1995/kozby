@@ -1,11 +1,12 @@
 import { Modal, Row, Col } from 'antd';
 import { useFormProductoHandler } from '../hooks/useFormProductoHandler';
 import { useNavigate } from 'react-router';
-import { ProductForm } from '../components/ProductForm';
+import { ProductForm } from '../components/Forms/ProductForm';
 import { CloseOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import SubmitButton from '../components/SubmitButton';
 import { formatDate } from '../utils/dateUtils';
 import Variantes from '../components/Variantes';
+import { useEffect } from 'react';
 
 const FormProducto = ({ isEditMode = false }) => {
 
@@ -20,6 +21,10 @@ const FormProducto = ({ isEditMode = false }) => {
     showFormErrors } = useFormProductoHandler(isEditMode);
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    console.log("FormProductovalues", values);
+  }, [values]);
 
 
   return (

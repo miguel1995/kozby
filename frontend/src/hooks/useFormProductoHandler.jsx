@@ -53,13 +53,20 @@ export const useFormProductoHandler = (isEditMode = false) => {
         setLoading(true);
         try {
             const data = await getProductoById(id);
+
+
+            const variantes = data.variantes.map(variante => ({
+                nombre: { value: variante.nombre, valid: true },
+                precio: { value: variante.precio, valid: true },
+                cantidad: { value: variante.cantidad, valid: true }
+            }));
             setValues({
                 nombre: { value: data.nombre, valid: true },
                 precio: { value: data.precio, valid: true },
                 cantidad: { value: data.cantidad, valid: true },
                 descripcion: { value: data.descripcion, valid: true },
                 imagen: { value: data.imagen, valid: true },
-                variantes: { value: data.variantes, valid: true }
+                variantes: { value: variantes, valid: true }
             });
 
             setFechaCreacion(data.fecha_creacion);
@@ -76,6 +83,7 @@ export const useFormProductoHandler = (isEditMode = false) => {
     const createNewProduct = async (productoData) => {
         setLoading(true);
         try {
+            console.log("productoData", productoData);
             const data = await postProducto(productoData);
             navigate('/productos');
         } catch (err) {
@@ -101,10 +109,11 @@ export const useFormProductoHandler = (isEditMode = false) => {
 
 
     const handleChange = (e) => {
+        console.log("handleChange", e);
         setShowFormErrors(false);
 
         // Manejar tanto inputs normales como File objects
-        const fieldName = e.target.name;
+        const fieldName = e.target?.name;
         if (!fieldName) {
             console.warn("El evento de cambio no tiene un nombre de campo válido.");
             return;

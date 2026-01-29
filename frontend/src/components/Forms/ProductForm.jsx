@@ -1,7 +1,7 @@
-import FloatLabel from "./FloatLabel";
+import FloatLabel from "../FloatLabel";
 import { Input } from "antd";
-import { NumericInput } from "./NumericInput";
-import { ImageUpload } from "./ImageUpload";
+import { NumericInput } from "../NumericInput";
+import { ImageUpload } from "../ImageUpload";
 
 export const ProductForm = ({ values, handleChange }) => {
     const { TextArea } = Input;

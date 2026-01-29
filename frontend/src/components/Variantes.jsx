@@ -1,11 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Modal } from 'antd';
-import FloatLabel from './FloatLabel';
-import { Input } from 'antd';
-import { NumericInput } from './NumericInput';
 import { Button } from 'antd';
 import { VARIANTES_ACTIONS, initialVariantesValues } from '../utils/constants';
-
+import { VariantForm } from './Forms/VariantForm';
 
 const Variantes = ({ variantes, handleChange } = { variantes: [], handleChange: () => { } }) => {
 
@@ -17,10 +14,17 @@ const Variantes = ({ variantes, handleChange } = { variantes: [], handleChange: 
 
 
     useEffect(() => {
+        console.log("Variantes values", values);
         setIsFormValid(Object.values(values).every(value => value.valid));
     }, [values]);
 
-    const showModal = () => {
+    const showModal = (variante) => {
+        if (variante) {
+            setValues(variante);
+        }
+        else {
+            setValues(initialVariantesValues);
+        }
         setIsModalOpen(true);
     };
     const handleVariantOk = () => {
@@ -40,6 +44,7 @@ const Variantes = ({ variantes, handleChange } = { variantes: [], handleChange: 
         }
 
     };
+
     const handleVariantCreate = () => {
         handleChange(
 
@@ -67,9 +72,25 @@ const resetValues = () => {
 
             <div className="variantes-title">Variantes</div>
             <div className="variantes-subtitle">Establece los precios y la disponibilidad por variantes, como tamaños o colores.</div>
-            <div className="variantes-add-button" onClick={showModal}>Agregar</div>
+            <div className="variantes-add-button" onClick={() => showModal(null)}>Agregar</div>
+            {variantes.length > 0 && (
+                <div className="variantes-list">
+                    {variantes.map((variante, index) => (   
+                        <div key={index} className="variante-item" onClick={() => showModal(variante)}>
+                            <div className="variante-item-nombre">{variante.nombre.value}</div>
+                            <div className="variante-item-precio">$ {variante.precio.value}</div>
+                            <div className="variante-item-cantidad">{variante.cantidad.value}</div>
+                            <div className="variante-item-admin"> Administrar existencias</div>
+                        </div>
+                    ))}
+                </div>
+            )}
 
-            <Modal open={isModalOpen} onCancel={handleVariantOk}
+            <Modal 
+            open={isModalOpen} 
+            onCancel={handleVariantOk}
+            footer={null}
+            closable={false}
                 title={
 
                     <div>
@@ -90,47 +111,12 @@ const resetValues = () => {
                         </div>
                     </div>
 
-                }
+                }>
 
 
-                footer={null}
-                closable={false}>
+                <VariantForm values={values} handleVariantChange={handleVariantChange} />
 
-                <div className="example">
-
-
-
-                    <FloatLabel label="Nombre (requerido)" name="nombre" value={values.nombre.value}>
-                        <Input
-                            value={values.nombre.value}
-                            name="nombre"
-                            maxLength={45}
-                            onChange={(e) => handleVariantChange(e)} />
-
-                    </FloatLabel>
-                    <FloatLabel label="Precio" name="precio" value={values.precio.value}>
-
-                        <NumericInput
-                            value={values.precio.value}
-                            onChange={e => handleVariantChange(e)}
-                            name="precio"
-                            maxLength={10}
-                        />
-
-
-                    </FloatLabel>
-
-                    <FloatLabel label="Cantidad" name="cantidad" value={values.cantidad.value}>
-
-                        <NumericInput
-                            value={values.cantidad?.value}
-                            onChange={e => handleVariantChange(e)}
-                            name="cantidad"
-                            maxLength={3}
-                        />
-                    </FloatLabel>
-
-                </div>
+               
             </Modal>
         </div>
     );
