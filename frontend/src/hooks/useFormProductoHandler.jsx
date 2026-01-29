@@ -15,6 +15,7 @@ export const useFormProductoHandler = (isEditMode = false) => {
     const [fechaCreacion, setFechaCreacion] = useState('');
     const [fechaModificacion, setFechaModificacion] = useState('');
     const [showFormErrors, setShowFormErrors] = useState(false);
+
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -56,6 +57,7 @@ export const useFormProductoHandler = (isEditMode = false) => {
 
 
             const variantes = data.variantes.map(variante => ({
+                id: { value: variante.id, valid: true },
                 nombre: { value: variante.nombre, valid: true },
                 precio: { value: variante.precio, valid: true },
                 cantidad: { value: variante.cantidad, valid: true }
@@ -132,6 +134,31 @@ export const useFormProductoHandler = (isEditMode = false) => {
                 }
             });
            }
+           else if (e.target.action === VARIANTES_ACTIONS.UPDATE) {
+            const updatedVariantes = values.variantes.value.map(variante => {
+                if (variante.id === e.target.value.id) {
+                    return e.target.value;
+                }
+                return variante;
+            });
+            setValues({
+                ...values,
+                [fieldName]: {
+                    value: updatedVariantes,
+                    valid: e.target.valid
+                }
+            });
+           }
+           else if (e.target.action === VARIANTES_ACTIONS.DELETE) {
+            const updatedVariantes = values.variantes.value.filter(variante => variante.id.value !== e.target.value);
+            setValues({
+                ...values,
+                [fieldName]: {
+                    value: updatedVariantes,
+                    valid: true
+                }
+            });
+           }    
         } else {
             if (e.target.files && e.target.files[0]) {
                 // Si es un input de tipo file
@@ -160,7 +187,6 @@ export const useFormProductoHandler = (isEditMode = false) => {
             const isFieldRequired = values[fieldName].required;
 
 
-
             setValues({
                 ...values,
                 [fieldName]: {
@@ -176,6 +202,16 @@ export const useFormProductoHandler = (isEditMode = false) => {
     const handleSubmit = () => {
         console.log(values)
         if (isFormValid) {
+            // Transformar variantes del formato frontend al formato backend
+            const variantesFormatted = values.variantes.value.map(variante => ({
+                id: variante.id.value,
+                nombre: variante.nombre.value,
+                precio: variante.precio.value,
+                cantidad: variante.cantidad.value
+            }));
+
+            console.log("variantesFormatted", variantesFormatted);
+
             if (isEditMode) {
                 updateProduct(id, {
                     nombre: values.nombre.value,
@@ -183,7 +219,7 @@ export const useFormProductoHandler = (isEditMode = false) => {
                     cantidad: values.cantidad.value,
                     descripcion: values.descripcion.value,
                     imagen: values.imagen.value,
-                    variantes: values.variantes.value,
+                    variantes: variantesFormatted,
                     categoria_id: 1 // TODO: get categoria_id from the dropdown
                 });
             } else {
@@ -193,7 +229,7 @@ export const useFormProductoHandler = (isEditMode = false) => {
                     cantidad: values.cantidad.value,
                     descripcion: values.descripcion.value,
                     imagen: values.imagen.value,
-                    variantes: values.variantes.value,
+                    variantes: variantesFormatted,
                     categoria_id: 1 // TODO: get categoria_id from the dropdown
                 });
             }

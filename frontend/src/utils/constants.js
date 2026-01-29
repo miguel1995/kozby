@@ -38,7 +38,10 @@ export const initialFormValues = {
   }
 
   export const initialVariantesValues = {
-
+    id: {
+        value: null,
+        valid: true
+    },
     nombre: {
         value: "",
         valid: null

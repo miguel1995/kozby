@@ -48,10 +48,12 @@ export const postProducto = async (productoData) => {
             }
         } else if (key === 'variantes') {
             const variantes = productoData[key].map(variante => {
+                console.log("variante in post", variante);
                 return{
-                    nombre: variante.nombre.value,
-                    precio: variante.precio.value,
-                    cantidad: variante.cantidad.value,
+                    id: variante.id,
+                    nombre: variante.nombre,
+                    precio: variante.precio,
+                    cantidad: variante.cantidad,
                 }
             });
             formData.append('variantes', JSON.stringify(variantes));
@@ -88,9 +90,10 @@ export const putProducto = async (id, productoData) => {
         } else if (key === 'variantes') {
             const variantes = productoData[key].map(variante => {
                 return{
-                    nombre: variante.nombre.value,
-                    precio: variante.precio.value,
-                    cantidad: variante.cantidad.value,
+                    id: variante.id,
+                    nombre: variante.nombre,
+                    precio: variante.precio,
+                    cantidad: variante.cantidad,
                 }
             });
             formData.append('variantes', JSON.stringify(variantes));

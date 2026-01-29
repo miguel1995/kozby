@@ -3,6 +3,11 @@ const mongoose = require('mongoose');
 
 // Esquema para las variantes del producto
 const varianteSchema = new mongoose.Schema({
+  id: {
+    type: String,
+    required: true,
+    unique: false // Puede haber duplicados entre diferentes productos
+  },
   nombre: {
     type: String,
     required: true,

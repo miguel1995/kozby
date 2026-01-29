@@ -10,6 +10,7 @@ const Variantes = ({ variantes, handleChange } = { variantes: [], handleChange: 
     const [isFormValid, setIsFormValid] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [values, setValues] = useState(initialVariantesValues);
+    const [editMode, setEditMode] = useState(false);
 
 
 
@@ -21,9 +22,11 @@ const Variantes = ({ variantes, handleChange } = { variantes: [], handleChange: 
     const showModal = (variante) => {
         if (variante) {
             setValues(variante);
+            setEditMode(true);
         }
         else {
             setValues(initialVariantesValues);
+            setEditMode(false);
         }
         setIsModalOpen(true);
     };
@@ -46,12 +49,16 @@ const Variantes = ({ variantes, handleChange } = { variantes: [], handleChange: 
     };
 
     const handleVariantCreate = () => {
-        handleChange(
+            // Generar ID único si no existe (para nuevas variantes)
+        if (!editMode) {
+            values.id.value = crypto.randomUUID();
+        }
 
+        handleChange(
             {
                 target: {
                     name: "variantes",
-                    action: VARIANTES_ACTIONS.CREATE,
+                    action: editMode ? VARIANTES_ACTIONS.UPDATE : VARIANTES_ACTIONS.CREATE,
                     value: values,
                     valid: isFormValid
                 }
@@ -67,6 +74,19 @@ const resetValues = () => {
     setIsModalOpen(false);
 }
 
+    const handleVariantDelete = (id) => {
+        handleChange(
+            {
+                target: {
+                    name: "variantes",
+                    action: VARIANTES_ACTIONS.DELETE,
+                    value: id
+                }
+            });
+        handleVariantOk();
+        resetValues();
+    };
+
     return (
         <div className="variantes-container">
 
@@ -75,8 +95,8 @@ const resetValues = () => {
             <div className="variantes-add-button" onClick={() => showModal(null)}>Agregar</div>
             {variantes.length > 0 && (
                 <div className="variantes-list">
-                    {variantes.map((variante, index) => (   
-                        <div key={index} className="variante-item" onClick={() => showModal(variante)}>
+                    {variantes.map((variante) => (   
+                        <div key={variante.id.value} className="variante-item" onClick={() => showModal(variante)}>
                             <div className="variante-item-nombre">{variante.nombre.value}</div>
                             <div className="variante-item-precio">$ {variante.precio.value}</div>
                             <div className="variante-item-cantidad">{variante.cantidad.value}</div>
@@ -101,7 +121,7 @@ const resetValues = () => {
                                 </Button>
                             </div>
                             <div>
-                                Agregar Variante
+                                {editMode ? "Editar Variante" : "Agregar Variante"}
                             </div>
                             <div style={{ marginBottom: '20px' }}>
                                 <Button type="primary" onClick={handleVariantCreate} disabled={!isFormValid} block>
@@ -115,7 +135,13 @@ const resetValues = () => {
 
 
                 <VariantForm values={values} handleVariantChange={handleVariantChange} />
-
+                {editMode && (
+                    <div className="modal-delete-button" onClick={() => handleVariantDelete(values.id.value)}>
+                        <Button type="primary" danger>
+                            Eliminar
+                        </Button>
+                    </div>
+                )}
                
             </Modal>
         </div>

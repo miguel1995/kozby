@@ -158,7 +158,11 @@ const validarYProcesarVariantes = (variantes) => {
       throw new Error(`La cantidad de la variante ${index + 1} debe ser un entero entre 0 y 1000`);
     }
 
+    // Generar ID único si no existe
+    const id = variante.id || mongoose.Types.ObjectId().toString();
+
     return {
+      id,
       nombre,
       precio,
       cantidad
