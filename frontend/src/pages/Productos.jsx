@@ -7,6 +7,7 @@ import MenuBar from '../components/MenuBar';
 import SubmitButton from '../components/SubmitButton';
 import { useLocation, useNavigate } from 'react-router';
 import Loader from '../components/Loader';
+import { ModalError } from '../components/modals/ModalError';
 
 function Productos() {
 
@@ -138,16 +139,10 @@ function Productos() {
                     )}
                 </div>
 
-                <Modal
-                    title="Fuera de servicio"
-                    closable={false}
+                <ModalError
                     open={isModalOpen}
                     onOk={handleOk}
-                    cancelButtonProps={{ style: { display: 'none' } }}
-                >
-                    <p>Lo sentimos, en este momento el servicio no está disponible</p>
-                    <p>Por Favor intentelo más tarde</p>
-                </Modal>
+                />
 
 
                 <Modal

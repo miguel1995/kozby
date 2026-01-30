@@ -5,14 +5,15 @@ import { ProductForm } from '../components/ProductForm';
 import { CloseOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import SubmitButton from '../components/SubmitButton';
 import { formatDate } from '../utils/dateUtils';
-import { useState } from 'react';
-import Loader from '../components/Loader';
+import { useEffect, useState } from 'react';
+import { ModalLoader } from '../components/modals/modalLoader';
+import { ModalError } from '../components/modals/ModalError';
 
 const FormProducto = ({ isEditMode = false }) => {
 
-  const [loading, setLoading] = useState(false);
 
   const {
+    loading,
     values,
     fechaCreacion,
     fechaModificacion,
@@ -26,24 +27,13 @@ const FormProducto = ({ isEditMode = false }) => {
 
   const navigate = useNavigate();
 
-  const onSubmitWithLoader = async () => {
-    setLoading(true);
-    try {
-      await handleSubmit();
-    } finally {
-      setLoading(false);
-    }
-  };
+  useEffect(() => {
+    console.log("error", loading);
+  }, [loading]);
 
   return (
     <>
       <div style={{ position: 'relative' }}>
-
-        {loading && (
-          <div className="loader-overlay">
-            <Loader message="Guardando artículo..." />
-          </div>
-        )}
 
         <div>
           <div className="form-producto-actions">
@@ -53,7 +43,7 @@ const FormProducto = ({ isEditMode = false }) => {
             />
             <SubmitButton
               text="Guardar"
-              onClick={onSubmitWithLoader}
+              onClick={handleSubmit}
               disabled={loading}
             />
           </div>
@@ -106,16 +96,15 @@ const FormProducto = ({ isEditMode = false }) => {
 
       </div>
 
-      <Modal
-        title="Fuera de servicio"
-        closable={false}
+      <ModalError
         open={isModalOpen}
         onOk={handleOk}
-        cancelButtonProps={{ style: { display: 'none' } }}
-      >
-        <p>Lo sentimos, en este momento el servicio no está disponible</p>
-        <p>Por favor inténtelo más tarde</p>
-      </Modal>
+      />
+
+
+      
+      <ModalLoader loading={loading} message={isEditMode ? "Guardando cambios..." : "Creando artículo..."} />
+
     </>
   );
 };
