@@ -1,4 +1,3 @@
-import { Modal, Row, Col } from 'antd';
 import { useFormProductoHandler } from '../hooks/useFormProductoHandler';
 import { useNavigate } from 'react-router';
 import { ProductForm } from '../components/Forms/ProductForm';
@@ -7,7 +6,6 @@ import SubmitButton from '../components/SubmitButton';
 import { formatDate } from '../utils/dateUtils';
 import Variantes from '../components/Variantes';
 import { useEffect } from 'react';
-import { useEffect, useState } from 'react';
 import { ModalLoader } from '../components/modals/modalLoader';
 import { ModalError } from '../components/modals/ModalError';
 
@@ -89,7 +87,7 @@ const FormProducto = ({ isEditMode = false }) => {
           <ProductForm values={values} handleChange={handleChange} />
           <Variantes variantes={values.variantes.value} handleChange={handleChange} />
 
-       
+        </div>
       </div>
 
       <ModalError
@@ -97,8 +95,6 @@ const FormProducto = ({ isEditMode = false }) => {
         onOk={handleOk}
       />
 
-
-      
       <ModalLoader loading={loading} message={isEditMode ? "Guardando cambios..." : "Creando artículo..."} />
 
     </>
