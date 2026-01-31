@@ -6,6 +6,8 @@ import { SearchOutlined, CloseOutlined } from '@ant-design/icons';
 import MenuBar from '../components/MenuBar';
 import SubmitButton from '../components/SubmitButton';
 import { useLocation, useNavigate } from 'react-router';
+import Loader from '../components/Loader';
+import { ModalError } from '../components/modals/ModalError';
 
 function Productos() {
 
@@ -21,10 +23,11 @@ function Productos() {
         setVerArchivados,
         verArchivados,
         isDeleteModalOpen,
+        loading,
         handleArchive,
         handleDeletePermanent,
         handleCancelDelete,
-        handleRowClick
+        handleRowClick,
     } = useProductsHandler();
 
     const location = useLocation();
@@ -125,32 +128,21 @@ function Productos() {
 
 
                 <div className="products-table">
-                    <Table
-                        rowSelection={{ type: selectionType, ...rowSelection }}
-                        columns={columns}
-                        dataSource={tableData}
-                        pagination={{ pageSize: 10 }}
-                        onRow={(record) => {
-                            /* if (verArchivados) {
-                                 return null
-                             } else {
-                                 return handleRowClick(record)
-                             }*/
-                            return null;
-
-                        }}
-                    />
+                    {loading ? (
+                        <Loader message="Cargando productos..." />
+                    ) : (
+                        <Table
+                            columns={columns}
+                            dataSource={tableData}
+                            pagination={{ pageSize: 10 }}
+                        />
+                    )}
                 </div>
-                <Modal
-                    title="Fuera de servicio"
-                    closable={false}
+
+                <ModalError
                     open={isModalOpen}
                     onOk={handleOk}
-                    cancelButtonProps={{ style: { display: 'none' } }}
-                >
-                    <p>Lo sentimos, en este momento el servicio no está disponible</p>
-                    <p>Por Favor intentelo más tarde</p>
-                </Modal>
+                />
 
 
                 <Modal

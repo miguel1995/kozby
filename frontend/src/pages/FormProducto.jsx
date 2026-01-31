@@ -7,10 +7,16 @@ import SubmitButton from '../components/SubmitButton';
 import { formatDate } from '../utils/dateUtils';
 import Variantes from '../components/Variantes';
 import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { ModalLoader } from '../components/modals/modalLoader';
+import { ModalError } from '../components/modals/ModalError';
 
 const FormProducto = ({ isEditMode = false }) => {
 
-  const { values,
+
+  const {
+    loading,
+    values,
     fechaCreacion,
     fechaModificacion,
     isFormValid,
@@ -18,7 +24,8 @@ const FormProducto = ({ isEditMode = false }) => {
     handleChange,
     handleSubmit,
     handleOk,
-    showFormErrors } = useFormProductoHandler(isEditMode);
+    showFormErrors
+  } = useFormProductoHandler(isEditMode);
 
   const navigate = useNavigate();
 
@@ -26,64 +33,74 @@ const FormProducto = ({ isEditMode = false }) => {
     console.log("FormProductovalues", values);
   }, [values]);
 
+  useEffect(() => {
+    console.log("error", loading);
+  }, [loading]);
 
   return (
     <>
-      <div>
-        <div className="form-producto-actions">
-          <CloseOutlined
-            className="form-producto-close-icon"
-            onClick={() => navigate('/productos')}
-          />
-          <SubmitButton text="Guardar" onClick={handleSubmit} />
+      <div style={{ position: 'relative' }}>
+
+        <div>
+          <div className="form-producto-actions">
+            <CloseOutlined
+              className="form-producto-close-icon"
+              onClick={() => navigate('/productos')}
+            />
+            <SubmitButton
+              text="Guardar"
+              onClick={handleSubmit}
+              disabled={loading}
+            />
+          </div>
+
+          {isEditMode ? (
+            <>
+              <div className="form-producto-title">Editar artículo</div>
+              <div className="form-producto-subtitle">
+                <span>Artículo creado el {formatDate(fechaCreacion)}</span>
+                <span>Última modificación el {formatDate(fechaModificacion)}</span>
+              </div>
+            </>
+          ) : (
+            <div className="form-producto-title">Crear artículo</div>
+          )}
         </div>
-        {isEditMode ? 
-        <>
-          <div className="form-producto-title">Editar artículo</div>
-          <div className="form-producto-subtitle">
-            <span>Artículo creado el {formatDate(fechaCreacion)}</span>
-            <span>Última modificación el {formatDate(fechaModificacion)}</span>
-          </div>
-        </>
-        : <div className="form-producto-title">Crear artículo</div>}
 
-       
+        <div className="form-producto-container">
 
-      </div>
-      <div className="form-producto-container">
-
-      {
-        showFormErrors && isFormValid===false &&
-          <div className="error-messages">
-            <div className="error-messages-title">
-              <div> <ExclamationCircleOutlined /></div>
-              <span>Corrige estos errores para guardar este artículo:</span>
+          {showFormErrors && isFormValid === false && (
+            <div className="error-messages">
+              <div className="error-messages-title">
+                <div><ExclamationCircleOutlined /></div>
+                <span>Corrige estos errores para guardar este artículo:</span>
+              </div>
+              <ul>
+                {Object.entries(values).map(field => {
+                  if (field[1].error) {
+                    return <li key={field[0]}>{field[1].error}</li>;
+                  }
+                  return null;
+                })}
+              </ul>
             </div>
-            <ul>
-            {Object.entries(values).map(field => {
-              if (field[1].error) {
-                return <li key={field[0]}>{field[1].error}</li>
-              }
-            })}
-            </ul>
-          </div>
-          }
+          )}
 
           <ProductForm values={values} handleChange={handleChange} />
           <Variantes variantes={values.variantes.value} handleChange={handleChange} />
 
        
       </div>
-      <Modal
-        title="Fuera de servicio"
-        closable={false}
+
+      <ModalError
         open={isModalOpen}
         onOk={handleOk}
-        cancelButtonProps={{ style: { display: 'none' } }}
-      >
-        <p>Lo sentimos, en este momento el servicio no esta disponible</p>
-        <p>Por Favor intentelo mas tarde</p>
-      </Modal>
+      />
+
+
+      
+      <ModalLoader loading={loading} message={isEditMode ? "Guardando cambios..." : "Creando artículo..."} />
+
     </>
   );
 };
