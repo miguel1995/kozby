@@ -1,13 +1,14 @@
 import { useFormProductoHandler } from '../hooks/useFormProductoHandler';
 import { useNavigate } from 'react-router';
 import { ProductForm } from '../components/Forms/ProductForm';
-import { CloseOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
-import SubmitButton from '../components/SubmitButton';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { SubmitButton } from '../components/buttons/SubmitButton';
 import { formatDate } from '../utils/dateUtils';
 import Variantes from '../components/Variantes';
 import { useEffect } from 'react';
 import { ModalLoader } from '../components/modals/modalLoader';
 import { ModalError } from '../components/modals/ModalError';
+import { ButtonClose } from '../components/buttons/ButtonClose';
 
 const FormProducto = ({ isEditMode = false }) => {
 
@@ -27,13 +28,6 @@ const FormProducto = ({ isEditMode = false }) => {
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    console.log("FormProductovalues", values);
-  }, [values]);
-
-  useEffect(() => {
-    console.log("error", loading);
-  }, [loading]);
 
   return (
     <>
@@ -41,8 +35,8 @@ const FormProducto = ({ isEditMode = false }) => {
 
         <div>
           <div className="form-producto-actions">
-            <CloseOutlined
-              className="form-producto-close-icon"
+
+            <ButtonClose
               onClick={() => navigate('/productos')}
             />
             <SubmitButton

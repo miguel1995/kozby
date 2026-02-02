@@ -1,0 +1,49 @@
+.variantes-container {
+    margin: 0 8px;
+}
+.variantes-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin: 16px 0 8px 0;
+}
+
+.variante-item{
+    display: flex;
+    flex-direction:row;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+
+    
+}
+
+.variante-item-info-container {
+    //width: 100%;
+    cursor: pointer;
+}
+
+.variante-item-nombre {
+    
+    font-weight: 600;
+    margin: 0;
+}
+
+.variante-item-precio {
+    
+    font-weight: 500;
+    margin: 0;
+    color: #666666;
+}
+
+.variante-item-cantidad {
+    
+    font-weight: 700;
+    margin: 0;
+}
+
+.variantes-add-button {
+    text-align: center;
+    width: 100%;
+    margin: 16px 0;
+}
+

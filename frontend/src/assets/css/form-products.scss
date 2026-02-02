@@ -1,14 +1,30 @@
-.form-producto-close-icon {
-   
-    color: #000;
-    cursor: pointer;
-    background-color: #f0f0f0;
-    padding: 12px;                     
-    border-radius: 50%;
-}                                       
+
+// pantallas de escritorio
+@media (min-width: 1024px) {
+    .form-producto-container {
+        margin: 0 200px;
+    }
+
+    .form-producto-title {
+        font-size: 25px;
+        font-weight: 700;
+        margin: 32px 215px 8px 215px;
+    }
+
+    .form-producto-subtitle {
+        display: flex;
+        flex-direction: column;
+        font-size: 10px;
+        font-weight: 400;
+        margin: 0px 215px 16px 215px;
+        color: #4d4646;
+    }
+}
+
+                                    
 
 .form-producto-container {
-    margin: 0 200px;   
+    margin: 0 8px;   
 }
 
 .form-producto-actions {
@@ -31,7 +47,7 @@
 .form-producto-title {
     font-size: 25px;
     font-weight: 700;
-    margin: 32px 215px 8px 215px;
+    margin: 16px 8px 8px 16px;
 }
 
 .form-producto-subtitle {
@@ -39,7 +55,7 @@
     flex-direction: column;
     font-size: 10px;
     font-weight: 400;
-    margin: 0px 215px 16px 215px;
+    margin: 0px 8px 16px 16px;
     color: #4d4646;
 }
 

@@ -10,6 +10,7 @@ import {
   deleteProducto,
 } from '../services/productos.service';
 import { useNavigate } from 'react-router';
+import { ButtonAmount } from '../components/buttons/ButtonAmount';
 
 export const useProductsHandler = () => {
   const [tableData, setTableData] = useState([]);
@@ -64,10 +65,8 @@ export const useProductsHandler = () => {
       dataIndex: 'cantidad',
       key: 'cantidad',
       render: (text) => {
-        const available = text > 0;
-        text = available ? "Disponible (" + (text) + ")" : 'Agotado (' + (text) + ")";;
-
-        return <div className={available ? 'productos-page-cantidad-disponible' : 'productos-page-cantidad-no-disponible'}>{text}</div>;    
+        
+        return <ButtonAmount amount={text} />;    
 
       },
     },

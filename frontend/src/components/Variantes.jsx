@@ -1,8 +1,11 @@
 import { useState, useEffect } from 'react';
-import { Modal } from 'antd';
+import { Divider, Modal, Input } from 'antd';
 import { Button } from 'antd';
 import { VARIANTES_ACTIONS, initialVariantesValues } from '../utils/constants';
 import { VariantForm } from './Forms/VariantForm';
+import { ButtonSecundary } from './buttons/ButtonSecundary';
+import { ButtonAmount } from './buttons/ButtonAmount';
+import { ModalVariantForm } from './modals/ModalVariantForm';
 
 const Variantes = ({ variantes, handleChange } = { variantes: [], handleChange: () => { } }) => {
 
@@ -12,6 +15,19 @@ const Variantes = ({ variantes, handleChange } = { variantes: [], handleChange: 
     const [values, setValues] = useState(initialVariantesValues);
     const [editMode, setEditMode] = useState(false);
 
+    const [amountReceived, setAmountReceived] = useState(0);
+    const [isAmountModalOpen, setIsAmountModalOpen] = useState(false);
+    const handleAmountSave = () => {
+        console.log("amountReceived", amountReceived);
+        setIsAmountModalOpen(false);
+        setAmountReceived(0);
+    };
+    const handleAmountOk = () => {
+        setIsAmountModalOpen(false);
+    };
+    const handleAmountChange = (e) => {
+        setAmountReceived(e.target.value);
+    };
 
 
     useEffect(() => {
@@ -49,7 +65,7 @@ const Variantes = ({ variantes, handleChange } = { variantes: [], handleChange: 
     };
 
     const handleVariantCreate = () => {
-            // Generar ID único si no existe (para nuevas variantes)
+        // Generar ID único si no existe (para nuevas variantes)
         if (!editMode) {
             values.id.value = crypto.randomUUID();
         }
@@ -68,11 +84,11 @@ const Variantes = ({ variantes, handleChange } = { variantes: [], handleChange: 
     };
 
 
-const resetValues = () => {
-    setValues(initialVariantesValues);
-    setIsFormValid(false);
-    setIsModalOpen(false);
-}
+    const resetValues = () => {
+        setValues(initialVariantesValues);
+        setIsFormValid(false);
+        setIsModalOpen(false);
+    }
 
     const handleVariantDelete = (id) => {
         handleChange(
@@ -90,59 +106,82 @@ const resetValues = () => {
     return (
         <div className="variantes-container">
 
-            <div className="variantes-title">Variantes</div>
-            <div className="variantes-subtitle">Establece los precios y la disponibilidad por variantes, como tamaños o colores.</div>
-            <div className="variantes-add-button" onClick={() => showModal(null)}>Agregar</div>
             {variantes.length > 0 && (
-                <div className="variantes-list">
-                    {variantes.map((variante) => (   
-                        <div key={variante.id.value} className="variante-item" onClick={() => showModal(variante)}>
-                            <div className="variante-item-nombre">{variante.nombre.value}</div>
-                            <div className="variante-item-precio">$ {variante.precio.value}</div>
-                            <div className="variante-item-cantidad">{variante.cantidad.value}</div>
-                            <div className="variante-item-admin"> Administrar existencias</div>
-                        </div>
-                    ))}
-                </div>
+                <>
+                    <div className="variantes-title">Variantes</div>
+
+                    <div className="variantes-list">
+                        {variantes.map((variante) => (
+                            <div key={variante.id.value}>
+                                <div className="variante-item" onClick={() => showModal(variante)}>
+                                    <div className="variante-item-info-container" >
+                                        <div className="variante-item-nombre">{variante.nombre.value}</div>
+                                        <div className="variante-item-precio">$ {variante.precio.value}</div>
+                                    </div>
+                                    <div>
+                                        <div className="variante-item-cantidad">
+                                            <ButtonAmount amount={variante.cantidad.value} clickHandler={() => console.log("click")} />
+                                        </div>
+                                    </div>
+                                </div>
+                                <Divider style={{ margin: '8px 0' }} />
+                            </div>
+                        ))}
+                    </div>
+                </>
             )}
 
-            <Modal 
-            open={isModalOpen} 
-            onCancel={handleVariantOk}
-            footer={null}
-            closable={false}
-                title={
+            <div className="variantes-add-button" onClick={() => showModal(null)}>
+                <ButtonSecundary
+                    label="Agregar variante"
+                    onClick={() => showModal(null)}
+                />
+            </div>
 
+
+
+            <ModalVariantForm
+                isModalOpen={isModalOpen}
+                handleVariantOk={handleVariantOk}
+                handleVariantCreate={handleVariantCreate}
+                isFormValid={isFormValid}
+                editMode={editMode}
+                values={values}
+                handleVariantChange={handleVariantChange}
+                handleVariantDelete={handleVariantDelete}
+            />
+
+
+
+
+
+            <Modal
+                open={isAmountModalOpen}
+                onCancel={handleAmountOk}
+                closable={false}
+                title={
                     <div>
                         <div className="modal-title">
                             <div style={{ marginBottom: '20px' }}>
-                                <Button type="primary" onClick={handleVariantOk}>
+                                <Button type="primary" onClick={handleAmountOk}>
                                     Cerrar
                                 </Button>
                             </div>
                             <div>
-                                {editMode ? "Editar Variante" : "Agregar Variante"}
+                                Existencias Recibidas
                             </div>
                             <div style={{ marginBottom: '20px' }}>
-                                <Button type="primary" onClick={handleVariantCreate} disabled={!isFormValid} block>
-                                    Listo
+                                <Button type="primary" onClick={handleAmountSave}>
+                                    Guardar
                                 </Button>
                             </div>
                         </div>
                     </div>
-
                 }>
+                <div>
+                    <Input type="number" value={amountReceived} onChange={handleAmountChange} />
+                </div>
 
-
-                <VariantForm values={values} handleVariantChange={handleVariantChange} />
-                {editMode && (
-                    <div className="modal-delete-button" onClick={() => handleVariantDelete(values.id.value)}>
-                        <Button type="primary" danger>
-                            Eliminar
-                        </Button>
-                    </div>
-                )}
-               
             </Modal>
         </div>
     );

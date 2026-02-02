@@ -4,11 +4,12 @@ import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { useProductsHandler } from '../hooks/useProductsHandler';
 import { SearchOutlined, CloseOutlined } from '@ant-design/icons';
 import MenuBar from '../components/MenuBar';
-import SubmitButton from '../components/SubmitButton';
+import {SubmitButton} from '../components/buttons/SubmitButton';
 import { useLocation, useNavigate } from 'react-router';
 import Loader from '../components/Loader';
 import { ModalError } from '../components/modals/ModalError';
-
+import { ButtonDanger } from '../components/buttons/ButtonDanger';
+import { ButtonSecundary } from '../components/buttons/ButtonSecundary';
 function Productos() {
 
     const [search, setSearch] = useState('');
@@ -40,67 +41,37 @@ function Productos() {
 
     const modalFotterActions = useMemo(() => {
 
-        const bottonDeleteStyle = {
-            borderRadius: 40,
-            padding: '12px 16px',
-            backgroundColor: '#cf070a',
-            borderColor: '#e00004',
-            color: '#ffffff',
-            fontSize: '15px',
-            fontWeight: 'bold'
-
-        };
-
-        const bottonStyle = {
-            borderRadius: 40,
-            padding: '12px 16px',
-            backgroundColor: '#eeeded',
-            borderColor: '#e9e2e2',
-            fontSize: '15px',
-            fontWeight: 'bold'
-
-        };
-
-
+    
         if (verArchivados) {
             return [
-                <Button key="cancel" onClick={handleCancelDelete} style={bottonStyle}>
-                    Cancelar
-
-                </Button>,
-                <Button
+                <ButtonSecundary
+                    key="cancel"
+                    onClick={handleCancelDelete}
+                    label="Cancelar"
+                />,   
+                <ButtonDanger
                     key="delete"
-                    type="primary"
-                    color='red'
                     onClick={handleDeletePermanent}
-                    style={bottonDeleteStyle}
-                >
-                    Eliminar permanentemente
-                </Button>,
+                    label="Eliminar permanentemente"
+                />
             ];
         } else {
             return [
-                <Button key="cancel" onClick={handleCancelDelete} style={bottonStyle}>
-                    Cancelar
-
-                </Button>,
-                <Button
+                <ButtonSecundary
+                    key="cancel"
+                    onClick={handleCancelDelete}
+                    label="Cancelar"
+                />,                   
+                <ButtonSecundary
                     key="archive"
-                    type="default"
                     onClick={handleArchive}
-                    style={bottonStyle}
-                >
-                    Archivar
-                </Button>,
-                <Button
+                    label="Archivar"
+                />,
+                <ButtonDanger
                     key="delete"
-                    type="primary"
-                    color='red'
                     onClick={handleDeletePermanent}
-                    style={bottonDeleteStyle}
-                >
-                    Eliminar permanentemente
-                </Button>,
+                    label="Eliminar permanentemente"
+                />
             ];
         }
     }, [verArchivados, handleCancelDelete, handleDeletePermanent, handleArchive]);
@@ -123,7 +94,7 @@ function Productos() {
                     <SubmitButton
                         text="Crear Artículo"
                         onClick={() => navigate('/nuevo-producto')}
-                    >Crear Artículo</SubmitButton>
+                        />
                 </div>
 
 
@@ -148,9 +119,10 @@ function Productos() {
                 <Modal
                     title={
                         <Space>
-                            <span style={{ color: '#000000', fontSize: 20, fontWeight: 'bold' }}>Eliminar Articulo</span>
+                            <span style={{ color: '#000000', fontSize: 20, fontWeight: 'bold' }}>Eliminar Artículo</span>
                         </Space>
                     }
+                    className="modal-delete-product"
                     closable={false}
                     open={isDeleteModalOpen.open}
                     onCancel={handleCancelDelete}
