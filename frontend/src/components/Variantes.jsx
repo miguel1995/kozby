@@ -6,8 +6,10 @@ import { VariantForm } from './Forms/VariantForm';
 import { ButtonSecundary } from './buttons/ButtonSecundary';
 import { ButtonAmount } from './buttons/ButtonAmount';
 import { ModalVariantForm } from './modals/ModalVariantForm';
-
+import { message } from 'antd';
+import ModalAditionalAmount from './modals/ModalAditionalAmount';
 const Variantes = ({ variantes, handleChange } = { variantes: [], handleChange: () => { } }) => {
+
 
 
     const [isFormValid, setIsFormValid] = useState(false);
@@ -17,23 +19,44 @@ const Variantes = ({ variantes, handleChange } = { variantes: [], handleChange: 
 
     const [amountReceived, setAmountReceived] = useState(0);
     const [isAmountModalOpen, setIsAmountModalOpen] = useState(false);
+
+    useEffect(() => {
+        console.log("variantes values", values);
+    }, [values]);
+
+    useEffect(() => {
+        setIsFormValid(Object.values(values).every(value => value.valid));
+    }, [values]);
+
     const handleAmountSave = () => {
         console.log("amountReceived", amountReceived);
+        let valuesToSend = values;
+        valuesToSend.cantidad.value = amountReceived;
+        handleChange(
+            {
+                target: {
+                    name: "variantes",
+                    action: VARIANTES_ACTIONS.UPDATE,
+                    value: valuesToSend,
+                }
+            });
         setIsAmountModalOpen(false);
         setAmountReceived(0);
     };
+
     const handleAmountOk = () => {
         setIsAmountModalOpen(false);
     };
+
     const handleAmountChange = (e) => {
         setAmountReceived(e.target.value);
     };
 
+    const showAmountModal = (variante) => {
+        setIsAmountModalOpen(true);
+        setValues(variante);
+    };
 
-    useEffect(() => {
-        console.log("Variantes values", values);
-        setIsFormValid(Object.values(values).every(value => value.valid));
-    }, [values]);
 
     const showModal = (variante) => {
         if (variante) {
@@ -66,8 +89,17 @@ const Variantes = ({ variantes, handleChange } = { variantes: [], handleChange: 
 
     const handleVariantCreate = () => {
         // Generar ID único si no existe (para nuevas variantes)
+        let valuesToSend = values;
+
         if (!editMode) {
-            values.id.value = crypto.randomUUID();
+            const newId = crypto.randomUUID();
+            valuesToSend = {
+                ...values,
+                id: {
+                    value: newId,
+                    valid: true
+                }
+            };
         }
 
         handleChange(
@@ -75,7 +107,7 @@ const Variantes = ({ variantes, handleChange } = { variantes: [], handleChange: 
                 target: {
                     name: "variantes",
                     action: editMode ? VARIANTES_ACTIONS.UPDATE : VARIANTES_ACTIONS.CREATE,
-                    value: values,
+                    value: valuesToSend,
                     valid: isFormValid
                 }
             });
@@ -120,7 +152,7 @@ const Variantes = ({ variantes, handleChange } = { variantes: [], handleChange: 
                                     </div>
                                     <div>
                                         <div className="variante-item-cantidad">
-                                            <ButtonAmount amount={variante.cantidad.value} clickHandler={() => console.log("click")} />
+                                            <ButtonAmount amount={variante.cantidad.value} clickHandler={() => {showAmountModal(variante)}} />
                                         </div>
                                     </div>
                                 </div>
@@ -131,10 +163,17 @@ const Variantes = ({ variantes, handleChange } = { variantes: [], handleChange: 
                 </>
             )}
 
-            <div className="variantes-add-button" onClick={() => showModal(null)}>
+            <div className="variantes-add-button">
                 <ButtonSecundary
                     label="Agregar variante"
-                    onClick={() => showModal(null)}
+                    onClick={() => {
+                        if (variantes.length < 10) {
+                            showModal(null)
+                        }
+                        else {
+                            message.error("No se puede agregar más de 10 variantes");
+                        }
+                    }}
                 />
             </div>
 
@@ -155,34 +194,13 @@ const Variantes = ({ variantes, handleChange } = { variantes: [], handleChange: 
 
 
 
-            <Modal
-                open={isAmountModalOpen}
+            <ModalAditionalAmount
+                isModalOpen={isAmountModalOpen}
                 onCancel={handleAmountOk}
-                closable={false}
-                title={
-                    <div>
-                        <div className="modal-title">
-                            <div style={{ marginBottom: '20px' }}>
-                                <Button type="primary" onClick={handleAmountOk}>
-                                    Cerrar
-                                </Button>
-                            </div>
-                            <div>
-                                Existencias Recibidas
-                            </div>
-                            <div style={{ marginBottom: '20px' }}>
-                                <Button type="primary" onClick={handleAmountSave}>
-                                    Guardar
-                                </Button>
-                            </div>
-                        </div>
-                    </div>
-                }>
-                <div>
-                    <Input type="number" value={amountReceived} onChange={handleAmountChange} />
-                </div>
-
-            </Modal>
+                handleSave={handleAmountSave}
+                handleChange={handleAmountChange}
+                currentAmount={values.cantidad.value}
+            />
         </div>
     );
 };

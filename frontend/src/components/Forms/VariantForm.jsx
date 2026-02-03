@@ -5,10 +5,6 @@ import { useEffect } from "react";
 
 export const VariantForm = ({ values, handleVariantChange}) => {
 
-    useEffect(() => {
-        console.log("VariantForm values", values);
-    }, [values]);
-
     return (
         <div className="example">
 
@@ -32,10 +28,10 @@ export const VariantForm = ({ values, handleVariantChange}) => {
 
                     </FloatLabel>
 
-                    <FloatLabel label="Cantidad" name="cantidad" value={values.cantidad?.value || "0"}>
+                    <FloatLabel label="Cantidad" name="cantidad" value={values.cantidad?.value}>
 
                         <NumericInput
-                            value={values.cantidad?.value || "0"}
+                            value={values.cantidad?.value}
                             onChange={e => handleVariantChange(e)}
                             name="cantidad"
                             maxLength={3}

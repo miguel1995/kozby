@@ -71,8 +71,8 @@ export const useFormProductoHandler = (isEditMode = false) => {
                 variantes: { value: variantes, valid: true }
             });
 
-            setFechaCreacion(data.fecha_creacion);
-            setFechaModificacion(data.fecha_modificacion);
+            setFechaCreacion(data.createdAt);
+            setFechaModificacion(data.updatedAt);
 
         } catch (err) {
             setError(err.message || 'Error');
