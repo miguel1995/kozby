@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router";
 
 import Productos from './pages/Productos'
 import FormProducto from './pages/FormProducto'
+import FormInicio from './pages/FormInicio';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path="/productos" element={<Productos />} />
           <Route path="/nuevo-producto" element={<FormProducto />} />
           <Route path="/editar-producto/:id" element={<FormProducto isEditMode={true} />} />
+          <Route path="/inicio-sesion" element={<FormInicio />} />
 
 
 
