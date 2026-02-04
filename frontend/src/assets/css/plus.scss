@@ -1,0 +1,30 @@
+
+
+.plus-container{
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    padding: 8px;
+}
+
+.plus-welcome-text{
+    font-size: 24px;
+    font-weight: 700;
+    text-align: left;
+    margin-bottom: 24px;
+    width: 70%;
+
+}
+
+.plus-menu-item-label{
+    
+    font-weight: 600;
+    text-align: left;
+    margin-bottom: 10px;
+    width: 70%;
+    cursor: pointer;
+}
+
+.plus-menu-item-divider{
+    margin: 4px 0;
+}

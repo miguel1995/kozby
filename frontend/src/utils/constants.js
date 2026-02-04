@@ -62,3 +62,21 @@ export const initialFormValues = {
     UPDATE: "update",
     DELETE: "delete"
   }
+
+  export const PLUS_MENU_ITEMS = [
+    {
+      key: "1",
+      label: "Todos los productos",
+      path: "/productos"
+    },
+    {
+      key: "2",
+      label: "Todos los servicios",
+      path: "/servicios"
+    },
+    {
+      key: "3",
+      label: "Todos los clientes",
+      path: "/clientes"
+    }
+  ]

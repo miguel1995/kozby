@@ -80,7 +80,6 @@ function Productos() {
 
     return (
         <div className="page-container">
-            <MenuBar />
             <div className="products-page">
                 <div className="products-page-filters-and-actions">
                     <Input placeholder="Buscar"

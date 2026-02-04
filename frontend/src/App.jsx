@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import './App.css'
 import { BrowserRouter, Routes, Route, Navigate } from "react-router";
+import { Plus } from './pages/Plus'
 
 import Productos from './pages/Productos'
 import FormProducto from './pages/FormProducto'
@@ -15,6 +16,7 @@ function App() {
         <Route path="/productos" element={<Productos />} />
           <Route path="/nuevo-producto" element={<FormProducto />} />
           <Route path="/editar-producto/:id" element={<FormProducto isEditMode={true} />} />
+          <Route path="/mas" element={<Plus />} />
 
 
 
