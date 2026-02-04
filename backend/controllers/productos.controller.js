@@ -4,6 +4,7 @@ const productosService = require('../services/productos.service');
 const getProductos = async (req, res) => {
   try {
     const productos = await productosService.getProductos();
+    
     res.status(200).json(productos);
   } catch (error) {
     console.error('Error al obtener productos:', error);
