@@ -1,11 +1,11 @@
-import { Modal, Row, Col } from 'antd';
 import { useFormProductoHandler } from '../hooks/useFormProductoHandler';
 import { useNavigate } from 'react-router';
-import { ProductForm } from '../components/ProductForm';
+import { ProductForm } from '../components/Forms/ProductForm';
 import { CloseOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import SubmitButton from '../components/SubmitButton';
 import { formatDate } from '../utils/dateUtils';
-import { useEffect, useState } from 'react';
+import Variantes from '../components/Variantes';
+import { useEffect } from 'react';
 import { ModalLoader } from '../components/modals/modalLoader';
 import { ModalError } from '../components/modals/ModalError';
 
@@ -26,6 +26,10 @@ const FormProducto = ({ isEditMode = false }) => {
   } = useFormProductoHandler(isEditMode);
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    console.log("FormProductovalues", values);
+  }, [values]);
 
   useEffect(() => {
     console.log("error", loading);
@@ -80,20 +84,10 @@ const FormProducto = ({ isEditMode = false }) => {
             </div>
           )}
 
-          <Row gutter={[32, 32]} justify="center">
-            <Col span={16}>
-              <ProductForm
-                values={values}
-                handleChange={handleChange}
-              />
-            </Col>
-            <Col span={8}>
-              <div>Categorías</div>
-              <div>En construcción...</div>
-            </Col>
-          </Row>
-        </div>
+          <ProductForm values={values} handleChange={handleChange} />
+          <Variantes variantes={values.variantes.value} handleChange={handleChange} />
 
+        </div>
       </div>
 
       <ModalError
@@ -101,8 +95,6 @@ const FormProducto = ({ isEditMode = false }) => {
         onOk={handleOk}
       />
 
-
-      
       <ModalLoader loading={loading} message={isEditMode ? "Guardando cambios..." : "Creando artículo..."} />
 
     </>

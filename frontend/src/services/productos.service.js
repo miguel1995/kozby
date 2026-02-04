@@ -46,6 +46,17 @@ export const postProducto = async (productoData) => {
                 // Si es una URL (string), agregarlo como texto
                 formData.append('imagen', productoData[key]);
             }
+        } else if (key === 'variantes') {
+            const variantes = productoData[key].map(variante => {
+                console.log("variante in post", variante);
+                return{
+                    id: variante.id,
+                    nombre: variante.nombre,
+                    precio: variante.precio,
+                    cantidad: variante.cantidad,
+                }
+            });
+            formData.append('variantes', JSON.stringify(variantes));
         } else {
             formData.append(key, productoData[key]);
         }
@@ -76,6 +87,16 @@ export const putProducto = async (id, productoData) => {
                 // Si es una URL (string), agregarlo como texto
                 formData.append('imagen', productoData[key]);
             }
+        } else if (key === 'variantes') {
+            const variantes = productoData[key].map(variante => {
+                return{
+                    id: variante.id,
+                    nombre: variante.nombre,
+                    precio: variante.precio,
+                    cantidad: variante.cantidad,
+                }
+            });
+            formData.append('variantes', JSON.stringify(variantes));
         } else {
             formData.append(key, productoData[key]);
         }

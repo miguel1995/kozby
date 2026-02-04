@@ -23,6 +23,7 @@ const getProductos = async () => {
       imagen: producto.imagen,
       categoria_id: producto.categoria_id,
       archivado: producto.archivado,
+      variantes: producto.variantes || [],
       createdAt: producto.createdAt,
       updatedAt: producto.updatedAt
     }));
@@ -49,6 +50,7 @@ const getProductosArchivados = async () => {
       imagen: producto.imagen,
       categoria_id: producto.categoria_id,
       archivado: producto.archivado,
+      variantes: producto.variantes || [],
       createdAt: producto.createdAt,
       updatedAt: producto.updatedAt
     }));
@@ -85,6 +87,7 @@ const getProductoById = async (id) => {
       imagen: producto.imagen,
       categoria_id: producto.categoria_id,
       archivado: producto.archivado,
+      variantes: producto.variantes || [],
       createdAt: producto.createdAt,
       updatedAt: producto.updatedAt
     };
@@ -94,10 +97,83 @@ const getProductoById = async (id) => {
   }
 };
 
+// Validar y procesar variantes
+const validarYProcesarVariantes = (variantes) => {
+  if (!variantes) {
+    return [];
+  }
+
+  // Si viene como string (desde form-data), parsearlo
+  let variantesArray = variantes;
+  if (typeof variantes === 'string') {
+    try {
+      variantesArray = JSON.parse(variantes);
+    } catch (error) {
+      throw new Error('Las variantes deben ser un JSON válido');
+    }
+  }
+
+  if (!Array.isArray(variantesArray)) {
+    throw new Error('Las variantes deben ser un arreglo');
+  }
+
+  if (variantesArray.length > 10) {
+    throw new Error('No se pueden tener más de 10 variantes por producto');
+  }
+
+  return variantesArray.map((variante, index) => {
+    if (!variante.nombre || variante.precio === undefined || variante.cantidad === undefined) {
+      throw new Error(`La variante ${index + 1} debe tener nombre, precio y cantidad`);
+    }
+
+    // Validar nombre (máximo 45 caracteres)
+    const nombre = String(variante.nombre).trim();
+    if (nombre.length === 0 || nombre.length > 45) {
+      throw new Error(`El nombre de la variante ${index + 1} debe tener entre 1 y 45 caracteres`);
+    }
+
+    // Validar y convertir precio
+    const precio = typeof variante.precio === 'string' ? parseFloat(variante.precio) : variante.precio;
+    if (isNaN(precio) || precio < 0) {
+      throw new Error(`El precio de la variante ${index + 1} debe ser un número válido mayor o igual a 0`);
+    }
+
+    // Validar formato de precio (máximo 10 dígitos y 2 decimales)
+    const precioStr = precio.toString();
+    const partes = precioStr.split('.');
+    const parteEntera = partes[0];
+    const parteDecimal = partes[1] || '';
+    const totalDigitos = parteEntera.length + parteDecimal.length;
+    
+    if (totalDigitos > 10) {
+      throw new Error(`El precio de la variante ${index + 1} no puede tener más de 10 dígitos`);
+    }
+    if (parteDecimal.length > 2) {
+      throw new Error(`El precio de la variante ${index + 1} no puede tener más de 2 decimales`);
+    }
+
+    // Validar y convertir cantidad (entero de 0 a 1000)
+    const cantidad = typeof variante.cantidad === 'string' ? parseInt(variante.cantidad, 10) : variante.cantidad;
+    if (!Number.isInteger(cantidad) || cantidad < 0 || cantidad > 1000) {
+      throw new Error(`La cantidad de la variante ${index + 1} debe ser un entero entre 0 y 1000`);
+    }
+
+    // Generar ID único si no existe
+    const id = variante.id || mongoose.Types.ObjectId().toString();
+
+    return {
+      id,
+      nombre,
+      precio,
+      cantidad
+    };
+  });
+};
+
 // Crear un nuevo producto
 const createProducto = async (nuevoProducto) => {
   try {
-  const { nombre, precio, cantidad, imagen = null, descripcion = null, categoria_id } = nuevoProducto;
+  const { nombre, precio, cantidad, imagen = null, descripcion = null, categoria_id, variantes } = nuevoProducto;
 
 if (nombre == null || precio == null || cantidad == null || !categoria_id) {
   throw new Error('Faltan campos obligatorios');
@@ -118,6 +194,9 @@ if (cantidad < 0) {
     // Convertir categoria_id a string si viene como número
     const categoriaIdStr = String(categoria_id);
 
+    // Validar y procesar variantes
+    const variantesProcesadas = validarYProcesarVariantes(variantes);
+
     const productoData = {
       nombre,
       precio: precioNum,
@@ -125,7 +204,8 @@ if (cantidad < 0) {
       descripcion,
       imagen,
       categoria_id: categoriaIdStr,
-      archivado: false
+      archivado: false,
+      variantes: variantesProcesadas
     };
 
     const nuevoProductoDoc = new Producto(productoData);
@@ -140,6 +220,7 @@ if (cantidad < 0) {
       imagen: productoGuardado.imagen,
       categoria_id: productoGuardado.categoria_id,
       archivado: productoGuardado.archivado,
+      variantes: productoGuardado.variantes || [],
       createdAt: productoGuardado.createdAt,
       updatedAt: productoGuardado.updatedAt
     };
@@ -161,7 +242,7 @@ const updateProducto = async (id, updates) => {
       return null;
     }
 
-    const allowed = ['nombre', 'precio', 'cantidad', 'descripcion', 'imagen', 'categoria_id'];
+    const allowed = ['nombre', 'precio', 'cantidad', 'descripcion', 'imagen', 'categoria_id', 'variantes'];
     const updateData = {};
 
     // Filtrar solo campos permitidos
@@ -191,6 +272,11 @@ const updateProducto = async (id, updates) => {
       updateData.categoria_id = String(updateData.categoria_id);
     }
 
+    // Validar y procesar variantes si están presentes
+    if (updateData.variantes !== undefined) {
+      updateData.variantes = validarYProcesarVariantes(updateData.variantes);
+    }
+
     // Actualizar el producto (findByIdAndUpdate retorna el documento actualizado)
     const productoActualizado = await Producto.findByIdAndUpdate(
       id,
@@ -215,6 +301,7 @@ const updateProducto = async (id, updates) => {
       imagen: productoActualizado.imagen,
       categoria_id: productoActualizado.categoria_id,
       archivado: productoActualizado.archivado,
+      variantes: productoActualizado.variantes || [],
       createdAt: productoActualizado.createdAt,
       updatedAt: productoActualizado.updatedAt
     };

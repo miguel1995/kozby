@@ -174,10 +174,7 @@ function Productos() {
                         <p>
                             Si desea archivar el producto, este se ocultará de la lista, pero no perderá ningún dato asociado; podrá restaurarlo en cualquier momento.
                         </p>
-
-
                     </div>
-
 
                 </Modal>
             </div>
