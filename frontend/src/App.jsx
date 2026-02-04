@@ -5,6 +5,7 @@ import { Plus } from './pages/Plus'
 
 import Productos from './pages/Productos'
 import FormProducto from './pages/FormProducto'
+import FormInicio from './pages/FormInicio';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
           <Route path="/nuevo-producto" element={<FormProducto />} />
           <Route path="/editar-producto/:id" element={<FormProducto isEditMode={true} />} />
           <Route path="/mas" element={<Plus />} />
+          <Route path="/inicio-sesion" element={<FormInicio />} />
 
 
 
