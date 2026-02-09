@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import crypto from 'crypto-js';
 
-export function useLoginFormHandler(onSuccess) {
+export function useLoginFormHandler({ onSuccess } = {}) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -37,7 +37,7 @@ export function useLoginFormHandler(onSuccess) {
         body: JSON.stringify({
           username: trimmedUsername,
           password: passwordEncrypted,
-          
+
         }),
       });
 
