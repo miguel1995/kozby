@@ -18,10 +18,7 @@ export const useProductsHandler = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [verArchivados, setVerArchivados] = useState(null);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState({
-    open: false,
-    nombre: '',
-  });
+
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -116,10 +113,9 @@ export const useProductsHandler = () => {
       setIsModalOpen(false);
   };
 
-  const hacerClick = async (event, record) => {
+  const hacerClick = async (key, record) => {
      setSelectedProduct(record);
 
-    const { key } = event;
     const { id } = record;
 
     if (key === 'edit') {
@@ -127,78 +123,12 @@ export const useProductsHandler = () => {
       return;
     }
 
-    if (key === 'archive') {
-      setLoading(true);
-      try {
-        await archiveProducto(id);
-        message.success('Producto archivado');
-        fetchProductos();
-        return;
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-      message.success('Producto archivado');
-      fetchProductos();
-      return;
-    }
-
-    if (key === 'restore') {
-      setLoading(true);
-      try {
-        await restaurarProducto(id);
-        message.success('Producto restaurado');
-        fetchProductos();
-        return;
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    if (key === 'delete') {
-      setIsDeleteModalOpen({
-        open: true,
-        nombre: record.nombre,
-      });
-      return;
-    }
   };
 
 
-  const handleDeletePermanent = async () => {
-    if (!selectedProduct) return;
 
-    setLoading(true);
-    try {
-      const fullFileName = selectedProduct.imagen.split('/').pop(); // "o8vyvxdh2zhwsl8gmlyo.png"
-      const imageId = "kozby/products/" + fullFileName.split('.')[0];     // "o8vyvxdh2zhwsl8gmlyo"
-      await deleteProducto(selectedProduct.id,imageId);
-      message.success('Producto eliminado definitivamente');
-      setIsDeleteModalOpen({
-        open: false,
-        nombre: '',
-      });
-      setSelectedProduct(null);
-      fetchProductos();
-    } catch (err) {
-      message.error('Error al eliminar');
-      setError(err.message);
 
-    } finally {
-      setLoading(false);
-    }
-  };
 
-  const handleCancelDelete = () => {
-        setIsDeleteModalOpen({
-          open: false,
-          nombre: '',
-        });
-    setSelectedProduct(null);
-  };
 
   const fetchProductos = async () => {
     setLoading(true);
@@ -225,18 +155,7 @@ export const useProductsHandler = () => {
     };
   };
 
-  const handleArchive = async () => {
-    if (!selectedProduct) return;
-    await archiveProducto(selectedProduct.id);
-    message.success('Producto archivado');
-    fetchProductos();
-    setIsDeleteModalOpen({
-      open: false,
-      nombre: '',
-    });
-    setSelectedProduct(null);
 
-  };
 
 
   return {
@@ -246,12 +165,10 @@ export const useProductsHandler = () => {
     error,
     verArchivados,
     setVerArchivados,
-    isDeleteModalOpen,
-    handleDeletePermanent,
-    handleCancelDelete,
     handleRowClick,
     isModalOpen,
     handleOk,
-    handleArchive
+    productos,
+    hacerClick
   };
 };

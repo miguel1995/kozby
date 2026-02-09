@@ -88,3 +88,11 @@
     font-weight: 600;
     color: #000;
 }
+
+.form-producto-actions-container {
+    display: flex;
+    gap: 16px;
+    flex-direction: column;
+    padding-bottom: 8px;
+    
+}

@@ -47,7 +47,7 @@ export const ModalVariantForm = ({
             <Divider />
             <div className="modal-delete-button">
                 <ButtonSecundary 
-                label="Eliminar artículo" 
+                label="Eliminar variante" 
                 onClick={() => handleVariantDelete(values.id.value)} 
                 />
             </div>

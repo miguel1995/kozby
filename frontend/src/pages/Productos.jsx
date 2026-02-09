@@ -4,12 +4,13 @@ import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { useProductsHandler } from '../hooks/useProductsHandler';
 import { SearchOutlined, CloseOutlined } from '@ant-design/icons';
 import MenuBar from '../components/MenuBar';
-import {SubmitButton} from '../components/buttons/SubmitButton';
+import { SubmitButton } from '../components/buttons/SubmitButton';
 import { useLocation, useNavigate } from 'react-router';
 import Loader from '../components/Loader';
 import { ModalError } from '../components/modals/ModalError';
 import { ButtonDanger } from '../components/buttons/ButtonDanger';
 import { ButtonSecundary } from '../components/buttons/ButtonSecundary';
+import { ButtonAmount } from '../components/buttons/ButtonAmount';
 function Productos() {
 
     const [search, setSearch] = useState('');
@@ -29,6 +30,8 @@ function Productos() {
         handleDeletePermanent,
         handleCancelDelete,
         handleRowClick,
+        productos,
+        hacerClick
     } = useProductsHandler();
 
     const location = useLocation();
@@ -39,43 +42,7 @@ function Productos() {
         setVerArchivados(esArchivos);
     }, [location.pathname, setVerArchivados]);
 
-    const modalFotterActions = useMemo(() => {
-
-    
-        if (verArchivados) {
-            return [
-                <ButtonSecundary
-                    key="cancel"
-                    onClick={handleCancelDelete}
-                    label="Cancelar"
-                />,   
-                <ButtonDanger
-                    key="delete"
-                    onClick={handleDeletePermanent}
-                    label="Eliminar permanentemente"
-                />
-            ];
-        } else {
-            return [
-                <ButtonSecundary
-                    key="cancel"
-                    onClick={handleCancelDelete}
-                    label="Cancelar"
-                />,                   
-                <ButtonSecundary
-                    key="archive"
-                    onClick={handleArchive}
-                    label="Archivar"
-                />,
-                <ButtonDanger
-                    key="delete"
-                    onClick={handleDeletePermanent}
-                    label="Eliminar permanentemente"
-                />
-            ];
-        }
-    }, [verArchivados, handleCancelDelete, handleDeletePermanent, handleArchive]);
-
+  
 
 
     return (
@@ -89,23 +56,48 @@ function Productos() {
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                     />
-
-                    <SubmitButton
+                    {verArchivados ? (
+                        <div className="products-page-archived-title">Artículos archivados</div>
+                    ) : (
+                        <SubmitButton
                         text="Crear Artículo"
                         onClick={() => navigate('/nuevo-producto')}
-                        />
+                    />
+                    )}
+                   
                 </div>
 
 
                 <div className="products-table">
                     {loading ? (
                         <Loader message="Cargando productos..." />
-                    ) : (
-                        <Table
-                            columns={columns}
-                            dataSource={tableData}
-                            pagination={{ pageSize: 10 }}
-                        />
+                    ) : (<>        
+                        {<div className="productos-list">
+                            {productos.map((producto) => (
+                                <div key={producto.id}>
+                                    <div className="producto-item" onClick={() => { hacerClick("edit", producto) }}>
+                                        <div className="producto-item-info-container" >
+                                            <div>
+                                                <img src={producto.imagen} alt="" style={{ width: 39, height: 'auto', objectFit: 'cover' }} />
+                                            </div>
+                                            <div>
+                                                <div className="producto-item-nombre">{producto.nombre}</div>
+                                                <div className="producto-item-precio">$ {producto.precio}</div>
+                                                <ButtonAmount amount={producto.cantidad} clickHandler={() => { }} />
+                                            </div>
+
+                                        </div>
+                                        <div>
+                                            <div className="producto-item-cantidad">
+                                                {producto.variantes.length > 0 ? <div>{producto.variantes.length} precios</div> : <div>Variable</div>}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <Divider style={{ margin: '8px 0' }} />
+                                </div>
+                            ))}
+                        </div>}
+                    </>
                     )}
                 </div>
 
@@ -115,39 +107,6 @@ function Productos() {
                 />
 
 
-                <Modal
-                    title={
-                        <Space>
-                            <span style={{ color: '#000000', fontSize: 20, fontWeight: 'bold' }}>Eliminar Artículo</span>
-                        </Space>
-                    }
-                    className="modal-delete-product"
-                    closable={false}
-                    open={isDeleteModalOpen.open}
-                    onCancel={handleCancelDelete}
-                    footer={modalFotterActions}
-                    modalRender={modal => (
-                        <div style={{ borderRadius: 20, overflow: 'hidden' }}>
-                            {modal}
-                        </div>
-                    )}
-                >
-
-
-                    <div style={{ marginBottom: '20px' }}>
-                        <p>
-                            ¿Está seguro que desea eliminar el artículo <strong>{isDeleteModalOpen.nombre}</strong>? Las transacciones asociadas a este artículo se perderán.
-                        </p>
-
-                    </div>
-
-                    <div style={{ marginBottom: '16px' }}>
-                        <p>
-                            Si desea archivar el producto, este se ocultará de la lista, pero no perderá ningún dato asociado; podrá restaurarlo en cualquier momento.
-                        </p>
-                    </div>
-
-                </Modal>
             </div>
         </div>
 

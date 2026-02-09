@@ -203,15 +203,13 @@ const restaurarProducto = async (req, res) => {
 const deleteProducto = async (req, res) => {
   try {
     const { id } = req.params;
-    const imageId = req.query.imageId;
-    console.log('Iniciando eliminación de producto', req);
-    console.log("obteniendo imagen de prueba",imageId);
-    const cloudinary = require('../config/cloudinary');
-    const result = await cloudinary.uploader.destroy(imageId);
-    console.log(result);
+    const imageId = req.query.imageId || '';
+
+    if(imageId !== '') {
+      const cloudinary = require('../config/cloudinary');
+      const result = await cloudinary.uploader.destroy(imageId);
+    }
     
-
-
     const eliminado = await productosService.deleteProducto(id);
 
     if (!eliminado) {

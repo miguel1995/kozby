@@ -3,6 +3,12 @@ import { postProducto, getProductoById, putProducto } from '../services/producto
 import { initialFormValues, VARIANTES_ACTIONS } from '../utils/constants';
 import { useNavigate } from 'react-router';
 import { useParams } from 'react-router';
+import {
+    archiveProducto,
+    deleteProducto,
+    restaurarProducto
+} from '../services/productos.service';
+import { message } from 'antd';
 
 export const useFormProductoHandler = (isEditMode = false) => {
 
@@ -15,10 +21,16 @@ export const useFormProductoHandler = (isEditMode = false) => {
     const [fechaCreacion, setFechaCreacion] = useState('');
     const [fechaModificacion, setFechaModificacion] = useState('');
     const [showFormErrors, setShowFormErrors] = useState(false);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState({
+        open: false,
+        nombre: '',
+    });
+    const [isArchived, setIsArchived] = useState(false);
 
     const navigate = useNavigate();
 
     useEffect(() => {
+        console.log("id", id);
         if (id && isEditMode) {
             fetchProducto(id);
         }
@@ -32,7 +44,6 @@ export const useFormProductoHandler = (isEditMode = false) => {
 
 
     useEffect(() => {
-        console.log(values);
         setIsFormValid(Object.values(values).every(field => {
             if (field.required === true) {
                 return field.valid === true;
@@ -55,7 +66,7 @@ export const useFormProductoHandler = (isEditMode = false) => {
         try {
             const data = await getProductoById(id);
 
-
+            console.log("data", data);
             const variantes = data.variantes.map(variante => ({
                 id: { value: variante.id, valid: true },
                 nombre: { value: variante.nombre, valid: true },
@@ -73,7 +84,7 @@ export const useFormProductoHandler = (isEditMode = false) => {
 
             setFechaCreacion(data.createdAt);
             setFechaModificacion(data.updatedAt);
-
+            setIsArchived(data.archivado);
         } catch (err) {
             setError(err.message || 'Error');
         } finally {
@@ -111,7 +122,6 @@ export const useFormProductoHandler = (isEditMode = false) => {
 
 
     const handleChange = (e) => {
-        console.log("handleChange", e);
         setShowFormErrors(false);
 
         // Manejar tanto inputs normales como File objects
@@ -125,40 +135,40 @@ export const useFormProductoHandler = (isEditMode = false) => {
         let error;
 
         if (fieldName === "variantes") {
-           if (e.target.action === VARIANTES_ACTIONS.CREATE) {
-            setValues({
-                ...values,
-                [fieldName]: {
-                    value: [...values.variantes.value, e.target.value],
-                    valid: e.target.valid
-                }
-            });
-           }
-           else if (e.target.action === VARIANTES_ACTIONS.UPDATE) {
-            const updatedVariantes = values.variantes.value.map(variante => {
-                if (variante.id === e.target.value.id) {
-                    return e.target.value;
-                }
-                return variante;
-            });
-            setValues({
-                ...values,
-                [fieldName]: {
-                    value: updatedVariantes,
-                    valid: e.target.valid
-                }
-            });
-           }
-           else if (e.target.action === VARIANTES_ACTIONS.DELETE) {
-            const updatedVariantes = values.variantes.value.filter(variante => variante.id.value !== e.target.value);
-            setValues({
-                ...values,
-                [fieldName]: {
-                    value: updatedVariantes,
-                    valid: true
-                }
-            });
-           }    
+            if (e.target.action === VARIANTES_ACTIONS.CREATE) {
+                setValues({
+                    ...values,
+                    [fieldName]: {
+                        value: [...values.variantes.value, e.target.value],
+                        valid: e.target.valid
+                    }
+                });
+            }
+            else if (e.target.action === VARIANTES_ACTIONS.UPDATE) {
+                const updatedVariantes = values.variantes.value.map(variante => {
+                    if (variante.id === e.target.value.id) {
+                        return e.target.value;
+                    }
+                    return variante;
+                });
+                setValues({
+                    ...values,
+                    [fieldName]: {
+                        value: updatedVariantes,
+                        valid: e.target.valid
+                    }
+                });
+            }
+            else if (e.target.action === VARIANTES_ACTIONS.DELETE) {
+                const updatedVariantes = values.variantes.value.filter(variante => variante.id.value !== e.target.value);
+                setValues({
+                    ...values,
+                    [fieldName]: {
+                        value: updatedVariantes,
+                        valid: true
+                    }
+                });
+            }
         } else {
             if (e.target.files && e.target.files[0]) {
                 // Si es un input de tipo file
@@ -200,7 +210,6 @@ export const useFormProductoHandler = (isEditMode = false) => {
     }
 
     const handleSubmit = () => {
-        console.log(values)
         if (isFormValid) {
             // Transformar variantes del formato frontend al formato backend
             const variantesFormatted = values.variantes.value.map(variante => ({
@@ -239,6 +248,83 @@ export const useFormProductoHandler = (isEditMode = false) => {
     }
 
 
+    const hacerClick = async (key, record) => {
+
+        if (key === 'archive') {
+            setLoading(true);
+            try {
+                await archiveProducto(id);
+                message.success('Artículo archivado');
+                navigate('/productos');
+                return;
+            } catch (err) {
+                setError(err.message);
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        if (key === 'restore') {
+            setLoading(true);
+            try {
+                console.log("restaurarProducto", id);
+                await restaurarProducto(id);
+                message.success('Producto restaurado');
+                navigate( '/productos/archivados');
+                return;
+            } catch (err) {
+                setError(err.message);
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        if (key === 'delete') {
+            setIsDeleteModalOpen({
+                open: true,
+                nombre: record.nombre,
+            });
+            return;
+        }
+    };
+
+
+    const handleDeletePermanent = async () => {
+
+        setLoading(true);
+        try {
+            let imageForDelete = values.imagen.value || '';
+
+            if (imageForDelete !== '') {
+                const fullFileName = values.imagen.value.split('/').pop(); // "o8vyvxdh2zhwsl8gmlyo.png"
+                imageForDelete = "kozby/products/" + fullFileName.split('.')[0];     // "o8vyvxdh2zhwsl8gmlyo"
+            }
+
+            await deleteProducto(id, imageForDelete);
+            message.success('Producto eliminado definitivamente');
+            setIsDeleteModalOpen({
+                open: false,
+                nombre: '',
+            });
+            navigate((isArchived) ? '/productos/archivados' : '/productos');
+        } catch (err) {
+            console.log("error", err);
+            message.error('Error al eliminar');
+            setError(err.message);
+
+        } finally {
+            setLoading(false);
+        }
+    };
+
+
+    const handleCancelDelete = () => {
+        setIsDeleteModalOpen({
+            open: false,
+            nombre: '',
+        });
+    };
+
     return {
         loading,
         handleOk,
@@ -249,6 +335,11 @@ export const useFormProductoHandler = (isEditMode = false) => {
         values,
         showFormErrors,
         fechaCreacion,
-        fechaModificacion
+        fechaModificacion,
+        hacerClick,
+        handleDeletePermanent,
+        isDeleteModalOpen,
+        handleCancelDelete,
+        isArchived
     };
 };

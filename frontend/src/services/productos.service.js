@@ -7,12 +7,12 @@ export const getProductosArchivados = async () => {
 };
 
 export const restaurarProducto = async (id) => {
-  const res = await fetch(`${API_URL}/${id}/restore`, {
-    method: 'PATCH',
-  });
-  if (!res.ok) throw new Error('Error al restaurar');
+    const res = await fetch(`${API_URL}/${id}/restore`, {
+        method: 'PATCH',
+    });
+    if (!res.ok) throw new Error('Error al restaurar');
 };
-    
+
 
 export const getProductos = async () => {
     const res = await fetch(API_URL);
@@ -35,7 +35,7 @@ export const getProductoById = async (id) => {
 
 export const postProducto = async (productoData) => {
     const formData = new FormData();
-    
+
     // Agregar todos los campos de texto
     Object.keys(productoData).forEach(key => {
         if (key === 'imagen') {
@@ -49,7 +49,7 @@ export const postProducto = async (productoData) => {
         } else if (key === 'variantes') {
             const variantes = productoData[key].map(variante => {
                 console.log("variante in post", variante);
-                return{
+                return {
                     id: variante.id,
                     nombre: variante.nombre,
                     precio: variante.precio,
@@ -76,7 +76,7 @@ export const postProducto = async (productoData) => {
 
 export const putProducto = async (id, productoData) => {
     const formData = new FormData();
-    
+
     // Agregar todos los campos de texto
     Object.keys(productoData).forEach(key => {
         if (key === 'imagen') {
@@ -89,7 +89,7 @@ export const putProducto = async (id, productoData) => {
             }
         } else if (key === 'variantes') {
             const variantes = productoData[key].map(variante => {
-                return{
+                return {
                     id: variante.id,
                     nombre: variante.nombre,
                     precio: variante.precio,
@@ -106,11 +106,11 @@ export const putProducto = async (id, productoData) => {
         method: 'PUT',
         body: formData // No establecer Content-Type, el navegador lo hace automáticamente
     });
-    
+
     if (!res.ok) {
         throw new Error(`HTTP ${res.status}`);
     }
-    
+
     return await res.json();
 };
 
@@ -126,7 +126,7 @@ export const archiveProducto = async (id) => {
     return await res.json();
 };
 
-export const deleteProducto = async (id,imageId) => {
+export const deleteProducto = async (id, imageId) => {
     const res = await fetch(`${API_URL}/${id}?imageId=${imageId}`, {
         method: 'DELETE',
     });
