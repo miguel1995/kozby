@@ -6,13 +6,14 @@ import { Plus } from './pages/Plus'
 import Productos from './pages/Productos'
 import FormProducto from './pages/FormProducto'
 import FormInicio from './pages/FormInicio';
-import MainLayout from './layouts/MainLoyout';
+import MainLayout from './layouts/MainLayout';
+import ProcesoPagos from './pages/ProcesoPagos';
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Navigate to="/productos" />} />
+        <Route path="/" element={<Navigate to="/proceso-pagos" />} />
         <Route path="/productos" element={
           <MainLayout>
             <Productos />
@@ -20,9 +21,22 @@ function App() {
         } />
         <Route path="/nuevo-producto" element={<FormProducto />} />
         <Route path="/editar-producto/:id" element={<FormProducto isEditMode={true} />} />
-        <Route path="/mas" element={<Plus />} />
+        <Route path="/mas" element={
+          <MainLayout>
+            <Plus />
+          </MainLayout>
+        } />
         <Route path="/inicio-sesion" element={<FormInicio />} />
-        <Route path="/productos/archivados" element={<Productos />} />
+        <Route path="/productos/archivados" element={
+          <MainLayout>
+            <Productos />
+          </MainLayout>
+        } />
+        <Route path="/proceso-pagos" element={
+          <MainLayout>
+            <ProcesoPagos />
+          </MainLayout>
+        } />
       </Routes>
     </BrowserRouter>
   );

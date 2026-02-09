@@ -1,75 +1,41 @@
 import React, { useState } from 'react';
-import {
-
-  MenuFoldOutlined,
-  MenuUnfoldOutlined,
-  BookOutlined,
-} from '@ant-design/icons';
-import { Button, Menu } from 'antd';
-import { useNavigate } from 'react-router';
+import { AppstoreOutlined, MenuOutlined } from '@ant-design/icons';
+import { useNavigate, useLocation } from 'react-router';
 
 const MenuBar = () => {
-
-
-
-  const items = [
-
-    {
-      key: 'sub1',
-      label: 'Artículos',
-      icon: <BookOutlined className='icon-book'/>,
-      children: [
-        {
-          key: '1',
-          label: 'Surtido de Artículos',
-          onClick: () => {
-            navigate('/productos', { replace: false });
-            navigate(0);
-          }
-        },
-        {
-          key: '2',
-          label: 'Artículos Archivados',
-          onClick: () => {
-            navigate('/productos/archivados', { replace: false });
-            navigate(0);
-          }
-        }
-
-      ],
-    }
-  ];
-
   const navigate = useNavigate();
+  const location = useLocation();
 
+  const isActive = (path) => {
 
-  const [collapsed, setCollapsed] = useState(false);
-  const toggleCollapsed = () => {
-    setCollapsed(!collapsed);
+      if (path === '/mas') return location.pathname === '/mas' || location.pathname === '/productos' || location.pathname === '/productos/archivados';
+      if (path === '/proceso-pagos') return location.pathname === '/proceso-pagos';
+      return false;
   };
+
+
   return (
-    <div style={{ width: 260, marginTop: 50, marginLeft: 40 }}>
-      <Button
-        type="primary"
-        className="menu-btn"
-        size="large"
-        shape="round"
-        onClick={toggleCollapsed}
-      >
-        {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-        Menú
-      </Button>
-
-
-      <Menu
-        defaultSelectedKeys={['1']}
-        defaultOpenKeys={['sub1']}
-        mode="inline"
-        theme="light"
-        inlineCollapsed={collapsed}
-        items={items}
-      />
-    </div>
+    <nav className="main-layout-bottom-bar">              
+    <button
+        type="button"
+        className={`main-layout-nav-item ${isActive('/proceso-pagos') ? 'active' : ''}`}
+        onClick={() => navigate('/proceso-pagos')}
+        aria-label="Proceso de pagos"
+    >
+        <AppstoreOutlined/>
+        <span>Proceso de pagos</span>
+    </button>
+  
+    <button
+        type="button"
+        className={`main-layout-nav-item ${isActive('/mas') ? 'active' : ''}`}
+        onClick={() => navigate('/mas')}
+        aria-label="Más"
+    >
+        <MenuOutlined /> 
+        <span>Más</span>
+    </button>
+</nav>
   );
 };
 export default MenuBar;

@@ -66,17 +66,13 @@ export const initialFormValues = {
   export const PLUS_MENU_ITEMS = [
     {
       key: "1",
-      label: "Todos los productos",
+      label: "Articulos activos",
       path: "/productos"
     },
     {
       key: "2",
-      label: "Todos los servicios",
-      path: "/servicios"
-    },
-    {
-      key: "3",
-      label: "Todos los clientes",
-      path: "/clientes"
+      label: "Articulos archivados",
+      path: "/productos/archivados"
     }
+    
   ]

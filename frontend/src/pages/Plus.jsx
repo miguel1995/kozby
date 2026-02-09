@@ -8,7 +8,6 @@ export const Plus = () => {
     return (
         <div className="plus-container">
             <div className="plus-welcome-text">Te damos la bienvenida de Nuevo</div>
-           {/* <MenuBar /> */}
            {PLUS_MENU_ITEMS.map((item) => (
             <div key={item.key}>
                 <div className="plus-menu-item-label" onClick={() => navigate(item.path)}>{item.label}</div>

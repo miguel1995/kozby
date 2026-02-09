@@ -130,23 +130,26 @@ const FormProducto = ({ isEditMode = false }) => {
 
           <ProductForm values={values} handleChange={handleChange} />
           <Variantes variantes={values.variantes.value} handleChange={handleChange} />
-          <Divider />
-          
-          <div className="form-producto-actions-container">
-          <div>
-            <ButtonSecundary
-              label={isArchived ? "Restaurar artículo" : "Archivar artículo"}
-              onClick={() => hacerClick(isArchived ? "restore" : "archive", {})}
-            />
-          </div>
-          <div>
-            <ButtonDanger
-              label="Eliminar artículo"
-              onClick={() => hacerClick("delete", {})}
-            />
-          </div>
-          </div>
+          {isEditMode && (
+            <>
+              <Divider />
 
+              <div className="form-producto-actions-container">
+                <div>
+                  <ButtonSecundary
+                    label={isArchived ? "Restaurar artículo" : "Archivar artículo"}
+                    onClick={() => hacerClick(isArchived ? "restore" : "archive", {})}
+                  />
+                </div>
+                <div>
+                  <ButtonDanger
+                    label="Eliminar artículo"
+                    onClick={() => hacerClick("delete", {})}
+                  />
+                </div>
+              </div>
+            </>
+          )}
 
         </div>
       </div>
