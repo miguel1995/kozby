@@ -4,6 +4,7 @@ import { UserOutlined } from '@ant-design/icons';
 import { Input, Button } from 'antd';
 import { SubmitButton } from '../components/buttons/SubmitButton';
 import { useLoginFormHandler } from '../hooks/useLoginFormHandler';
+import { ModalError } from '../components/modals/ModalError';
 
 export default function FormInicio() {
   const navigate = useNavigate();
@@ -20,10 +21,12 @@ export default function FormInicio() {
     canSubmit,
     handleSubmit,
     setServerError,
+    isErrorModalOpen,
+    closeErrorModal,
   } = useLoginFormHandler({ onSuccess: () => navigate('/productos') });
 
   return (
-     <div style={{ maxWidth: 500, margin: '16rem auto 2rem auto', padding: 16 }}>
+    <div style={{ maxWidth: 500, margin: '16rem auto 2rem auto', padding: 16 }}>
       <h2 style={{ fontWeight: 'bold', fontSize: 30, letterSpacing: 1 }}>Iniciar sesión</h2>
 
       <form onSubmit={handleSubmit} noValidate>
@@ -85,15 +88,12 @@ export default function FormInicio() {
           )}
         </div>
 
-        {serverError && (
-          <div
-            role="alert"
-            aria-live="polite"
-            style={{ color: 'red', marginBottom: 12 }}
-          >
+        {serverError && !isErrorModalOpen && (
+          <div role="alert" aria-live="polite" style={{ color: 'red', marginBottom: 12 }}>
             {serverError}
           </div>
         )}
+
 
         <div style={{ display: 'flex', justifyContent: 'center', marginTop: 20 }}>
           <SubmitButton
@@ -104,6 +104,11 @@ export default function FormInicio() {
           />
         </div>
       </form>
+      <ModalError
+        open={isErrorModalOpen}
+        onOk={closeErrorModal}
+      />
+
     </div>
   );
 }
