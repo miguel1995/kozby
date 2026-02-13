@@ -4,88 +4,18 @@ import { Dropdown, message } from 'antd';
 
 import {
   getProductos,
-  getProductosArchivados,
-  archiveProducto,
-  restaurarProducto,
-  deleteProducto,
+  getProductosArchivados
 } from '../services/productos.service';
 import { useNavigate } from 'react-router';
-import { ButtonAmount } from '../components/buttons/ButtonAmount';
 
 export const useProductsHandler = () => {
-  const [tableData, setTableData] = useState([]);
   const [productos, setProductos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [verArchivados, setVerArchivados] = useState(null);
 
-  const [selectedProduct, setSelectedProduct] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-
-  const items = verArchivados
-    ? [
-      { label: 'Restaurar', key: 'restore' },
-      { label: 'Eliminar', key: 'delete' },
-    ]
-    : [
-      { label: 'Editar', key: 'edit' },
-      { label: 'Archivar', key: 'archive' },
-      { label: 'Eliminar', key: 'delete' }
-    ];
-
-
-  const columns = [
-    {
-      title: '',
-      dataIndex: 'imagen',
-      key: 'imagen',
-      width: 42,
-      render: (src) => (
-        <img src={src} alt="" style={{ width: 39, height: 'auto', objectFit: 'cover' }} />
-      ),
-    },
-    {
-      title: 'Artículo',
-      dataIndex: 'nombre',
-      key: 'nombre',
-      render: (text) => text,
-    },
-    {
-      title: 'Categoría',
-      dataIndex: 'categoria_nombre',
-      key: 'categoria_nombre',
-      render: (text) => "En construcción",
-    },
-    {
-      title: 'Disponibilidad',
-      dataIndex: 'cantidad',
-      key: 'cantidad',
-      render: (text) => {
-        
-        return <ButtonAmount amount={text} />;    
-
-      },
-    },
-    {
-      title: 'Precio',
-      dataIndex: 'precio',
-      key: 'precio',
-      render: (p) => `$${p}`,
-    },
-    {
-      title: '',
-      key: 'acciones',
-      render: (_, record) => (
-        <Dropdown menu={{ items, onClick: (event) => hacerClick(event, record) }} trigger={["click"]}>
-          <EllipsisOutlined
-            style={{ fontSize: '25px' }}
-            onClick={(e) => e.stopPropagation()}
-          />
-        </Dropdown>
-      ),
-    },
-  ];
 
   const navigate = useNavigate();
 
@@ -96,9 +26,6 @@ export const useProductsHandler = () => {
     }
   }, [verArchivados]);
 
-  useEffect(() => {
-    setTableData(productos.map((p) => ({ key: p.id, ...p })));
-  }, [productos]);
 
   useEffect(() => {
     if (error) {
@@ -114,7 +41,6 @@ export const useProductsHandler = () => {
   };
 
   const hacerClick = async (key, record) => {
-     setSelectedProduct(record);
 
     const { id } = record;
 
@@ -146,26 +72,15 @@ export const useProductsHandler = () => {
     }
   };
 
-  const handleRowClick = (record) => {
-    return {
-      onClick: () => {
-        navigate(`/editar-producto/${record.id}`);
-      },
-      style: { cursor: 'pointer' }
-    };
-  };
 
 
 
 
   return {
-    columns,
-    tableData,
     loading,
     error,
     verArchivados,
     setVerArchivados,
-    handleRowClick,
     isModalOpen,
     handleOk,
     productos,

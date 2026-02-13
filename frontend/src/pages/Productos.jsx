@@ -8,28 +8,17 @@ import { SubmitButton } from '../components/buttons/SubmitButton';
 import { useLocation, useNavigate } from 'react-router';
 import Loader from '../components/Loader';
 import { ModalError } from '../components/modals/ModalError';
-import { ButtonDanger } from '../components/buttons/ButtonDanger';
-import { ButtonSecundary } from '../components/buttons/ButtonSecundary';
 import { ButtonAmount } from '../components/buttons/ButtonAmount';
 function Productos() {
 
     const [search, setSearch] = useState('');
 
     const {
-        columns,
-        tableData,
-        rowSelection,
-        selectionType,
         isModalOpen,
         handleOk,
         setVerArchivados,
         verArchivados,
-        isDeleteModalOpen,
         loading,
-        handleArchive,
-        handleDeletePermanent,
-        handleCancelDelete,
-        handleRowClick,
         productos,
         hacerClick
     } = useProductsHandler();
