@@ -49,6 +49,11 @@ export const useProductsHandler = () => {
       return;
     }
 
+    if (key === 'nueva-orden') {
+      navigate('/nueva-orden');
+      return;
+    }
+
   };
 
 
@@ -57,6 +62,7 @@ export const useProductsHandler = () => {
 
 
   const fetchProductos = async () => {
+    console.log('fetchProductos');
     setLoading(true);
     try {
       const data = verArchivados

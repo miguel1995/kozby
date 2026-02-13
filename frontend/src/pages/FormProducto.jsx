@@ -87,7 +87,7 @@ const FormProducto = ({ isEditMode = false }) => {
           <div className="form-producto-actions">
 
             <ButtonClose
-              onClick={() => navigate('/productos')}
+              onClick={() => navigate(-1)}
             />
             <SubmitButton
               text="Guardar"

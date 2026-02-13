@@ -30,7 +30,6 @@ export const useFormProductoHandler = (isEditMode = false) => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        console.log("id", id);
         if (id && isEditMode) {
             fetchProducto(id);
         }
@@ -66,7 +65,6 @@ export const useFormProductoHandler = (isEditMode = false) => {
         try {
             const data = await getProductoById(id);
 
-            console.log("data", data);
             const variantes = data.variantes.map(variante => ({
                 id: { value: variante.id, valid: true },
                 nombre: { value: variante.nombre, valid: true },
@@ -96,9 +94,8 @@ export const useFormProductoHandler = (isEditMode = false) => {
     const createNewProduct = async (productoData) => {
         setLoading(true);
         try {
-            console.log("productoData", productoData);
             const data = await postProducto(productoData);
-            navigate('/productos');
+            navigate(-1);
         } catch (err) {
             console.error('Error al crear producto:', err);
             setError(err.message || 'Error');

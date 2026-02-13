@@ -1,14 +1,15 @@
-import React, { useEffect, useState, useMemo } from 'react';
-import { Divider, Radio, Table, Modal, Button, Space, Input, message } from 'antd';
-import { ExclamationCircleOutlined } from '@ant-design/icons';
+import React, { useEffect, useState } from 'react';
+
 import { useProductsHandler } from '../hooks/useProductsHandler';
 import { SearchOutlined, CloseOutlined } from '@ant-design/icons';
-import MenuBar from '../components/MenuBar';
 import { SubmitButton } from '../components/buttons/SubmitButton';
 import { useLocation, useNavigate } from 'react-router';
 import Loader from '../components/Loader';
 import { ModalError } from '../components/modals/ModalError';
-import { ButtonAmount } from '../components/buttons/ButtonAmount';
+import ListProductos from '../components/ListProductos';
+import {Input} from 'antd';
+
+
 function Productos() {
 
     const [search, setSearch] = useState('');
@@ -60,33 +61,13 @@ function Productos() {
                 <div className="products-table">
                     {loading ? (
                         <Loader message="Cargando productos..." />
-                    ) : (<>        
-                        {<div className="productos-list">
-                            {productos.map((producto) => (
-                                <div key={producto.id}>
-                                    <div className="producto-item" onClick={() => { hacerClick("edit", producto) }}>
-                                        <div className="producto-item-info-container" >
-                                            <div>
-                                                <img src={producto.imagen} alt="" style={{ width: 39, height: 'auto', objectFit: 'cover' }} />
-                                            </div>
-                                            <div>
-                                                <div className="producto-item-nombre">{producto.nombre}</div>
-                                                <div className="producto-item-precio">$ {producto.precio}</div>
-                                                <ButtonAmount amount={producto.cantidad} clickHandler={() => { }} />
-                                            </div>
-
-                                        </div>
-                                        <div>
-                                            <div className="producto-item-cantidad">
-                                                {producto.variantes.length > 0 ? <div>{producto.variantes.length} precios</div> : <div>Variable</div>}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <Divider style={{ margin: '8px 0' }} />
-                                </div>
-                            ))}
-                        </div>}
-                    </>
+                    ) : (      
+                        <ListProductos 
+                        productos={productos} 
+                        hacerClickCallback={hacerClick}
+                        clickAction="edit"
+                        />
+                    
                     )}
                 </div>
 
