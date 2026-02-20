@@ -1,9 +1,7 @@
-
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 
-// Nota: La conexión a MongoDB se inicializa en server.js para asegurar que esté lista antes de aceptar peticiones
 
 const app = express();
 
@@ -20,6 +18,7 @@ app.get("/health", (req, res) => {
 });
 
 app.use('/productos', require('./routes/productos.routes'));
+app.use('/', require('./routes/authentication.routes'));
 
 
 
