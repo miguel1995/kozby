@@ -30,20 +30,20 @@ export function useLoginFormHandler({ onSuccess } = {}) {
         password,
       });
 
-        if (!res.ok) {
-          const body = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
 
-          if (res.status >= 500) {
-            setServerError(body.message || 'Error interno del servidor');
-            setIsErrorModalOpen(true);
-          } else {
-            setServerError(body.message || 'Credenciales inválidas');
-          }
-
-          setLoading(false);
-          
-          return;
+        if (res.status >= 500) {
+          setServerError(body.message || 'Error interno del servidor');
+          setIsErrorModalOpen(true);
+        } else {
+          setServerError(body.message || 'Credenciales inválidas');
         }
+
+        setLoading(false);
+
+        return;
+      }
 
 
       const data = await res.json().catch(() => ({}));

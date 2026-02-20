@@ -76,3 +76,19 @@ export const initialFormValues = {
     }
     
   ]
+
+
+  export const ERROR_CODES = {
+    500:{
+      title: "Error interno del servidor",
+      message: "Lo sentimos, en este momento el servicio no está disponible",
+      label: "Ok",
+      redirectPath: null
+    },
+    401:{
+      title: "Su sesión ha expirado",
+      message: "Por favor, inicie sesión nuevamente",
+      label: "Ir a inicio de sesión",
+      redirectPath: "/inicio-sesion"
+    }
+  }

@@ -15,7 +15,7 @@ function Productos() {
     const [search, setSearch] = useState('');
 
     const {
-        isModalOpen,
+        errorData,
         handleOk,
         setVerArchivados,
         verArchivados,
@@ -72,7 +72,8 @@ function Productos() {
                 </div>
 
                 <ModalError
-                    open={isModalOpen}
+                    open={errorData.isOpen}
+                    errorCode={errorData.codeError}
                     onOk={handleOk}
                 />
 

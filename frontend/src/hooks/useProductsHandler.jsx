@@ -11,10 +11,11 @@ import { useNavigate } from 'react-router';
 export const useProductsHandler = () => {
   const [productos, setProductos] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [verArchivados, setVerArchivados] = useState(null);
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [errorData, setErrorData] = useState({
+    codeError: null,
+    isOpen: false
+  });
 
 
   const navigate = useNavigate();
@@ -27,17 +28,14 @@ export const useProductsHandler = () => {
   }, [verArchivados]);
 
 
-  useEffect(() => {
-    if (error) {
-      showModal();
-    }
-  }, [error]);
+
   
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
+ 
   const handleOk = () => {
-      setIsModalOpen(false);
+    setErrorData({
+      codeError: null,
+      isOpen: false
+    });
   };
 
   const hacerClick = async (key, record) => {
@@ -62,16 +60,25 @@ export const useProductsHandler = () => {
 
 
   const fetchProductos = async () => {
-    console.log('fetchProductos');
     setLoading(true);
     try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw { status: 401 };
+      }
+      
       const data = verArchivados
         ? await getProductosArchivados()
         : await getProductos();
 
+        console.log('data', data);
+
       setProductos(data);
     } catch (err) {
-      setError(err.message);
+      setErrorData({
+        codeError: err.status || 500,
+        isOpen: true
+      });
       setProductos([]);
     } finally {
       setLoading(false);
@@ -84,10 +91,9 @@ export const useProductsHandler = () => {
 
   return {
     loading,
-    error,
     verArchivados,
     setVerArchivados,
-    isModalOpen,
+    errorData,
     handleOk,
     productos,
     hacerClick

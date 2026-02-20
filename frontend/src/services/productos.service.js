@@ -2,7 +2,7 @@ const API_URL = `${import.meta.env.VITE_API_URL_BASE}/productos`;
 
 export const getProductosArchivados = async () => {
     const res = await fetch(`${API_URL}/archived`);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    if (!res.ok) throw { status: res.status };
     return await res.json();
 };
 
@@ -10,15 +10,19 @@ export const restaurarProducto = async (id) => {
     const res = await fetch(`${API_URL}/${id}/restore`, {
         method: 'PATCH',
     });
-    if (!res.ok) throw new Error('Error al restaurar');
+    if (!res.ok) throw { status: res.status };
 };
 
 
 export const getProductos = async () => {
-    const res = await fetch(API_URL);
+    const res = await fetch(API_URL, {
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+    });
 
     if (!res.ok) {
-        throw new Error(`HTTP ${res.status}`);
+        throw { status: res.status };
     }
 
     return await res.json();
@@ -27,7 +31,7 @@ export const getProductos = async () => {
 export const getProductoById = async (id) => {
     const res = await fetch(`${API_URL}/${id}`);
     if (!res.ok) {
-        throw new Error(`HTTP ${res.status}`);
+        throw { status: res.status };
     }
     return await res.json();
 };
@@ -68,7 +72,7 @@ export const postProducto = async (productoData) => {
     });
 
     if (!res.ok) {
-        throw new Error(`HTTP ${res.status}`);
+        throw { status: res.status };
     }
 
     return await res.json();
@@ -108,7 +112,7 @@ export const putProducto = async (id, productoData) => {
     });
 
     if (!res.ok) {
-        throw new Error(`HTTP ${res.status}`);
+        throw { status: res.status };
     }
 
     return await res.json();
@@ -120,7 +124,7 @@ export const archiveProducto = async (id) => {
     });
 
     if (!res.ok) {
-        throw new Error(`HTTP ${res.status}`);
+        throw { status: res.status };
     }
 
     return await res.json();
@@ -132,7 +136,7 @@ export const deleteProducto = async (id, imageId) => {
     });
 
     if (!res.ok) {
-        throw new Error(`HTTP ${res.status}`);
+        throw { status: res.status };
     }
 
     return await res.json();
