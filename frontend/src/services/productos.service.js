@@ -1,7 +1,13 @@
 const API_URL = `${import.meta.env.VITE_API_URL_BASE}/productos`;
 
+const getAuthHeaders = () => ({
+    Authorization: `Bearer ${localStorage.getItem('token')}`,
+});
+
 export const getProductosArchivados = async () => {
-    const res = await fetch(`${API_URL}/archived`);
+    const res = await fetch(`${API_URL}/archived`, {
+        headers: getAuthHeaders(),
+    });
     if (!res.ok) throw { status: res.status };
     return await res.json();
 };
@@ -9,16 +15,14 @@ export const getProductosArchivados = async () => {
 export const restaurarProducto = async (id) => {
     const res = await fetch(`${API_URL}/${id}/restore`, {
         method: 'PATCH',
+        headers: getAuthHeaders(),
     });
     if (!res.ok) throw { status: res.status };
 };
 
-
 export const getProductos = async () => {
     const res = await fetch(API_URL, {
-        headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
+        headers: getAuthHeaders(),
     });
 
     if (!res.ok) {
@@ -29,13 +33,14 @@ export const getProductos = async () => {
 };
 
 export const getProductoById = async (id) => {
-    const res = await fetch(`${API_URL}/${id}`);
+    const res = await fetch(`${API_URL}/${id}`, {
+        headers: getAuthHeaders(),
+    });
     if (!res.ok) {
         throw { status: res.status };
     }
     return await res.json();
 };
-
 
 export const postProducto = async (productoData) => {
     const formData = new FormData();
@@ -58,7 +63,7 @@ export const postProducto = async (productoData) => {
                     nombre: variante.nombre,
                     precio: variante.precio,
                     cantidad: variante.cantidad,
-                }
+                };
             });
             formData.append('variantes', JSON.stringify(variantes));
         } else {
@@ -68,6 +73,7 @@ export const postProducto = async (productoData) => {
 
     const res = await fetch(API_URL, {
         method: 'POST',
+        headers: getAuthHeaders(),
         body: formData // No establecer Content-Type, el navegador lo hace automáticamente
     });
 
@@ -98,7 +104,7 @@ export const putProducto = async (id, productoData) => {
                     nombre: variante.nombre,
                     precio: variante.precio,
                     cantidad: variante.cantidad,
-                }
+                };
             });
             formData.append('variantes', JSON.stringify(variantes));
         } else {
@@ -108,6 +114,7 @@ export const putProducto = async (id, productoData) => {
 
     const res = await fetch(`${API_URL}/${id}`, {
         method: 'PUT',
+        headers: getAuthHeaders(),
         body: formData // No establecer Content-Type, el navegador lo hace automáticamente
     });
 
@@ -121,6 +128,7 @@ export const putProducto = async (id, productoData) => {
 export const archiveProducto = async (id) => {
     const res = await fetch(`${API_URL}/${id}/archive`, {
         method: 'PATCH',
+        headers: getAuthHeaders(),
     });
 
     if (!res.ok) {
@@ -133,6 +141,7 @@ export const archiveProducto = async (id) => {
 export const deleteProducto = async (id, imageId) => {
     const res = await fetch(`${API_URL}/${id}?imageId=${imageId}`, {
         method: 'DELETE',
+        headers: getAuthHeaders(),
     });
 
     if (!res.ok) {

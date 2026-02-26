@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 
-// Agregamos la palabra 'export' antes de la constante
+
 export const createAccessToken = (user) => {
     const secret = process.env.JWT_SECRET;
     const token = jwt.sign(
@@ -11,7 +11,7 @@ export const createAccessToken = (user) => {
     return token;
 }
 
-// Agregamos la palabra 'export' antes de la constante
+
 export const verifyToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
