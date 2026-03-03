@@ -16,17 +16,18 @@ import { useMemo } from 'react';
 
 
 
+
 const FormProducto = ({ isEditMode = false }) => {
 
 
 
   const {
+    errorData,
     loading,
     values,
     fechaCreacion,
     fechaModificacion,
     isFormValid,
-    isModalOpen,
     handleChange,
     handleSubmit,
     handleOk,
@@ -155,7 +156,8 @@ const FormProducto = ({ isEditMode = false }) => {
       </div>
 
       <ModalError
-        open={isModalOpen}
+        open={errorData.isOpen}
+        errorCode={errorData.codeError}
         onOk={handleOk}
       />
 

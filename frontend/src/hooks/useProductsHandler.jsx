@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { EllipsisOutlined } from '@ant-design/icons';
-import { Dropdown, message } from 'antd';
+import { checkToken } from '../utils/authUtils';
 
 import {
   getProductos,
@@ -62,16 +61,10 @@ export const useProductsHandler = () => {
   const fetchProductos = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        throw { status: 401 };
-      }
-      
+      checkToken();
       const data = verArchivados
         ? await getProductosArchivados()
         : await getProductos();
-
-        console.log('data', data);
 
       setProductos(data);
     } catch (err) {

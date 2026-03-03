@@ -3,6 +3,7 @@ import { postProducto, getProductoById, putProducto } from '../services/producto
 import { initialFormValues, VARIANTES_ACTIONS } from '../utils/constants';
 import { useNavigate } from 'react-router';
 import { useParams } from 'react-router';
+import { checkToken } from '../utils/authUtils';
 import {
     archiveProducto,
     deleteProducto,
@@ -14,9 +15,7 @@ export const useFormProductoHandler = (isEditMode = false) => {
 
     const { id } = useParams();
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
     const [isFormValid, setIsFormValid] = useState(false);
-    const [isModalOpen, setIsModalOpen] = useState(false);
     const [values, setValues] = useState(initialFormValues);
     const [fechaCreacion, setFechaCreacion] = useState('');
     const [fechaModificacion, setFechaModificacion] = useState('');
@@ -24,6 +23,10 @@ export const useFormProductoHandler = (isEditMode = false) => {
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState({
         open: false,
         nombre: '',
+    });
+    const [errorData, setErrorData] = useState({
+        codeError: null,
+        isOpen: false
     });
     const [isArchived, setIsArchived] = useState(false);
 
@@ -35,11 +38,6 @@ export const useFormProductoHandler = (isEditMode = false) => {
         }
     }, [id, isEditMode]);
 
-    useEffect(() => {
-        if (error) {
-            showModal()
-        }
-    }, [error])
 
 
     useEffect(() => {
@@ -52,18 +50,19 @@ export const useFormProductoHandler = (isEditMode = false) => {
         }));
     }, [values]);
 
-
-    const showModal = () => {
-        setIsModalOpen(true);
-    };
     const handleOk = () => {
-        setIsModalOpen(false);
+        setErrorData({
+            codeError: null,
+            isOpen: false
+        });
     };
 
     const fetchProducto = async (id) => {
         setLoading(true);
         try {
+            checkToken();
             const data = await getProductoById(id);
+
 
             const variantes = data.variantes.map(variante => ({
                 id: { value: variante.id, valid: true },
@@ -84,7 +83,11 @@ export const useFormProductoHandler = (isEditMode = false) => {
             setFechaModificacion(data.updatedAt);
             setIsArchived(data.archivado);
         } catch (err) {
-            setError(err.message || 'Error');
+            setErrorData({
+                codeError: err.status || 500,
+                isOpen: true
+            });
+
         } finally {
             setLoading(false);
         }
@@ -94,11 +97,14 @@ export const useFormProductoHandler = (isEditMode = false) => {
     const createNewProduct = async (productoData) => {
         setLoading(true);
         try {
+            checkToken();
             const data = await postProducto(productoData);
             navigate(-1);
         } catch (err) {
-            console.error('Error al crear producto:', err);
-            setError(err.message || 'Error');
+            setErrorData({
+                codeError: err.status || 500,
+                isOpen: true
+            });
         } finally {
             setLoading(false);
         }
@@ -107,11 +113,14 @@ export const useFormProductoHandler = (isEditMode = false) => {
     const updateProduct = async (id, productoData) => {
         setLoading(true);
         try {
+            checkToken();
             const data = await putProducto(id, productoData);
             navigate('/productos');
         } catch (err) {
-            console.error('Error al actualizar producto:', err);
-            setError(err.message || 'Error');
+            setErrorData({
+                codeError: err.status || 500,
+                isOpen: true
+            })
         } finally {
             setLoading(false);
         }
@@ -120,8 +129,6 @@ export const useFormProductoHandler = (isEditMode = false) => {
 
     const handleChange = (e) => {
         setShowFormErrors(false);
-
-        // Manejar tanto inputs normales como File objects
         const fieldName = e.target?.name;
         if (!fieldName) {
             console.warn("El evento de cambio no tiene un nombre de campo válido.");
@@ -208,15 +215,12 @@ export const useFormProductoHandler = (isEditMode = false) => {
 
     const handleSubmit = () => {
         if (isFormValid) {
-            // Transformar variantes del formato frontend al formato backend
             const variantesFormatted = values.variantes.value.map(variante => ({
                 id: variante.id.value,
                 nombre: variante.nombre.value,
                 precio: variante.precio.value,
                 cantidad: variante.cantidad.value
             }));
-
-            console.log("variantesFormatted", variantesFormatted);
 
             if (isEditMode) {
                 updateProduct(id, {
@@ -250,12 +254,16 @@ export const useFormProductoHandler = (isEditMode = false) => {
         if (key === 'archive') {
             setLoading(true);
             try {
+                checkToken();
                 await archiveProducto(id);
                 message.success('Artículo archivado');
                 navigate('/productos');
                 return;
             } catch (err) {
-                setError(err.message);
+                setErrorData({
+                    codeError: err.status || 500,
+                    isOpen: true
+                })
             } finally {
                 setLoading(false);
             }
@@ -264,13 +272,17 @@ export const useFormProductoHandler = (isEditMode = false) => {
         if (key === 'restore') {
             setLoading(true);
             try {
+                checkToken();
                 console.log("restaurarProducto", id);
                 await restaurarProducto(id);
                 message.success('Producto restaurado');
-                navigate( '/productos/archivados');
+                navigate('/productos/archivados');
                 return;
             } catch (err) {
-                setError(err.message);
+                setErrorData({
+                    codeError: err.status || 500,
+                    isOpen: true
+                })
             } finally {
                 setLoading(false);
             }
@@ -290,11 +302,12 @@ export const useFormProductoHandler = (isEditMode = false) => {
 
         setLoading(true);
         try {
+            checkToken();
             let imageForDelete = values.imagen.value || '';
 
             if (imageForDelete !== '') {
-                const fullFileName = values.imagen.value.split('/').pop(); // "o8vyvxdh2zhwsl8gmlyo.png"
-                imageForDelete = "kozby/products/" + fullFileName.split('.')[0];     // "o8vyvxdh2zhwsl8gmlyo"
+                const fullFileName = values.imagen.value.split('/').pop();
+                imageForDelete = "kozby/products/" + fullFileName.split('.')[0];
             }
 
             await deleteProducto(id, imageForDelete);
@@ -305,10 +318,10 @@ export const useFormProductoHandler = (isEditMode = false) => {
             });
             navigate((isArchived) ? '/productos/archivados' : '/productos');
         } catch (err) {
-            console.log("error", err);
-            message.error('Error al eliminar');
-            setError(err.message);
-
+            setErrorData({
+                codeError: err.status || 500,
+                isOpen: true
+            });
         } finally {
             setLoading(false);
         }
@@ -325,7 +338,6 @@ export const useFormProductoHandler = (isEditMode = false) => {
     return {
         loading,
         handleOk,
-        isModalOpen,
         isFormValid,
         handleChange,
         handleSubmit,
@@ -337,6 +349,7 @@ export const useFormProductoHandler = (isEditMode = false) => {
         handleDeletePermanent,
         isDeleteModalOpen,
         handleCancelDelete,
-        isArchived
+        isArchived,
+        errorData,
     };
 };
