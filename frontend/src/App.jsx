@@ -38,7 +38,7 @@ function App() {
               <ProcesoPagos />
             </MainLayout>
           } />
-          <Route path="/nueva-orden" element={
+          <Route path="/nueva-orden/:id" element={
             <MainLayout>
               <NuevaOrden />
             </MainLayout>

@@ -47,7 +47,7 @@ export const useProductsHandler = () => {
     }
 
     if (key === 'nueva-orden') {
-      navigate('/nueva-orden');
+      navigate(`/nueva-orden/${id}`);
       return;
     }
 
