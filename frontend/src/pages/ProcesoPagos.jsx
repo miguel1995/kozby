@@ -3,7 +3,7 @@ import { useProductsHandler } from '../hooks/useProductsHandler';
 import ListProductos from '../components/ListProductos';
 import Loader from '../components/Loader';
 import { ModalError } from '../components/modals/ModalError';
-import { ButtonSecundary } from '../components/buttons/ButtonSecundary';
+import { SubmitButton } from '../components/buttons/SubmitButton';
 import { useNavigate } from 'react-router';
 import { useOrder } from '../context/OrderContext';
 
@@ -51,19 +51,20 @@ const ProcesoPagos = () => {
                 }}
             ><span>Crear articulo nuevo</span></div>
             <div className="charge-button">
-                <ButtonSecundary
+                <SubmitButton
                     onClick={() => {
 
                         if (total > 0) {
                             navigate('/cobro');
                         }
                     }}
-                    label={(total > 0) ? 
+                    text={(total > 0) ? 
                         <>
                         <div>Revisar venta</div>
                         <div>{items.length} artículos</div>
                     </>
                      : `Cobrar $0.00`}
+                    disabled={total === 0}
                 />
             </div>
             <ModalError
