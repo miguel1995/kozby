@@ -9,9 +9,11 @@ import MainLayout from './layouts/MainLayout';
 import ProcesoPagos from './pages/ProcesoPagos';
 import NuevaOrden from './pages/NuevaOrden';
 import Cobro from './pages/Cobro';
+import { OrderProvider } from './context/OrderContext';
 
 function App() {
   return (
+      <OrderProvider>
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Navigate to="/proceso-pagos" />} />
@@ -51,6 +53,7 @@ function App() {
         </Routes>
        
       </BrowserRouter>
+      </OrderProvider>
   );
 }
 

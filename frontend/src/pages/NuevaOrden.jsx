@@ -4,10 +4,12 @@ import { useState, useEffect } from 'react';
 import { usePaymentProcess } from '../hooks/usePaymentProcess';
 import { useNavigate } from 'react-router-dom';
 import { PlusOutlined, MinusOutlined } from '@ant-design/icons';
+import { useOrder } from '../context/OrderContext';
 
 
 const NuevaOrden = () => {
     const navigate = useNavigate();
+    const { addProduct } = useOrder();
     const { product, errorData, loading } = usePaymentProcess();
     const [values, setValues] = useState({
         currentVariant: {
@@ -54,8 +56,19 @@ const NuevaOrden = () => {
     };
 
     const handleAddProduct = () => {
-        if(values.currentVariant.valid && values.amount.valid) {
-            console.log(values);
+        if (values.currentVariant.valid && values.amount.valid && values.currentVariant.value) {
+            const variante = values.currentVariant.value;
+            addProduct({
+                productId: product.id,
+                productName: product.nombre,
+                variantId: variante.id,
+                variantName: variante.nombre,
+                precio: variante.precio,
+                cantidad: amount,
+                notes: values.notes.value,
+                discounts: values.discounts.value,
+            });
+            navigate('/proceso-pagos');
         }
     }
 
