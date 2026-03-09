@@ -1,0 +1,77 @@
+
+
+.nueva-orden__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.nueva-orden__body {
+    display: flex;
+    flex-direction: column;
+    padding: 8px;
+   
+}
+
+.nueva-orden__body--row {
+    
+    padding: 8px;
+}
+
+.nueva-orden__body--title {
+   
+    font-weight: 600;
+    color: #000;
+    text-transform: uppercase;
+}
+
+.nueva-orden__body--divider {
+    margin: 10px 0;
+}
+
+.nueva-orden__body--variant {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nueva-orden__body--row--price {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px;
+    gap: 8px;
+}
+
+.nueva-orden__body--row--amount {
+    display: flex;
+    justify-content: space-between;
+    padding: 16px 8px;
+    gap: 8px;
+}
+
+.nueva-orden__body-minus {
+    cursor: pointer;
+    border-right: 1px solid #e0e0e0;
+    padding-right: 16px;
+}
+.nueva-orden__body-plus {
+    cursor: pointer;  
+    border-left: 1px solid #e0e0e0;
+    padding-left: 16px;
+}
+.nueva-orden__body-amount {
+    width: 50px;
+   border-bottom: 1px solid #e0e0e0;
+   padding-bottom: 8px;
+   text-align: center;
+}
+
+.nueva-orden__header--add {
+    cursor: pointer;
+    background-color: #000;
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 4px;
+}

@@ -35,12 +35,7 @@ export const usePaymentProcess = () => {
             const data = await getProductoById(id);
 
 
-            const variantes = data.variantes.map(variante => ({
-                id: { value: variante.id, valid: true },
-                nombre: { value: variante.nombre, valid: true },
-                precio: { value: variante.precio, valid: true },
-                cantidad: { value: variante.cantidad, valid: true }
-            }));
+        
             
                
                 setProduct({
@@ -50,7 +45,7 @@ export const usePaymentProcess = () => {
                     cantidad: data.cantidad,
                     descripcion: data.descripcion,
                     imagen: data.imagen,
-                    variantes: variantes
+                    variantes: data.variantes
                 });
         } catch (err) {
             setErrorData({
