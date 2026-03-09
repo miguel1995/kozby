@@ -1,12 +1,20 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useProductsHandler } from '../hooks/useProductsHandler';
 import ListProductos from '../components/ListProductos';
 import Loader from '../components/Loader';
 import { ModalError } from '../components/modals/ModalError';
 import { ButtonSecundary } from '../components/buttons/ButtonSecundary';
 import { useNavigate } from 'react-router';
+import { useOrder } from '../context/OrderContext';
 
 const ProcesoPagos = () => {
+
+    const { items } = useOrder();
+    const [total, setTotal] = useState(0);
+    useEffect(() => {
+        const total = items.reduce((acc, item) => acc + item.precio * item.cantidad, 0);
+        setTotal(total);
+    }, [items]);
 
     const {
         isModalOpen,
@@ -38,14 +46,19 @@ const ProcesoPagos = () => {
                 )}
             </div>
             <div className="create-article-new"
-            onClick={() => { 
-                navigate('/nuevo-producto');
-             }}
+                onClick={() => {
+                    navigate('/nuevo-producto');
+                }}
             ><span>Crear articulo nuevo</span></div>
             <div className="charge-button">
                 <ButtonSecundary
-                    onClick={() => { navigate('/cobro'); }}
-                    label="Cobrar $0.00"
+                    onClick={() => {
+
+                        if (total > 0) {
+                            navigate('/cobro');
+                        }
+                    }}
+                    label={(total > 0) ? `Revisar venta ${total.length} artículos` : `Cobrar $0.00`}
                 />
             </div>
             <ModalError

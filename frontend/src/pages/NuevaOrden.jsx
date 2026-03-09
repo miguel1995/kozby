@@ -28,21 +28,29 @@ const NuevaOrden = () => {
             value: '',
             valid: true,
         },
-    });    
+    });
+    const [total, setTotal] = useState(0.00);
+
     const [amount, setAmount] = useState(1);
 
 
     useEffect(() => {
 
-       onChange('amount', amount);
+        onChange('amount', amount);
 
-    },[amount])
+    }, [amount]);
+    useEffect(() => {
+        if (values.currentVariant.value && values.amount.value) {
+            const total = values.currentVariant.value?.precio * values.amount.value;
+            setTotal(total);
+        }
+    }, [values.currentVariant.value, values.amount.value]);
 
     useEffect(() => {
-        if(product.variantes && product.variantes.length > 0) {
+        if (product.variantes && product.variantes.length > 0) {
             onChange('currentVariant', product.variantes[0]);
         }
-    },[product.variantes])
+    }, [product.variantes])
 
 
     const onChange = (name, value) => {
@@ -78,10 +86,10 @@ const NuevaOrden = () => {
                 <div><CloseOutlined
                     onClick={() => navigate('/proceso-pagos')}
                 /></div>
-                <div>{product.nombre} ${values.currentVariant.value?.precio}</div>
+                <div>{product.nombre} ${total}</div>
                 <div onClick={() => handleAddProduct()}
                     className='nueva-orden__header--add'
-                    >Agregar</div>
+                >Agregar</div>
             </div>
 
             <div className='nueva-orden__body'>
