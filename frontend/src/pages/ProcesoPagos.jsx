@@ -58,7 +58,12 @@ const ProcesoPagos = () => {
                             navigate('/cobro');
                         }
                     }}
-                    label={(total > 0) ? `Revisar venta ${total.length} artículos` : `Cobrar $0.00`}
+                    label={(total > 0) ? 
+                        <>
+                        <div>Revisar venta</div>
+                        <div>{items.length} artículos</div>
+                    </>
+                     : `Cobrar $0.00`}
                 />
             </div>
             <ModalError
