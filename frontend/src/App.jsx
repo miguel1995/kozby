@@ -9,48 +9,55 @@ import MainLayout from './layouts/MainLayout';
 import ProcesoPagos from './pages/ProcesoPagos';
 import NuevaOrden from './pages/NuevaOrden';
 import Cobro from './pages/Cobro';
+import Transacciones from './pages/transacciones';
+
 
 function App() {
   return (
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Navigate to="/proceso-pagos" />} />
-          <Route path="/productos" element={
-            <MainLayout>
-              <Productos />
-            </MainLayout>
-          } />
-          <Route path="/nuevo-producto" element={<FormProducto />} />
-          <Route path="/editar-producto/:id" element={<FormProducto isEditMode={true} />} />
-          <Route path="/mas" element={
-            <MainLayout>
-              <Plus />
-            </MainLayout>
-          } />
-          <Route path="/inicio-sesion" element={<FormInicio />} />
-          <Route path="/productos/archivados" element={
-            <MainLayout>
-              <Productos />
-            </MainLayout>
-          } />
-          <Route path="/proceso-pagos" element={
-            <MainLayout>
-              <ProcesoPagos />
-            </MainLayout>
-          } />
-          <Route path="/nueva-orden" element={
-            <MainLayout>
-              <NuevaOrden />
-            </MainLayout>
-          } />
-           <Route path="/cobro" element={
+    <BrowserRouter>
+      <Routes>
+        <Route path="/transacciones" element={
+          <MainLayout>
+            <Transacciones />
+          </MainLayout>
+        } />
+        <Route path="/" element={<Navigate to="/proceso-pagos" />} />
+        <Route path="/productos" element={
+          <MainLayout>
+            <Productos />
+          </MainLayout>
+        } />
+        <Route path="/nuevo-producto" element={<FormProducto />} />
+        <Route path="/editar-producto/:id" element={<FormProducto isEditMode={true} />} />
+        <Route path="/mas" element={
+          <MainLayout>
+            <Plus />
+          </MainLayout>
+        } />
+        <Route path="/inicio-sesion" element={<FormInicio />} />
+        <Route path="/productos/archivados" element={
+          <MainLayout>
+            <Productos />
+          </MainLayout>
+        } />
+        <Route path="/proceso-pagos" element={
+          <MainLayout>
+            <ProcesoPagos />
+          </MainLayout>
+        } />
+        <Route path="/nueva-orden" element={
+          <MainLayout>
+            <NuevaOrden />
+          </MainLayout>
+        } />
+        <Route path="/cobro" element={
           <MainLayout>
             <Cobro />
           </MainLayout>
         } />
-        </Routes>
-       
-      </BrowserRouter>
+      </Routes>
+
+    </BrowserRouter>
   );
 }
 

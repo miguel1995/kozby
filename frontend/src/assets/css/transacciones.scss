@@ -1,0 +1,75 @@
+.tx-day-group {
+  margin-bottom: 16px;
+}
+
+.tx-day-title {
+  font-weight: 700;
+  margin-bottom: 8px;
+  text-transform: capitalize;
+}
+
+.tx-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  background: #fff;
+  transition: background-color 0.2s ease;
+}
+
+.tx-item:hover {
+  background: #f3f4f6;
+}
+
+.tx-item-total-and-time {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.tx-item-title {
+  margin-left: 32px; 
+}
+
+.tx-total-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.tx-pay-icon {
+  font-size: 18px;
+  color: #4b5563;
+  position: relative;
+  top: 10px; 
+}
+
+
+.tx-pay-icon-zelle {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;      
+  color: #837e7e;        
+  border: 2px solid #686666; 
+  font-size: 12px;
+  font-weight: 700;
+}
+
+
+.tx-item-total {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.tx-item-time {
+  font-size: 16px;
+  font-weight: 400;
+  white-space: nowrap;
+  position: relative;
+  top: 10px; 
+}

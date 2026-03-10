@@ -73,6 +73,12 @@ export const initialFormValues = {
       key: "2",
       label: "Articulos archivados",
       path: "/productos/archivados"
+    },
+
+    {
+      key : "3",
+      label: "Transacciones",
+      path: "/transacciones"
     }
     
   ]
