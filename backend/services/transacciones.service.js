@@ -1,3 +1,4 @@
+const { default: mongoose } = require('mongoose');
 const Transaccion = require('../models/transaccion');
 
 const getTransacciones = async () => {
@@ -6,15 +7,15 @@ const getTransacciones = async () => {
       .sort({ createdAt: -1 })
       .lean();
 
-    return transacciones.map((t) => ({
-      id: t._id?.toString?.() || t._id,
-      total: t.total,
-      subtotal: t.subtotal,
-      productos_descripcion: t.productos_descripcion,
-      productos_id: t.productos_id || [],
-      descuento: t.descuento || {},
-      tipo_pago: t.tipo_pago,
-      createdAt: t.createdAt,
+    return transacciones.map((transaccion) => ({
+      id: transaccion._id?.toString?.() || transaccion._id,
+      total: transaccion.total,
+      subtotal: transaccion.subtotal,
+      productos_descripcion: transaccion.productos_descripcion,
+      productos_id: transaccion.productos_id || [],
+      descuento: transaccion.descuento || {},
+      tipo_pago: transaccion.tipo_pago,
+      createdAt: transaccion.createdAt,
     }));
   } catch (error) {
     console.error('Error al obtener transacciones:', error);
@@ -22,6 +23,31 @@ const getTransacciones = async () => {
   }
 };
 
+const getTransaccionById = async (id) => {
+  try {
+    if (!id || !mongoose.Types.ObjectId.isValid(id)) return null;
+
+    const transaccion = await Transaccion.findById(id).lean();
+    if (!transaccion) return null;
+
+    return {
+      id: transaccion._id?.toString?.() || transaccion._id,
+      total: transaccion.total,
+      subtotal: transaccion.subtotal,
+      productos_descripcion: transaccion.productos_descripcion,
+      productos_id: transaccion.productos_id || [],
+      descuento: transaccion.descuento || {},
+      tipo_pago: transaccion.tipo_pago,
+      createdAt: transaccion.createdAt,
+    };
+  } catch (error) {
+    console.error('Error al obtener transacción por id:', error);
+    throw error;
+  }
+};
+
+
 module.exports = {
   getTransacciones,
+  getTransaccionById,
 };

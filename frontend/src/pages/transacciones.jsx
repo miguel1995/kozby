@@ -9,8 +9,12 @@ import {
 import Loader from '../components/Loader';
 import { ModalError } from '../components/modals/ModalError';
 import { useTransaccionHandler } from '../hooks/useTransaccionHandler';
+import { useNavigate } from 'react-router-dom';
+
 
 function Transacciones() {
+  const navigate = useNavigate();
+
   const { transacciones, loading, errorData, handleOk } = useTransaccionHandler();
   const [search, setSearch] = useState('');
 
@@ -120,7 +124,13 @@ function Transacciones() {
                 <div className="tx-day-title">{group.label}</div>
 
                 {group.items.map((tx) => (
-                  <div key={tx.id} className="tx-item">
+                  <div
+                    key={tx.id}
+                    className="tx-item"
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => navigate(`/transacciones/${tx.id}`)}
+                  >
+
                     <div style={{ width: '100%' }}>
                       <div className="tx-item-total-and-time">
                         <div className="tx-total-left">
