@@ -16,7 +16,6 @@ export const ModalError = ({ open, errorCode, onOk }) => {
             open={open}
             cancelButtonProps={{ style: { display: 'none' } }}
             onOk={() => {
-                console.log('onOk', error);
                 onOk();
 
                 if (error.redirectPath) {

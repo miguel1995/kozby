@@ -273,7 +273,6 @@ export const useFormProductoHandler = (isEditMode = false) => {
             setLoading(true);
             try {
                 checkToken();
-                console.log("restaurarProducto", id);
                 await restaurarProducto(id);
                 message.success('Producto restaurado');
                 navigate('/productos/archivados');

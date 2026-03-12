@@ -7,9 +7,19 @@ const app = express();
 
 app.use(cors());
 
-
+// Aceptar JSON con Content-Type application/json
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+// Aceptar cuerpo con Content-Type text/plain y parsearlo como JSON (p. ej. desde el frontend)
+app.use(express.text({ type: 'text/plain' }));
+app.use((req, res, next) => {
+  if (typeof req.body === 'string') {
+    try {
+      req.body = JSON.parse(req.body);
+    } catch (_) { /* dejar req.body como string si no es JSON */ }
+  }
+  next();
+});
 app.get("/", (req, res) => {
   res.status(200).send("Hello World");
 });

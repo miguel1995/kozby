@@ -15,3 +15,17 @@ export const getTransaccionById = async (id) => {
   if (!res.ok) throw { status: res.status };
   return await res.json();
 };
+
+
+export const postTransaccion = async (transaccion) => {
+    const res = await fetch(API_URL, {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(transaccion),
+    });
+    
+    if (!res.ok) {
+        throw { status: res.status };
+    }
+    return await res.json();
+};

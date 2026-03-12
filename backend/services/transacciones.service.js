@@ -1,5 +1,5 @@
 const { default: mongoose } = require('mongoose');
-const Transaccion = require('../models/transaccion');
+const Transaccion = require('../models/Transaccion');
 
 const getTransacciones = async () => {
   try {
@@ -47,7 +47,18 @@ const getTransaccionById = async (id) => {
 };
 
 
+const postTransaccion = async (transaccion) => {
+  try {
+    const newTransaccion = await Transaccion.create(transaccion);
+    return newTransaccion;
+  } catch (error) {
+    console.error('Error al crear transaccion:', error);
+    throw error;
+  }
+};
+
 module.exports = {
   getTransacciones,
   getTransaccionById,
+  postTransaccion,
 };

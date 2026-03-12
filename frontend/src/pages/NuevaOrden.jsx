@@ -86,7 +86,7 @@ const NuevaOrden = () => {
                 <div><CloseOutlined
                     onClick={() => navigate('/proceso-pagos')}
                 /></div>
-                <div>{product.nombre} ${total}</div>
+                <div>{product.nombre} ${total.toFixed(2)}</div>
                 <div onClick={() => handleAddProduct()}
                     className='nueva-orden__header--add'
                 >Agregar</div>

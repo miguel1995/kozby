@@ -13,8 +13,13 @@ const MenuBar = () => {
                 || location.pathname === '/productos'
                 || location.pathname === '/productos/archivados'
                 || location.pathname === '/transacciones';
+                
         }
-        if (path === '/proceso-pagos') return location.pathname === '/proceso-pagos';
+        if (path === '/proceso-pagos') 
+            return location.pathname === '/proceso-pagos'
+                || location.pathname === '/cobro'
+                || location.pathname === '/metodo-pago';
+
         return false;
     };
 

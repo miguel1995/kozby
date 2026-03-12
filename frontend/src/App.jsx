@@ -12,6 +12,7 @@ import Cobro from './pages/Cobro';
 import Transacciones from './pages/transacciones';
 import TransaccionDetalle from './pages/TransaccionDetalle';
 
+import PaymentMethod from './pages/PaymentMethod';
 
 import { OrderProvider } from './context/OrderContext';
 
@@ -19,13 +20,13 @@ function App() {
   return (
     <OrderProvider>
       <BrowserRouter>
+      <Route path="/" element={<Navigate to="/inicio-sesion" />} />
         <Routes>
           <Route path="/transacciones" element={
             <MainLayout>
               <Transacciones />
             </MainLayout>
           } />
-          <Route path="/" element={<Navigate to="/proceso-pagos" />} />
           <Route path="/productos" element={
             <MainLayout>
               <Productos />

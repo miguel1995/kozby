@@ -6,5 +6,6 @@ const authenticationUtils = require('../utils/authentication.utils');
 router.get('/', authenticationUtils.verifyToken, transaccionController.getTransacciones);
 router.get('/:id', authenticationUtils.verifyToken, transaccionController.getTransaccionById);
 
+router.post('/', authenticationUtils.verifyToken, transaccionController.postTransaccion);
 
 module.exports = router;
