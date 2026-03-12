@@ -57,7 +57,6 @@ export const postProducto = async (productoData) => {
             }
         } else if (key === 'variantes') {
             const variantes = productoData[key].map(variante => {
-                console.log("variante in post", variante);
                 return {
                     id: variante.id,
                     nombre: variante.nombre,

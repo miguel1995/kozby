@@ -23,7 +23,7 @@ export default function FormInicio() {
     setServerError,
     isErrorModalOpen,
     closeErrorModal,
-  } = useLoginFormHandler({ onSuccess: () => navigate('/productos') });
+  } = useLoginFormHandler({ onSuccess: () => navigate('/proceso-pagos') });
 
   return (
     <div style={{ maxWidth: 500, margin: '16rem auto 2rem auto', padding: 16 }}>

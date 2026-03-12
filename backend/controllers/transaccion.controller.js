@@ -12,7 +12,6 @@ const getTransacciones = async (req, res) => {
 
 const postTransaccion = async (req, res) => {
   try {
-    console.log(">>> req.body", req.body);
     const transaccion = await transaccionesService.postTransaccion(req.body);
     return res.status(200).json(transaccion);
   } catch (error) {

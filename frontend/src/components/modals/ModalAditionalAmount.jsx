@@ -17,7 +17,6 @@ const ModalAditionalAmount = ({ isModalOpen, onCancel, handleSave, handleChange,
     }, [isModalOpen]);
 
     useEffect(() => {
-        console.log(amount);
         handleChange({
             target: {
                 name: "cantidad",

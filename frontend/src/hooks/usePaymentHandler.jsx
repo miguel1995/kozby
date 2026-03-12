@@ -1,9 +1,11 @@
 import { useOrder } from '../context/OrderContext';
 import { useState, useEffect } from 'react';
 import { postTransaccion } from '../services/transacciones.service';
+import { useNavigate } from 'react-router-dom';
+
 export default function usePaymentHandler() {
 
-    const { total, setPaymentMethod, setCash, items } = useOrder();
+    const { total, setPaymentMethod, setCash, items, clearOrder } = useOrder();
     const [enabled, setEnabled] = useState(false);
 
     const [values, setValues] = useState({
@@ -15,7 +17,9 @@ export default function usePaymentHandler() {
             value: '',
             valid: false
         }
-    })
+    });
+
+    const navigate = useNavigate();
 
     useEffect(() => {
 
@@ -35,7 +39,6 @@ export default function usePaymentHandler() {
     }, [values]);
 
     const onChange = (e, name) => {
-        console.log(e);
         if (e.target.value) {
             setValues({
                 ...values,
@@ -45,28 +48,25 @@ export default function usePaymentHandler() {
     }
 
 
-    const onSubmit = () => {
+    const onSubmit = async () => {
         setPaymentMethod(values.paymentMethod.value);
         setCash(values.cash?.value || 0);
         const productoDescripcion = items.map(item => {
-
             let text = item.productName;
-            if(item.cantidad > 1) {
+            if (item.cantidad > 1) {
                 text += ` x ${item.cantidad}`;
             }
-            
             return text;
 
         }).join(', ');
 
-
-        postTransaccion({
+        await postTransaccion({
             total: total.toFixed(2),
             subtotal: 0.00, //TODO: agregar subtotal            
-            monto: (values.paymentMethod.value === 'EFECTIVO')?values.cash?.value || 0:total,
-            cambio:  (values.paymentMethod.value === 'EFECTIVO') ? (values.cash?.value || 0) - total : 0,
-            producto_descripcion: productoDescripcion,
-            descuento:{
+            monto: (values.paymentMethod.value === 'EFECTIVO') ? values.cash?.value || 0 : total,
+            cambio: (values.paymentMethod.value === 'EFECTIVO') ? (values.cash?.value || 0) - total : 0,
+            productos_descripcion: productoDescripcion,
+            descuento: {
                 titulo: "vecinos 10% (10%)", //TODO: agregar descuento
                 valor: 1.2
             },
@@ -84,8 +84,12 @@ export default function usePaymentHandler() {
                     variante_nombre: item.variantName
                 }
             })
-            
+
         });
+        clearOrder();
+        alert('Transaccion realizada correctamente');
+        navigate('/proceso-pagos');
+        //TODO: descontar stock de productos
     }
 
     return {

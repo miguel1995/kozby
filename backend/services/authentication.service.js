@@ -4,7 +4,6 @@ const readValidateUser = async (username) => {
   try {
 
     const user = await Usuario.findOne({ username }).lean();
-    console.log("user found in service", user);
     return user 
 
   } catch (error) {

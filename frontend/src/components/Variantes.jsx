@@ -20,16 +20,12 @@ const Variantes = ({ variantes, handleChange } = { variantes: [], handleChange: 
     const [amountReceived, setAmountReceived] = useState(0);
     const [isAmountModalOpen, setIsAmountModalOpen] = useState(false);
 
-    useEffect(() => {
-        console.log("variantes values", values);
-    }, [values]);
 
     useEffect(() => {
         setIsFormValid(Object.values(values).every(value => value.valid));
     }, [values]);
 
     const handleAmountSave = () => {
-        console.log("amountReceived", amountReceived);
         let valuesToSend = values;
         valuesToSend.cantidad.value = amountReceived;
         handleChange(

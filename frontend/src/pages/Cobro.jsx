@@ -12,12 +12,6 @@ const Cobro = () => {
 
     const navigate = useNavigate();
     const { items, total, clearOrder } = useOrder();
-
-    useEffect(() => {
-        console.log(items);
-    }, [items]);
-
-
     
     return (
         <div className="cobro__container">
