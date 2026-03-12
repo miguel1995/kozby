@@ -20,8 +20,8 @@ function App() {
   return (
     <OrderProvider>
       <BrowserRouter>
-      <Route path="/" element={<Navigate to="/inicio-sesion" />} />
         <Routes>
+          <Route path="/" element={<Navigate to="/inicio-sesion" />} />
           <Route path="/transacciones" element={
             <MainLayout>
               <Transacciones />
@@ -65,6 +65,11 @@ function App() {
           <Route path="/cobro" element={
             <MainLayout>
               <Cobro />
+            </MainLayout>
+          } />
+          <Route path="/metodo-pago" element={
+            <MainLayout>
+              <PaymentMethod />
             </MainLayout>
           } />
         </Routes>
