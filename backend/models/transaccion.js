@@ -4,12 +4,16 @@ const transaccionSchema = new mongoose.Schema({
     total : { type: Number, required: true },
     subtotal : { type: Number, required: true },
     productos_descripcion : { type: String, default: '' },
-    productos_id : { type: [String], default: [] },
+    productos : { type: [Object], default: [] },
     descuento : {type: Object, default: {}},
     tipo_pago : {type: String, default: ''},
+    monto: {type: Number, default: 0},
+    cambio: {type: Number, default: 0},
 },
-{  timestamp: { createdAt: true, updatedAt: false },
-  versionKey: false },
+{
+    timestamps: true,
+    versionKey: false,
+},
 );
 
 module.exports = mongoose.model('Transaccion', transaccionSchema, 'transacciones');

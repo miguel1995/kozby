@@ -10,6 +10,17 @@ const getTransacciones = async (req, res) => {
   }
 };
 
+const postTransaccion = async (req, res) => {
+  try {
+    console.log(">>> req.body", req.body);
+    const transaccion = await transaccionesService.postTransaccion(req.body);
+    return res.status(200).json(transaccion);
+  } catch (error) {
+    console.error('Error al crear transaccion:', error);
+    return res.status(500).json({ message: 'Error al crear transaccion' });
+  }
+};
 module.exports = {
   getTransacciones,
+  postTransaccion,
 };

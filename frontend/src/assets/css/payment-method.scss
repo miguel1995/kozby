@@ -1,0 +1,30 @@
+.payment-method {
+   padding: 16px;
+}
+
+.payment__method--total {
+    font-size: 40px;
+    font-weight: 600;
+    text-align: left;
+    margin: 32px 0;
+}
+
+.payment__method--description {
+    font-size: 24px;
+    font-weight: 400;
+    text-align: left;
+    margin-bottom: 32px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 16px;
+    color: #666;
+}
+
+.payment__method--options {
+    margin: 16px 0;
+}
+
+.payment__method--submit button {
+    width: 100%;
+    margin: 32px 0;
+}

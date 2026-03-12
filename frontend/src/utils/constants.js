@@ -98,3 +98,21 @@ export const initialFormValues = {
       redirectPath: "/inicio-sesion"
     }
   }
+
+  export const PAYMENT_METHODS = [
+    {
+      key: "1",
+      label: "Efectivo",
+      value: "EFECTIVO"
+    },
+    {
+      key: "2",
+      label: "Tarjeta",
+      value: "TARJETA"
+    },
+    {
+      key: "3",
+      label: "Zelle",
+      value: "ZELLE"
+    }
+  ]

@@ -10,6 +10,7 @@ import ProcesoPagos from './pages/ProcesoPagos';
 import NuevaOrden from './pages/NuevaOrden';
 import Cobro from './pages/Cobro';
 import Transacciones from './pages/transacciones';
+import PaymentMethod from './pages/PaymentMethod';
 
 import { OrderProvider } from './context/OrderContext';
 
@@ -55,6 +56,11 @@ function App() {
         <Route path="/cobro" element={
           <MainLayout>
             <Cobro />
+          </MainLayout>
+        } />
+        <Route path="/metodo-pago" element={
+          <MainLayout>
+            <PaymentMethod />
           </MainLayout>
         } />
       </Routes>
