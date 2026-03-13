@@ -6,6 +6,8 @@ import {
   getProductosArchivados
 } from '../services/productos.service';
 import { useNavigate } from 'react-router';
+import { message } from 'antd';
+
 
 export const useProductsHandler = () => {
   const [productos, setProductos] = useState([]);
@@ -39,7 +41,7 @@ export const useProductsHandler = () => {
 
   const hacerClick = async (key, record) => {
 
-    const { id } = record;
+    const { id, cantidad } = record;
 
     if (key === 'edit') {
       navigate(`/editar-producto/${id}`);
@@ -47,8 +49,13 @@ export const useProductsHandler = () => {
     }
 
     if (key === 'nueva-orden') {
-      navigate(`/nueva-orden/${id}`);
-      return;
+      if (cantidad > 0) {
+        navigate(`/nueva-orden/${id}`);
+        return;
+      } else {
+        message.info('Artículo Agotado');
+        return;
+      }
     }
 
   };

@@ -5,12 +5,13 @@ import { usePaymentProcess } from '../hooks/usePaymentProcess';
 import { useNavigate } from 'react-router-dom';
 import { PlusOutlined, MinusOutlined } from '@ant-design/icons';
 import { useOrder } from '../context/OrderContext';
+import { ModalError } from '../components/modals/ModalError';
 
 
 const NuevaOrden = () => {
     const navigate = useNavigate();
     const { addProduct } = useOrder();
-    const { product, errorData, loading } = usePaymentProcess();
+    const { product, errorData, loading, handleOk } = usePaymentProcess();
     const [values, setValues] = useState({
         currentVariant: {
             value: null,
@@ -180,6 +181,11 @@ const NuevaOrden = () => {
                         </div>
                     )}
             </div>
+            <ModalError
+                    open={errorData.isOpen}
+                    errorCode={errorData.codeError}
+                    onOk={handleOk}
+                />
         </div>
     );
 };

@@ -7,7 +7,9 @@ const ListProductos = ({ productos, hacerClickCallback, clickAction }) => {
         <div className="productos-list">
             {productos.map((producto) => (
                 <div key={producto.id}>
-                    <div className="producto-item" onClick={() => { hacerClickCallback(clickAction, producto) }}>
+                    <div className="producto-item" onClick={() => { 
+                        hacerClickCallback(clickAction, producto) 
+                        }}>
                         <div className="producto-item-info-container" >
                             <div>
                                 <img src={producto.imagen} alt="" style={{ width: 39, height: 'auto', objectFit: 'cover' }} />

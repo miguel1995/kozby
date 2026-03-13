@@ -6,10 +6,10 @@ import { PAYMENT_METHODS } from '../utils/constants';
 import { SubmitButton } from '../components/buttons/SubmitButton';
 import usePaymentHandler from '../hooks/usePaymentHandler';
 import { NumericInput } from '../components/NumericInput';
-
+import { ModalError } from '../components/modals/ModalError';
 const PaymentMethod = () => {
     const navigate = useNavigate();
-    const { total, enabled, values, onChange, onSubmit } = usePaymentHandler();
+    const { total, enabled, values, onChange, onSubmit, errorData, handleOk } = usePaymentHandler();
 
     return (
         <div className="payment-method">
@@ -58,6 +58,12 @@ const PaymentMethod = () => {
                     disabled={!enabled}
                 />
             </div>
+
+            <ModalError
+                open={errorData.isOpen}
+                errorCode={errorData.codeError}
+                onOk={handleOk}
+            />
 
         </div>
     );
