@@ -10,6 +10,8 @@ import ProcesoPagos from './pages/ProcesoPagos';
 import NuevaOrden from './pages/NuevaOrden';
 import Cobro from './pages/Cobro';
 import Transacciones from './pages/transacciones';
+import TransaccionDetalle from './pages/TransaccionDetalle';
+
 import PaymentMethod from './pages/PaymentMethod';
 
 import { OrderProvider } from './context/OrderContext';
@@ -19,7 +21,7 @@ function App() {
     <OrderProvider>
       <BrowserRouter>
         <Routes>
-        <Route path="/" element={<Navigate to="/inicio-sesion" />} />
+          <Route path="/" element={<Navigate to="/inicio-sesion" />} />
           <Route path="/transacciones" element={
             <MainLayout>
               <Transacciones />
@@ -30,6 +32,13 @@ function App() {
               <Productos />
             </MainLayout>
           } />
+
+          <Route path="/transacciones/:id" element={
+            <MainLayout>
+              <TransaccionDetalle />
+            </MainLayout>
+          } />
+
           <Route path="/nuevo-producto" element={<FormProducto />} />
           <Route path="/editar-producto/:id" element={<FormProducto isEditMode={true} />} />
           <Route path="/mas" element={
