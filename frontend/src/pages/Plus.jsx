@@ -14,7 +14,7 @@ export const Plus = () => {
                     className="plus-menu-item-label"
                     onClick={() => {
                         if (item.action === 'logout') {
-                            sessionStorage.clear();
+                            localStorage.clear();
                             navigate('/inicio-sesion');
                         } else {
                             navigate(item.path);

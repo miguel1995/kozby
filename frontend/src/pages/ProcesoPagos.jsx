@@ -32,7 +32,7 @@ const ProcesoPagos = () => {
     }, []);
 
     return (
-        <>
+        <div className='proceso-pagos'>
             <div className="products-table">
                 {loading ? (
                     <Loader message="Cargando productos..." />
@@ -72,7 +72,7 @@ const ProcesoPagos = () => {
                 onOk={handleOk}
             />
 
-        </>
+        </div>
     )
 }
 
