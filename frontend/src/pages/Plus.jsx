@@ -10,7 +10,19 @@ export const Plus = () => {
             <div className="plus-welcome-text">Te damos la bienvenida de Nuevo</div>
            {PLUS_MENU_ITEMS.map((item) => (
             <div key={item.key}>
-                <div className="plus-menu-item-label" onClick={() => navigate(item.path)}>{item.label}</div>
+                <div
+                    className="plus-menu-item-label"
+                    onClick={() => {
+                        if (item.action === 'logout') {
+                            sessionStorage.clear();
+                            navigate('/inicio-sesion');
+                        } else {
+                            navigate(item.path);
+                        }
+                    }}
+                >
+                    {item.label}
+                </div>
                 <Divider className="plus-menu-item-divider" />
             </div>
            ))}

@@ -79,8 +79,13 @@ export const initialFormValues = {
       key : "3",
       label: "Transacciones",
       path: "/transacciones"
+    },
+    {
+      key: "4",
+      label: "Cerrar Sesión",
+      path: "/inicio-sesion",
+      action: "logout"
     }
-    
   ]
 
 
