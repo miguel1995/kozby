@@ -386,6 +386,52 @@ const deleteProducto = async (id) => {
   }
 };
 
+/**
+ * Resta cantidad del stock de una variante. Lanza si no hay producto/variante o stock insuficiente.
+ * @param {string} productoId - _id del producto
+ * @param {string} varianteId - id de la variante (variantes[].id)
+ * @param {number} cantidad - cantidad a restar
+ * @param {mongoose.ClientSession} [session] - sesión opcional para transacción MongoDB
+ */
+const decrementarCantidadVariante = async (productoId, varianteId, cantidad, session = null) => {
+  if (!productoId || !mongoose.Types.ObjectId.isValid(productoId)) {
+    throw new Error('ID de producto inválido');
+  }
+  if (!varianteId || typeof varianteId !== 'string') {
+    throw new Error('ID de variante inválido');
+  }
+  const cantidadNum = typeof cantidad === 'string' ? parseInt(cantidad, 10) : Number(cantidad);
+  if (!Number.isInteger(cantidadNum) || cantidadNum < 1) {
+    throw new Error('La cantidad a descontar debe ser un entero mayor que 0');
+  }
+
+  let query = Producto.findOne({ _id: productoId, 'variantes.id': varianteId });
+  if (session) query = query.session(session);
+  const producto = await query.lean();
+  if (!producto) {
+    throw new Error(`Producto o variante no encontrado (producto: ${productoId}, variante: ${varianteId})`);
+  }
+  const variante = producto.variantes.find((v) => v.id === varianteId);
+  if (!variante) {
+    throw new Error(`Variante no encontrada: ${varianteId}`);
+  }
+  if (variante.cantidad < cantidadNum) {
+    throw new Error(`Stock insuficiente para ${producto.nombre} - ${variante.nombre}: disponible ${variante.cantidad}, solicitado ${cantidadNum}`);
+  }
+
+  const options = { new: true, runValidators: true };
+  if (session) options.session = session;
+  const actualizado = await Producto.findOneAndUpdate(
+    { _id: productoId, 'variantes.id': varianteId },
+    { $inc: { 'variantes.$.cantidad': -cantidadNum } },
+    options
+  );
+  if (!actualizado) {
+    throw new Error(`Error al actualizar stock (producto: ${productoId}, variante: ${varianteId})`);
+  }
+  return actualizado;
+};
+
 module.exports = {
   getProductos,
   getProductoById,
@@ -395,4 +441,5 @@ module.exports = {
   archivarProducto,
   getProductosArchivados,
   restaurarProducto,
+  decrementarCantidadVariante,
 };

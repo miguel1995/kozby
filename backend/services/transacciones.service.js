@@ -1,5 +1,6 @@
-const { default: mongoose } = require('mongoose');
-const Transaccion = require('../models/Transaccion');
+const mongoose = require('mongoose');
+const Transaccion = require('../models/transaccion');
+const productosService = require('./productos.service');
 
 const getTransacciones = async () => {
   try {
@@ -48,12 +49,30 @@ const getTransaccionById = async (id) => {
 
 
 const postTransaccion = async (transaccion) => {
-  try {
+  const productos = transaccion.productos;
+  if (!productos || !Array.isArray(productos) || productos.length === 0) {
     const newTransaccion = await Transaccion.create(transaccion);
     return newTransaccion;
+  }
+
+  const session = await mongoose.startSession();
+  try {
+    await session.startTransaction();
+    for (const item of productos) {
+      const productoId = item.producto_id;
+      const varianteId = item.variante_id;
+      const cantidad = item.cantidad;
+      if (!productoId || !varianteId || cantidad == null) continue;
+      await productosService.decrementarCantidadVariante(productoId, varianteId, cantidad, session);
+    }
+    const newTransaccion = await Transaccion.create([transaccion], { session });
+    await session.commitTransaction();
+    return newTransaccion[0];
   } catch (error) {
-    console.error('Error al crear transaccion:', error);
+    await session.abortTransaction();
     throw error;
+  } finally {
+    session.endSession();
   }
 };
 
