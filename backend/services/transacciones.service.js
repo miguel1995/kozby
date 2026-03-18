@@ -1,5 +1,5 @@
 const { default: mongoose } = require('mongoose');
-const Transaccion = require('../models/Transaccion');
+const Transaccion = require('../models/transaccion');
 
 const getTransacciones = async () => {
   try {
@@ -12,7 +12,6 @@ const getTransacciones = async () => {
       total: transaccion.total,
       subtotal: transaccion.subtotal,
       productos_descripcion: transaccion.productos_descripcion,
-      productos_id: transaccion.productos_id || [],
       descuento: transaccion.descuento || {},
       tipo_pago: transaccion.tipo_pago,
       createdAt: transaccion.createdAt,
@@ -35,11 +34,12 @@ const getTransaccionById = async (id) => {
       total: transaccion.total,
       subtotal: transaccion.subtotal,
       productos_descripcion: transaccion.productos_descripcion,
-      productos_id: transaccion.productos_id || [],
+      productos: transaccion.productos || [],
       descuento: transaccion.descuento || {},
       tipo_pago: transaccion.tipo_pago,
       createdAt: transaccion.createdAt,
     };
+
   } catch (error) {
     console.error('Error al obtener transacción por id:', error);
     throw error;

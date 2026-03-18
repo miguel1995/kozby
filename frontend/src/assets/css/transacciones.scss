@@ -23,13 +23,9 @@
   background: #f3f4f6;
 }
 
-.tx-item-total-and-time {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
 .tx-item-title {
   margin-left: 32px; 
+  grid-column: 1 / 2;
 }
 
 .tx-total-left {
@@ -72,4 +68,16 @@
   white-space: nowrap;
   position: relative;
   top: 10px; 
+}
+
+.tx-item-content {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr max-content;
+  column-gap: 12px;
+  align-items: start;
+}
+
+.tx-item-total-and-time {
+  display: contents;
 }

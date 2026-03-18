@@ -1,6 +1,7 @@
 
 
 .plus-container{
+    margin: 16px;
     display: flex;
     flex-direction: column;
     height: 100vh;
@@ -17,12 +18,18 @@
 }
 
 .plus-menu-item-label{
-    
+    display: flex;
+    align-items: center;
+    gap: 10px;
     font-weight: 600;
     text-align: left;
     margin-bottom: 10px;
     width: 70%;
     cursor: pointer;
+}
+
+.plus-menu-item-icon{
+  font-size: 18px;
 }
 
 .plus-menu-item-divider{

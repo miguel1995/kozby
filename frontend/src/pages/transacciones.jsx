@@ -131,7 +131,7 @@ function Transacciones() {
                     onClick={() => navigate(`/transacciones/${tx.id}`)}
                   >
 
-                    <div style={{ width: '100%' }}>
+                    <div className="tx-item-content">
                       <div className="tx-item-total-and-time">
                         <div className="tx-total-left">
                           {getPaymentIcon(tx.tipo_pago)}

@@ -1,0 +1,138 @@
+.txd-date {
+  color: #66676b;
+  font-weight: 100;
+}
+
+.txd-total {
+  color: #66676b;
+  font-weight: 100;
+}
+
+.txd-icon {
+  color: #6b7280;
+  font-size: 16px;
+}
+
+.txd-pay-icon {
+  font-size: 18px;
+  color: #4b5563;
+}
+
+.txd-pay-icon-zelle {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  color: #837e7e;
+  border: 2px solid #686666;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.txd-col-icon {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.txd-threecol {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr) max-content;
+  column-gap: 16px;
+  align-items: center;
+}
+
+.txd-col-main {
+  min-width: 0;
+}
+
+
+
+.txd-col-icon .tx-pay-icon {
+  position: static;
+  top: auto;
+}
+
+.txd-products-table {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 0px;
+}
+
+.txd-products-row {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) max-content;
+  column-gap: 12px;
+  align-items: center;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.txd-totals-row {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) max-content;
+  column-gap: 12px;
+  align-items: center;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+
+.txd-products-badge {
+  width: 36px;
+  height: 40px;
+  background: #999898;
+  color: #f7f7f7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+.txd-products-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.txd-products-price {
+  font-weight: 400;
+  color: #111827;
+}
+
+
+.txd-products-row:last-child {
+  border-bottom: none;
+}
+
+.txd-products-title {
+  font-weight: 700;
+}
+
+.txd-products-qty {
+  font-weight: 400;
+}
+
+.txd-products-variant {
+  color: #6b7280;
+  font-style: italic;
+}
+
+
+.txd-totals-table { margin-top: 8px; }
+
+.txd-totals-label { font-weight: 600; }
+
+.txd-totals-value {
+  font-weight: 400; 
+  text-align: right;
+}
+
+.txd-products-badge .txd-icon {
+  color: #ffffff;
+}
