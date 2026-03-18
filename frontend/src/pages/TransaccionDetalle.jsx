@@ -166,9 +166,12 @@ const TransaccionDetalle = () => {
 
             <hr />
 
-            <div><strong>Descuento:</strong> {transaccion.descuento?.titulo || '-'}</div>
-            <div><strong>Valor descuento:</strong> {formatMoney(transaccion.descuento?.valor || 0)}</div>
-
+            {transaccion.descuentos.map((descuento, index) => (
+              <div key={index}>
+                <strong>Descuento:</strong> {descuento.titulo || '-'}
+                <div><strong>Valor descuento:</strong> {formatMoney(descuento.valor || 0)}</div>
+              </div>
+            ))}
           </div>
         )}
 

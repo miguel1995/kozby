@@ -74,10 +74,20 @@ export default function usePaymentHandler() {
                 monto: (values.paymentMethod.value === 'EFECTIVO') ? values.cash?.value || 0 : total,
                 cambio: (values.paymentMethod.value === 'EFECTIVO') ? (values.cash?.value || 0) - total : 0,
                 productos_descripcion: productoDescripcion,
-                descuento: {
+                descuentos: [
+                    {
                     titulo: "vecinos 10% (10%)", //TODO: agregar descuento
                     valor: 1.2
                 },
+                {
+                    titulo: "descuento navidad",
+                    valor: 2.00
+                },
+                {
+                    titulo: "descuento dia de la mujer",
+                    valor: 3.00
+                }
+            ],
                 tipo_pago: values.paymentMethod.value,
                 productos: items.map(item => {
                     return {

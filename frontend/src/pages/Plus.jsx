@@ -23,17 +23,24 @@ export const Plus = () => {
             <div className="plus-welcome-text">Te damos la bienvenida de Nuevo</div>
 
             {PLUS_MENU_ITEMS.map((item) => (
-                <>
-                <div
-                    key={item.key}
-                    className="plus-menu-item-label"
-                    onClick={() => navigate(item.path)}
-                >
-                    <span className="plus-menu-item-icon">{getIcon(item.icon)}</span>
-                    <span>{item.label}</span>
+
+                <div key={item.key}>
+                    <div
+                        className="plus-menu-item-label"
+                        onClick={() => {
+                            if (item.icon === 'logout') {
+                                localStorage.clear();
+                                navigate('/inicio-sesion');
+                            } else {
+                                navigate(item.path);
+                            }
+                        }}                >
+                        <span className="plus-menu-item-icon">{getIcon(item.icon)}</span>
+                        <span>{item.label}</span>
+                    </div>
+                    <Divider className="plus-menu-item-divider" />
+
                 </div>
-                <Divider className="plus-menu-item-divider" />
-                </>
             ))}
         </div>
     )

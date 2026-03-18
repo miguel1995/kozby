@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const Transaccion = require('../models/Transaccion');
+const Transaccion = require('../models/transaccion');
 const productosService = require('./productos.service');
 
 const getTransacciones = async () => {
@@ -13,7 +13,7 @@ const getTransacciones = async () => {
       total: transaccion.total,
       subtotal: transaccion.subtotal,
       productos_descripcion: transaccion.productos_descripcion,
-      descuento: transaccion.descuento || {},
+      descuentos: transaccion.descuentos || [],
       tipo_pago: transaccion.tipo_pago,
       createdAt: transaccion.createdAt,
     }));
@@ -36,7 +36,7 @@ const getTransaccionById = async (id) => {
       subtotal: transaccion.subtotal,
       productos_descripcion: transaccion.productos_descripcion,
       productos: transaccion.productos || [],
-      descuento: transaccion.descuento || {},
+      descuentos: transaccion.descuentos  || [],
       tipo_pago: transaccion.tipo_pago,
       createdAt: transaccion.createdAt,
     };
