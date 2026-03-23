@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { login } from '../services/authentication.service';
+import { useNavigate } from 'react-router';
 
 export function useLoginFormHandler({ onSuccess } = {}) {
   const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
@@ -7,6 +8,14 @@ export function useLoginFormHandler({ onSuccess } = {}) {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [serverError, setServerError] = useState('');
+
+  const navigate = useNavigate();
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      navigate('/proceso-pagos');
+    }
+  }, []);
 
   const validateUsername = (u) => /^\S{5,20}$/.test(u.trim());
   const validatePassword = (p) => p.length >= 5 && p.length <= 20;

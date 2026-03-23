@@ -6,6 +6,9 @@ import {
   getProductosArchivados
 } from '../services/productos.service';
 import { useNavigate } from 'react-router';
+import { message } from 'antd';
+import { useOrder } from '../context/OrderContext';
+
 
 export const useProductsHandler = () => {
   const [productos, setProductos] = useState([]);
@@ -18,6 +21,7 @@ export const useProductsHandler = () => {
 
 
   const navigate = useNavigate();
+  const { addProduct } = useOrder();
 
 
   useEffect(() => {
@@ -39,7 +43,7 @@ export const useProductsHandler = () => {
 
   const hacerClick = async (key, record) => {
 
-    const { id } = record;
+    const { id, cantidad, variantes, nombre, precio } = record;
 
     if (key === 'edit') {
       navigate(`/editar-producto/${id}`);
@@ -47,8 +51,32 @@ export const useProductsHandler = () => {
     }
 
     if (key === 'nueva-orden') {
-      navigate(`/nueva-orden/${id}`);
-      return;
+
+      if (variantes.length > 0) {
+        navigate(`/nueva-orden/${id}`);
+        return;
+      } else {
+        if (cantidad > 0) {
+          addProduct({
+            productId: id,
+            productName: nombre,
+            variantId: "",
+            variantName: "",
+            precio: precio,
+            cantidad: 1,
+            notes: '',
+            discounts: ''
+          });
+          message.info('Artículo agregado');
+          return;
+        } else {
+          message.info('Artículo Agotado');
+          return;
+        }
+      }
+
+
+     
     }
 
   };

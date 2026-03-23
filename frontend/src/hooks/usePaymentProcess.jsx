@@ -28,15 +28,19 @@ export const usePaymentProcess = () => {
         }
     }, [id]);
 
+    const handleOk = () => {
+        setErrorData({
+            codeError: null,
+            isOpen: false
+        });
+    }
+
     const fetchProducto = async (id) => {
         setLoading(true);
         try {
             checkToken();
             const data = await getProductoById(id);
 
-
-        
-            
                
                 setProduct({
                     id: data.id,
@@ -61,7 +65,8 @@ export const usePaymentProcess = () => {
     return {
         product,
         errorData,
-        loading
+        loading,
+        handleOk
     }
 }
    

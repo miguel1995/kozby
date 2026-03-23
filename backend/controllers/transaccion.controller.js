@@ -33,6 +33,15 @@ const postTransaccion = async (req, res) => {
     return res.status(200).json(transaccion);
   } catch (error) {
     console.error('Error al crear transaccion:', error);
+    const isStockError =
+      error.message && (
+        error.message.includes('Stock insuficiente') ||
+        error.message.includes('no encontrado') ||
+        error.message.includes('Variante no encontrada')
+      );
+    if (isStockError) {
+      return res.status(500).json({ message: error.message });
+    }
     return res.status(500).json({ message: 'Error al crear transaccion' });
   }
 };

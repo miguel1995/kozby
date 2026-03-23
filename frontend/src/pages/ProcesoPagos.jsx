@@ -11,10 +11,15 @@ const ProcesoPagos = () => {
 
     const { items } = useOrder();
     const [total, setTotal] = useState(0);
+    const [totalAmount, setTotalAmount] = useState(0);
     useEffect(() => {
         const total = items.reduce((acc, item) => acc + item.precio * item.cantidad, 0);
+        const totalAmount = items.reduce((acc, item) => acc + item.cantidad, 0);
         setTotal(total);
+        setTotalAmount(totalAmount);
     }, [items]);
+
+
 
     const {
         isModalOpen,
@@ -32,7 +37,7 @@ const ProcesoPagos = () => {
     }, []);
 
     return (
-        <>
+        <div className='proceso-pagos'>
             <div className="products-table">
                 {loading ? (
                     <Loader message="Cargando productos..." />
@@ -61,7 +66,7 @@ const ProcesoPagos = () => {
                     text={(total > 0) ? 
                         <>
                         <div>Revisar venta</div>
-                        <div>{items.length} artículos</div>
+                        <div>{totalAmount} artículos</div>
                     </>
                      : `Cobrar $0.00`}
                     disabled={total === 0}
@@ -72,7 +77,7 @@ const ProcesoPagos = () => {
                 onOk={handleOk}
             />
 
-        </>
+        </div>
     )
 }
 

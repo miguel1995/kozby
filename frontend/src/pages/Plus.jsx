@@ -1,15 +1,19 @@
 import { PLUS_MENU_ITEMS } from "../utils/constants"
 import { useNavigate } from "react-router"
-import { UnorderedListOutlined, InboxOutlined, DollarOutlined } from '@ant-design/icons';
+import { UnorderedListOutlined, InboxOutlined, DollarOutlined, LogoutOutlined } from '@ant-design/icons';
 
 export const Plus = () => {
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+
+    const icons = {
+        active: <UnorderedListOutlined />,
+        archived: <InboxOutlined />,
+        tx: <DollarOutlined />,
+        logout: <LogoutOutlined />
+    };
 
     const getIcon = (icon) => {
-        if (icon === 'active') return <UnorderedListOutlined />;
-        if (icon === 'archived') return <InboxOutlined />;
-        if (icon === 'tx') return <DollarOutlined />;
-        return null;
+        return icons[icon] || null;
     };
 
     return (
@@ -17,13 +21,23 @@ export const Plus = () => {
             <div className="plus-welcome-text">Te damos la bienvenida de Nuevo</div>
 
             {PLUS_MENU_ITEMS.map((item) => (
-                <div
-                    key={item.key || item.path || item.label}
-                    className="plus-menu-item-label"
-                    onClick={() => navigate(item.path)}
-                >
-                    <span className="plus-menu-item-icon">{getIcon(item.icon)}</span>
-                    <span>{item.label}</span>
+
+                <div key={item.key}>
+                    <div
+                        className="plus-menu-item-label"
+                        onClick={() => {
+                            if (item.icon === 'logout') {
+                                localStorage.clear();
+                                navigate('/inicio-sesion');
+                            } else {
+                                navigate(item.path);
+                            }
+                        }}                >
+                        <span className="plus-menu-item-icon">{getIcon(item.icon)}</span>
+                        <span>{item.label}</span>
+                    </div>
+                    <Divider className="plus-menu-item-divider" />
+
                 </div>
             ))}
         </div>

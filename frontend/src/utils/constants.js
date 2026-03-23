@@ -67,6 +67,7 @@ export const PLUS_MENU_ITEMS = [
   { key: "1", label: "Articulos activos", path: "/productos", icon: "active" },
   { key: "2", label: "Articulos archivados", path: "/productos/archivados", icon: "archived" },
   { key: "3", label: "Transacciones", path: "/transacciones", icon: "tx" },
+  { key: "4", label: "Cerrar Sesión", path: "/inicio-sesion", icon: "logout" }
 ];
 
 

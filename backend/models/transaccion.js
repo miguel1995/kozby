@@ -6,7 +6,6 @@ const transaccionSchema = new mongoose.Schema({
     productos_descripcion : { type: String, default: '' },
     productos : { type: [Object], default: [] },
     descuento : {type: Object, default: {}},
-    descuentos: { type: [Object], default: [] },
     tipo_pago : {type: String, default: ''},
     monto: {type: Number, default: 0},
     cambio: {type: Number, default: 0},

@@ -5,12 +5,13 @@ import { usePaymentProcess } from '../hooks/usePaymentProcess';
 import { useNavigate } from 'react-router-dom';
 import { PlusOutlined, MinusOutlined } from '@ant-design/icons';
 import { useOrder } from '../context/OrderContext';
-
+import { ModalError } from '../components/modals/ModalError';
+import { message } from 'antd';
 
 const NuevaOrden = () => {
     const navigate = useNavigate();
     const { addProduct } = useOrder();
-    const { product, errorData, loading } = usePaymentProcess();
+    const { product, errorData, loading, handleOk } = usePaymentProcess();
     const [values, setValues] = useState({
         currentVariant: {
             value: null,
@@ -87,7 +88,13 @@ const NuevaOrden = () => {
                     onClick={() => navigate('/proceso-pagos')}
                 /></div>
                 <div>{product.nombre} ${total.toFixed(2)}</div>
-                <div onClick={() => handleAddProduct()}
+                <div onClick={() => {
+                    if (Number(values.currentVariant.value?.cantidad) >= amount) {
+                        handleAddProduct();
+                    } else {
+                        message.error('No hay suficiente stock');
+                    }
+                }}
                     className='nueva-orden__header--add'
                 >Agregar</div>
             </div>
@@ -146,7 +153,15 @@ const NuevaOrden = () => {
                         <span className='nueva-orden__body-amount'>
                             {amount}
                         </span>
-                        <PlusOutlined onClick={() => setAmount(amount + 1)} className='nueva-orden__body-plus' />
+                        
+                            <PlusOutlined onClick={
+                                () => 
+                                {
+                                        setAmount(amount + 1);
+                                    
+                                }
+                                } className='nueva-orden__body-plus' />
+
                     </div>
 
                 </div>
@@ -180,6 +195,11 @@ const NuevaOrden = () => {
                         </div>
                     )}
             </div>
+            <ModalError
+                open={errorData.isOpen}
+                errorCode={errorData.codeError}
+                onOk={handleOk}
+            />
         </div>
     );
 };

@@ -189,7 +189,8 @@ const TransaccionDetalle = () => {
 
             <hr />
 
-
+            <div><strong>Descuento:</strong> {transaccion.descuento?.titulo || '-'}</div>
+            <div><strong>Valor descuento:</strong> {formatMoney(transaccion.descuento?.valor || 0)}</div>
 
           </div>
         )}

@@ -17,6 +17,9 @@ export const ModalError = ({ open, errorCode, onOk }) => {
             cancelButtonProps={{ style: { display: 'none' } }}
             onOk={() => {
                 onOk();
+                if(errorCode === 401) {
+                    localStorage.clear();                 
+                }
 
                 if (error.redirectPath) {
                     navigate(error.redirectPath);
