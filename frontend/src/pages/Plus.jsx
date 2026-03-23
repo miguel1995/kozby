@@ -1,6 +1,4 @@
-import MenuBar from "../components/MenuBar"
 import { PLUS_MENU_ITEMS } from "../utils/constants"
-import { Divider } from "antd"
 import { useNavigate } from "react-router"
 import { UnorderedListOutlined, InboxOutlined, DollarOutlined } from '@ant-design/icons';
 
