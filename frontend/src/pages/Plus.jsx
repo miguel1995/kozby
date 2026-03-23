@@ -1,6 +1,8 @@
 import { PLUS_MENU_ITEMS } from "../utils/constants"
 import { useNavigate } from "react-router"
+
 import { UnorderedListOutlined, InboxOutlined, DollarOutlined, LogoutOutlined } from '@ant-design/icons';
+import { Divider } from 'antd';
 
 export const Plus = () => {
     const navigate = useNavigate();
