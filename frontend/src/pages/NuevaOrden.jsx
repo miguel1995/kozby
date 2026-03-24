@@ -7,7 +7,7 @@ import { PlusOutlined, MinusOutlined } from '@ant-design/icons';
 import { useOrder } from '../context/OrderContext';
 import { ModalError } from '../components/modals/ModalError';
 import { message } from 'antd';
-
+import { ButtonAmount } from '../components/buttons/ButtonAmount';
 const NuevaOrden = () => {
     const navigate = useNavigate();
     const { addProduct } = useOrder();
@@ -120,7 +120,7 @@ const NuevaOrden = () => {
                             className='nueva-orden__body--variant'
                             onChange={() => onChange('currentVariant', variante)}
                         >
-                            <span>{variante.nombre}</span>
+                            <span className='nueva-orden__body--variant--nombre'>{variante.nombre} <span> <ButtonAmount amount={variante.cantidad} showLabel={false} /> </span> </span> 
                             <div className='nueva-orden__body--row--price'>
                                 <span>${variante.precio}</span>
                                 <Radio
