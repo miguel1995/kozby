@@ -104,3 +104,8 @@ export const PAYMENT_METHODS = [
     value: "ZELLE"
   }
 ]
+
+export const OTRO_IMPORTE = {
+  nombre: "Otro importe",
+  id: "1234567890"
+}

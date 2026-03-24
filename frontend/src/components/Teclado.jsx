@@ -2,16 +2,14 @@ import { useState } from 'react';
 
 const KEYS = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
 
-const Teclado = () => {
+const Teclado = ({ handlePlus }) => {
   const [rawPrice, setRawPrice] = useState('');
 
   const handleNumberClick = (num) => {
     setRawPrice((prev) => `${prev}${num}`);
   };
 
-  const handleDelete = () => {
-    setRawPrice((prev) => prev.slice(0, -1));
-  };
+
 
   const handleClear = () => {
     setRawPrice('');
@@ -25,7 +23,6 @@ const Teclado = () => {
 
   return (
     <div className="teclado-page">
-      <h2 className="teclado-title">Teclado de precio</h2>
 
       <div className="teclado-display">{formattedPrice}</div>
 
@@ -40,12 +37,16 @@ const Teclado = () => {
             {key}
           </button>
         ))}
-        <button type="button" className="teclado-key teclado-key--danger" onClick={handleDelete}>
-          Borrar
-        </button>
         <button type="button" className="teclado-key teclado-key--secondary" onClick={handleClear}>
-          Limpiar
+          C
         </button>
+        <button type="button" className="teclado-key teclado-key--danger"
+          onClick={
+            () => handlePlus(rawPrice)
+          }>
+          +
+        </button>
+
       </div>
     </div>
   );
