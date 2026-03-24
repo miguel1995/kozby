@@ -38,23 +38,29 @@ const ProcesoPagos = () => {
 
     return (
         <div className='proceso-pagos'>
-            <div className="products-table">
-                {loading ? (
-                    <Loader message="Cargando productos..." />
-                ) : (
-                    <ListProductos
-                        productos={productos}
-                        hacerClickCallback={hacerClick}
-                        clickAction="nueva-orden"
-                    />
 
-                )}
+            <div className='proceso-pagos__body'>
+
+                <div className="products-table">
+                    {loading ? (
+                        <Loader message="Cargando productos..." />
+                    ) : (
+                        <ListProductos
+                            productos={productos}
+                            hacerClickCallback={hacerClick}
+                            clickAction="nueva-orden"
+                        />
+
+                    )}
+                </div>
+                <div className="create-article-new"
+                    onClick={() => {
+                        navigate('/nuevo-producto');
+                    }}
+                ><span>Crear articulo nuevo</span></div>
+
             </div>
-            <div className="create-article-new"
-                onClick={() => {
-                    navigate('/nuevo-producto');
-                }}
-            ><span>Crear articulo nuevo</span></div>
+
             <div className="charge-button">
                 <SubmitButton
                     onClick={() => {
@@ -63,12 +69,12 @@ const ProcesoPagos = () => {
                             navigate('/cobro');
                         }
                     }}
-                    text={(total > 0) ? 
+                    text={(total > 0) ?
                         <>
-                        <div>Revisar venta</div>
-                        <div>{totalAmount} artículos</div>
-                    </>
-                     : `Cobrar $0.00`}
+                            <div>Revisar venta</div>
+                            <div>{totalAmount} artículos</div>
+                        </>
+                        : `Cobrar $0.00`}
                     disabled={total === 0}
                 />
             </div>
