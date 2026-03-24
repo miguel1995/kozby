@@ -13,6 +13,7 @@ import Transacciones from './pages/transacciones';
 import TransaccionDetalle from './pages/TransaccionDetalle';
 
 import PaymentMethod from './pages/PaymentMethod';
+import Teclado from './pages/Teclado';
 
 import { OrderProvider } from './context/OrderContext';
 import { useEffect } from 'react';
@@ -76,6 +77,11 @@ function App() {
             <Route path="/metodo-pago" element={
               <MainLayout>
                 <PaymentMethod />
+              </MainLayout>
+            } />
+            <Route path="/teclado" element={
+              <MainLayout>
+                <Teclado />
               </MainLayout>
             } />
           </Routes>
