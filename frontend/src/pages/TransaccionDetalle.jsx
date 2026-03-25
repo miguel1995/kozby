@@ -3,8 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import Loader from '../components/Loader';
 import { ModalError } from '../components/modals/ModalError';
 import { useTransaccionDetalleHandler } from '../hooks/useTransaccionDetalleHandler';
-import { CreditCardOutlined, DollarOutlined, FileTextOutlined } from '@ant-design/icons';
-import { ButtonSecundary } from '../components/buttons/ButtonSecundary';
+import { ArrowLeftOutlined, CreditCardOutlined, DollarOutlined, FileTextOutlined, TagOutlined } from '@ant-design/icons';
 
 
 
@@ -58,14 +57,31 @@ const TransaccionDetalle = () => {
 
 
   const numeroRecibo = transaccion?.id || '-';
+  const descuentos = Array.isArray(transaccion?.descuentos) ? transaccion.descuentos : [];
+  const totalDescuentos = descuentos.reduce((acc, d) => acc + Number(d?.valor || 0), 0);
+
 
   return (
     <div className="page-container">
       <div className="products-page">
         <div className="products-page-filters-and-actions">
-          
+          <div className="txd-topbar">
+            <div className="txd-back-row">
+              <button
+                type="button"
+                className="txd-back-btn"
+                onClick={() => navigate(-1)}
+                aria-label="Volver"
+              >
+                <ArrowLeftOutlined />
 
+              </button>
 
+              <div className="txd-back-title">
+                Venta de <strong>{transaccion ? formatMoney(transaccion.total) : '-'}</strong>
+              </div>
+            </div>
+          </div>
         </div>
 
         {loading ? (
@@ -90,8 +106,11 @@ const TransaccionDetalle = () => {
               <span className="txd-col-icon">
                 <FileTextOutlined className="txd-icon" />
               </span>
-              <strong className="txd-col-main">Número de recibo</strong>
-              <span className="txd-receipt"><strong>{numeroRecibo}</strong></span>
+              <div className="txd-col-stack">
+                <strong className="txd-col-main">Número de recibo</strong>
+                <span className="txd-receipt"><strong>{numeroRecibo}</strong></span>
+              </div>
+
 
             </div>
 
@@ -141,6 +160,16 @@ const TransaccionDetalle = () => {
 
             <strong className="txd-col-total">Total</strong>
             <div className="txd-totals-table">
+              {descuentos.map((d, idx) => (
+                <div key={`${d?.titulo || 'descuento'}-${idx}`} className="txd-products-row txd-totals-row">
+                  <div className="txd-products-badge">
+                    <TagOutlined className="txd-icon" />
+                  </div>
+                  <div className="txd-totals-label">{d?.titulo || 'Descuento'}</div>
+                  <div className="txd-totals-value">- {formatMoney(d?.valor || 0)}</div>
+                </div>
+              ))}
+
               <div className="txd-products-row txd-totals-row">
                 <div className="txd-products-badge">
                   <FileTextOutlined className="txd-icon" />
@@ -158,24 +187,12 @@ const TransaccionDetalle = () => {
               </div>
             </div>
 
-
-
-
-
-
-
             <hr />
 
-            {transaccion.descuentos.map((descuento, index) => (
-              <div key={index}>
-                <strong>Descuento:</strong> {descuento.titulo || '-'}
-                <div><strong>Valor descuento:</strong> {formatMoney(descuento.valor || 0)}</div>
-              </div>
-            ))}
+
           </div>
         )}
 
-        <ButtonSecundary label="Volver" onClick={() => navigate(-1)} />
         <ModalError open={errorData.isOpen} errorCode={errorData.codeError} onOk={handleOk} />
       </div>
     </div>
