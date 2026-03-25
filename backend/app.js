@@ -30,7 +30,7 @@ app.get("/health", (req, res) => {
 app.use('/productos', require('./routes/productos.routes'));
 app.use('/', require('./routes/authentication.routes'));
 app.use('/transaccion', require('./routes/transaccion.routes'));
-
+app.use('/descuentos', require('./routes/descuentos.routes'));
 
 
 
