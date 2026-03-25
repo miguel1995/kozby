@@ -15,7 +15,12 @@ const Teclado = ({ handlePlus }) => {
     setRawPrice('');
   };
 
-  const normalizedPrice = rawPrice ? Number(rawPrice) : 0;
+  // Modificamos el valor normalizado para que las dos últimas cifras se tomen como decimales
+  // Ejemplo: "1234" -> 12.34
+  const normalizedPrice = rawPrice
+    ? Number(rawPrice.slice(0, -2) || '0') + Number(`0.${rawPrice.slice(-2).padStart(2, '0')}`)
+    : 0;
+
   const formattedPrice = normalizedPrice.toLocaleString('es-MX', {
     style: 'currency',
     currency: 'MXN',

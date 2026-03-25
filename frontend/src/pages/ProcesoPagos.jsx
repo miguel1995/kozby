@@ -45,7 +45,13 @@ const ProcesoPagos = () => {
     }, []);
 
     const handlePlus = (price) => {
-        hacerClick('nueva-orden', { precio: price, cantidad: 1, nombre: OTRO_IMPORTE.nombre, id: OTRO_IMPORTE.id, variantes: [], variantId: "" });
+        hacerClick('nueva-orden', { 
+            precio: price, 
+            cantidad: 1, 
+            nombre: OTRO_IMPORTE.nombre, 
+            id: OTRO_IMPORTE.id, 
+            variantes: [], 
+            variantId: "" });
     }
 
     return (
