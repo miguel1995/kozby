@@ -13,6 +13,7 @@ const getTransacciones = async () => {
       total: transaccion.total,
       subtotal: transaccion.subtotal,
       productos_descripcion: transaccion.productos_descripcion,
+      descuento: transaccion.descuento || {},
       descuentos: transaccion.descuentos || [],
       tipo_pago: transaccion.tipo_pago,
       createdAt: transaccion.createdAt,
@@ -36,7 +37,9 @@ const getTransaccionById = async (id) => {
       subtotal: transaccion.subtotal,
       productos_descripcion: transaccion.productos_descripcion,
       productos: transaccion.productos || [],
-      descuentos: transaccion.descuentos  || [],
+      descuento: transaccion.descuento || {},
+      descuentos: transaccion.descuentos || [],
+
       tipo_pago: transaccion.tipo_pago,
       createdAt: transaccion.createdAt,
     };
