@@ -1,0 +1,33 @@
+.descuentos-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.descuento-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  background: #fff;
+}
+
+.descuento-item-main {
+  min-width: 0;
+}
+
+.descuento-item-nombre {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.descuento-item-tipo {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.descuento-item-monto {
+  font-weight: 500;
+  white-space: nowrap;
+}
