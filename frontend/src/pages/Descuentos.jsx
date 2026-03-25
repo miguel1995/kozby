@@ -1,14 +1,18 @@
 import { useMemo, useState } from 'react';
 import { Input } from 'antd';
-import { SearchOutlined, CloseOutlined } from '@ant-design/icons';
+import { SearchOutlined, CloseOutlined, TagOutlined, PlusOutlined } from '@ant-design/icons';
 import Loader from '../components/Loader';
 import { ModalError } from '../components/modals/ModalError';
 import { useDescuentosHandler } from '../hooks/useDescuentosHandler';
 import { Divider } from 'antd';
+import { SubmitButton } from '../components/buttons/SubmitButton';
+import { ButtonClose } from '../components/buttons/ButtonClose';
+import { useNavigate } from 'react-router';
+
 function Descuentos() {
   const { descuentos, loading, errorData, handleOk } = useDescuentosHandler();
   const [search, setSearch] = useState('');
-
+  const navigate = useNavigate();
   const filteredDescuentos = useMemo(() => {
     const term = search.trim().toLowerCase();
     if (!term) return descuentos;
@@ -36,7 +40,17 @@ function Descuentos() {
     <div className="page-container">
       <div className="products-page">
         <div className="products-page-filters-and-actions">
+          <div className="descuentos-page-header">
+            <ButtonClose
+              onClick={() => navigate('/plus')}
+            />
           <div className="products-page-archived-title">Descuentos</div>
+          
+            <PlusOutlined
+            className="descuentos-page-plus-icon"
+              onClick={() => navigate('/nuevo-descuento')}
+            />
+          </div>
           <Input
             placeholder="Buscar"
             className="products-page-search-input"
@@ -57,7 +71,16 @@ function Descuentos() {
               {filteredDescuentos.map((d) => (
                 <div key={d.id}>
                 <div className="descuento-item">
+                  
+                
+                  
+
                   <div className="descuento-item-main">
+
+                  <div className="descuento-item-badge">
+                    <TagOutlined className="descuento-item-icon" />
+                  </div>
+
                     <div className="descuento-item-nombre">{d.nombre || '—'}</div>
                   </div>
                   <div className="descuento-item-monto">{formatMonto(d)}</div>
