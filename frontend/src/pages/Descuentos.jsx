@@ -8,11 +8,79 @@ import { Divider } from 'antd';
 import { SubmitButton } from '../components/buttons/SubmitButton';
 import { ButtonClose } from '../components/buttons/ButtonClose';
 import { useNavigate } from 'react-router';
-
-function Descuentos() {
+import { ModalDescuentoForm } from '../components/modals/ModalDescuentoForm';
+import { useState } from 'react';
+import { initialDescuentosValues } from '../utils/constants';
+const Descuentos = ({ descuentos, handleChange }) => {
   const { descuentos, loading, errorData, handleOk } = useDescuentosHandler();
   const [search, setSearch] = useState('');
   const navigate = useNavigate();
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+  const [values, setValues] = useState(initialDescuentosValues);
+  const [isFormValid, setIsFormValid] = useState(false);
+
+  const handleDescuentoOk = () => {
+    setIsModalOpen(false);
+};  
+ 
+  const handleDescuentoChange = (e) => {
+    setValues(
+      { ...values,
+        [e.target.name]: {
+          ...values[e.target.name],
+          value: e.target.value,
+          valid: e.target.value != ""
+        }
+      });
+  };
+
+ 
+  const handleDescuentoCreate = () => {
+    let valuesToSend = values;
+    if (!editMode) {
+      const newId = crypto.randomUUID();
+      valuesToSend = {
+        ...values,
+        id: { 
+          value: newId, 
+          valid: true 
+        }
+      };
+    }
+    handleChange(
+      {
+        target: {
+          name: "descuentos",
+          action: editMode ? "update" : "create",
+          value: valuesToSend,
+          valid: isFormValid
+        }
+      });
+    handleDescuentoOk();
+    resetValues();
+  }
+
+  const resetValues = () => {
+    setValues(initialDescuentosValues);
+    setIsFormValid(false);
+    setIsModalOpen(false);
+  }
+  const handleDescuentoDelete = (id) => {
+    handleChange(
+      {
+        target: {
+          name: "descuentos",
+          action: DESCUENTOS_ACTIONS.DELETE,
+          value: id
+        }
+      });
+    handleDescuentoOk();
+    resetValues();
+  };
+
+
   const filteredDescuentos = useMemo(() => {
     const term = search.trim().toLowerCase();
     if (!term) return descuentos;
@@ -70,10 +138,7 @@ function Descuentos() {
             <div className="descuentos-list">
               {filteredDescuentos.map((d) => (
                 <div key={d.id}>
-                <div className="descuento-item">
-                  
-                
-                  
+                <div className="descuento-item">                
 
                   <div className="descuento-item-main">
 
@@ -91,6 +156,17 @@ function Descuentos() {
             </div>
           )}
         </div>
+
+        <ModalDescuentoForm
+                isModalOpen={isModalOpen}
+                handleDescuentoOk={handleDescuentoOk}
+                handleDescuentoCreate={handleDescuentoCreate}
+                isFormValid={isFormValid}
+                editMode={editMode}
+                values={values}
+                handleDescuentoChange={handleDescuentoChange}
+                handleDescuentoDelete={handleDescuentoDelete}
+            />
 
         <ModalError open={errorData.isOpen} errorCode={errorData.codeError} onOk={handleOk} />
       </div>

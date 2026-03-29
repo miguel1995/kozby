@@ -148,7 +148,7 @@ const Variantes = ({ variantes, handleChange } = { variantes: [], handleChange: 
                                     </div>
                                     <div>
                                         <div className="variante-item-cantidad">
-                                            <ButtonAmount amount={variante.cantidad.value} clickHandler={() => {showAmountModal(variante)}} />
+                                            <ButtonAmount amount={variante.cantidad.value} clickHandler={() => { showAmountModal(variante) }} />
                                         </div>
                                     </div>
                                 </div>

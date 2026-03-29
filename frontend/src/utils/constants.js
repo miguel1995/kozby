@@ -110,3 +110,22 @@ export const OTRO_IMPORTE = {
   nombre: "Otro importe",
   id: "1234567890"
 }
+
+export const initialDescuentosValues = {
+  id: {
+    value: null,
+    valid: true
+  },
+  nombre: {
+    value: "",
+    valid: null
+  },
+  tipo: {
+    value: "PORCENTAJE",
+    valid: true
+  },
+  monto: {
+    value: "",
+    valid: null
+  }
+}

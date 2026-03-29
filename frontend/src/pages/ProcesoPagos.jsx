@@ -30,7 +30,7 @@ const ProcesoPagos = () => {
 
 
     const {
-        isModalOpen,
+        errorData,
         handleOk,
         loading,
         productos,
@@ -102,8 +102,9 @@ const ProcesoPagos = () => {
                 />
             </div>
             <ModalError
-                open={isModalOpen}
+                open={errorData.isOpen}
                 onOk={handleOk}
+                errorCode={errorData.codeError}
             />
 
         </div>
