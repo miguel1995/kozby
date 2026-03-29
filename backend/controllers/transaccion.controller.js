@@ -2,13 +2,15 @@ const transaccionesService = require('../services/transacciones.service');
 
 const getTransacciones = async (req, res) => {
   try {
-    const transacciones = await transaccionesService.getTransacciones();
-    return res.status(200).json(transacciones);
+    const { limit, createdAt, lastId } = req.query;
+    const result = await transaccionesService.getTransacciones({ limit, createdAt, lastId });
+    return res.status(200).json(result);
   } catch (error) {
     console.error('Error al obtener transacciones:', error);
     return res.status(500).json({ message: 'Error al obtener transacciones' });
   }
 };
+
 
 const getTransaccionById = async (req, res) => {
   try{

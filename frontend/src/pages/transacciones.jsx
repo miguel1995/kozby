@@ -7,6 +7,7 @@ import {
   DollarOutlined,
 } from '@ant-design/icons';
 import Loader from '../components/Loader';
+import { ButtonSecundary } from '../components/buttons/ButtonSecundary';
 import { ModalError } from '../components/modals/ModalError';
 import { useTransaccionHandler } from '../hooks/useTransaccionHandler';
 import { useNavigate } from 'react-router-dom';
@@ -15,7 +16,8 @@ import { useNavigate } from 'react-router-dom';
 function Transacciones() {
   const navigate = useNavigate();
 
-  const { transacciones, loading, errorData, handleOk } = useTransaccionHandler();
+  const { transacciones, loading, loadingMore, hasMore, loadMore, errorData, handleOk } = useTransaccionHandler();
+
   const [search, setSearch] = useState('');
 
 
@@ -151,6 +153,14 @@ function Transacciones() {
             ))
           )}
         </div>
+
+        {!loading && hasMore && (
+          <div style={{ display: 'flex', justifyContent: 'center', marginTop: 12 }}>
+            <ButtonSecundary onClick={loadMore} label="Cargar más" />
+          </div>
+        )}
+
+
 
         <ModalError
           open={errorData.isOpen}

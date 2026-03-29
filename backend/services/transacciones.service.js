@@ -2,13 +2,32 @@ const mongoose = require('mongoose');
 const Transaccion = require('../models/transaccion');
 const productosService = require('./productos.service');
 
-const getTransacciones = async () => {
+const getTransacciones = async ({ limit = 10, createdAt = null, lastId = null } = {}) => {
   try {
-    const transacciones = await Transaccion.find({})
-      .sort({ createdAt: -1 })
+    const filter = {};
+
+    if (createdAt && lastId && mongoose.Types.ObjectId.isValid(lastId)) {
+      const cursorDate = new Date(createdAt);
+      const cursorId = new mongoose.Types.ObjectId(lastId);
+
+      if (!Number.isNaN(cursorDate.valueOf())) {
+        filter.$or = [
+          { createdAt: { $lt: cursorDate } },
+          { createdAt: cursorDate, _id: { $lt: cursorId } },
+        ];
+      }
+    }
+
+    const docs = await Transaccion.find(filter)
+      .sort({ createdAt: -1, _id: -1 })
+      .limit(Number(limit) + 1)
       .lean();
 
-    return transacciones.map((transaccion) => ({
+    const effectiveLimit = Math.max(1, Math.min(100, Number(limit) || 10));
+    const hasMore = docs.length > effectiveLimit;
+    const page = hasMore ? docs.slice(0, effectiveLimit) : docs;
+
+    const items = page.map((transaccion) => ({
       id: transaccion._id?.toString?.() || transaccion._id,
       total: transaccion.total,
       subtotal: transaccion.subtotal,
@@ -18,11 +37,19 @@ const getTransacciones = async () => {
       tipo_pago: transaccion.tipo_pago,
       createdAt: transaccion.createdAt,
     }));
+
+    const last = page[page.length - 1];
+    const next = hasMore && last
+      ? { createdAt: last.createdAt, lastId: last._id?.toString?.() || last._id }
+      : null;
+
+    return { items, hasMore, next };
   } catch (error) {
     console.error('Error al obtener transacciones:', error);
     throw error;
   }
 };
+
 
 const getTransaccionById = async (id) => {
   try {
