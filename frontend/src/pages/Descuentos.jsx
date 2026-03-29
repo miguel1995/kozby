@@ -9,9 +9,9 @@ import { SubmitButton } from '../components/buttons/SubmitButton';
 import { ButtonClose } from '../components/buttons/ButtonClose';
 import { useNavigate } from 'react-router';
 import { ModalDescuentoForm } from '../components/modals/ModalDescuentoForm';
-import { useState } from 'react';
 import { initialDescuentosValues } from '../utils/constants';
-const Descuentos = ({ descuentos, handleChange }) => {
+
+const Descuentos = ({ descuentos2, handleChange }) => {
   const { descuentos, loading, errorData, handleOk } = useDescuentosHandler();
   const [search, setSearch] = useState('');
   const navigate = useNavigate();
