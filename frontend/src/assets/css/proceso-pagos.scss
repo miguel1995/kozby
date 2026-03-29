@@ -8,11 +8,15 @@
 }
 
 .charge-button {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 16px 16px;
-    
+
+    margin: 0 16px;
+    position: fixed;
+    bottom: 60px;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background-color: #fff;
+    padding: 16px 16px;
 }
 
 .charge-button button {
@@ -21,4 +25,14 @@
 
 .proceso-pagos {
     padding: 32px;
+}
+.proceso-pagos__body {
+    height: 100%;
+    padding-bottom: 100px;
+}
+
+.proceso-pagos__header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
