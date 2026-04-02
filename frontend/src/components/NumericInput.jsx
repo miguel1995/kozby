@@ -5,7 +5,7 @@ import { Input } from 'antd';
 
 
 export const NumericInput = props => {
-  const { value, onChange, name, maxLength } = props;
+  const { value, onChange, name, maxLength, placeholder="" } = props;
   
 
   const handleChange = e => {
@@ -17,11 +17,15 @@ export const NumericInput = props => {
   };
   // '.' at the end or only '-' in the input box.
   const handleBlur = () => {
-    let valueTemp = value;
-    if (value.charAt(value.length - 1) === '.' || value === '-') {
-      valueTemp = value.slice(0, -1);
+    let valueTemp = value ?? '';
+    if (
+      valueTemp.length > 0 &&
+      (valueTemp.charAt(valueTemp.length - 1) === '.' || valueTemp === '-')
+    ) {
+      valueTemp = valueTemp.slice(0, -1);
     }
-    onChange(valueTemp.replace(/0*(\d+)/, '$1'));
+    const normalized = valueTemp.replace(/0*(\d+)/, '$1');
+    onChange({ target: { name, value: normalized } });
   };
 
   return (
@@ -29,9 +33,10 @@ export const NumericInput = props => {
         {...props}
         onChange={handleChange}
         onBlur={handleBlur}
-        placeholder=""
+        placeholder={placeholder}
         maxLength={maxLength || 8}
-    
+        inputMode={'decimal'}
+
       />
   );
 };

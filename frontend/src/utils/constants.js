@@ -1,5 +1,10 @@
 export const PAGE_SIZE = 30;
 
+export const OPTIONS_TIPO_DESCUENTO = [
+  { label: 'Porcentaje', value: 'PORCENTAJE' },
+  { label: 'Importe', value: 'IMPORTE' }
+]
+
 export const initialFormValues = {
   nombre: {
     value: "",
@@ -123,7 +128,7 @@ export const initialDescuentosValues = {
     valid: null
   },
   tipo: {
-    value: "PORCENTAJE",
+    value: OPTIONS_TIPO_DESCUENTO[0].value,
     valid: true
   },
   monto: {

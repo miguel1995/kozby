@@ -20,6 +20,18 @@ const getDescuentos = async () => {
   }));
 };
 
+const postDescuento = async (descuento) => {
+  const newDescuento = await Descuento.create(descuento);
+  return newDescuento;
+};
+
+const putDescuento = async (id, descuento) => {
+  const updatedDescuento = await Descuento.findByIdAndUpdate(id, descuento, { new: true });
+  return updatedDescuento;
+};
+
 module.exports = {
   getDescuentos,
+  postDescuento,
+  putDescuento,
 };

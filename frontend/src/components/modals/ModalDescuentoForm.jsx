@@ -7,7 +7,7 @@ import { Divider } from 'antd';
 export const ModalDescuentoForm = ({ 
     isModalOpen, 
     handleDescuentoOk, 
-    handleDescuentoCreate, 
+    handleDescuentoSubmit, 
     isFormValid, 
     editMode,
     values,
@@ -33,7 +33,7 @@ export const ModalDescuentoForm = ({
                         {editMode ? "Editarar Descuento" : "Crear Descuento"}
                     </div>
                     <div style={{ marginBottom: '20px' }}>
-                        <SubmitButton text="Guardar" onClick={handleDescuentoCreate} disabled={!isFormValid} />
+                        <SubmitButton text="Guardar" onClick={handleDescuentoSubmit} disabled={!isFormValid} />
                     </div>
                 </div>
             </div>
