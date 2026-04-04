@@ -30,7 +30,7 @@ export const ModalDescuentoForm = ({
                         <ButtonClose onClick={handleDescuentoOk} />
                     </div>
                     <div>
-                        {editMode ? "Editarar Descuento" : "Crear Descuento"}
+                        {editMode ? "Editar Descuento" : "Crear Descuento"}
                     </div>
                     <div style={{ marginBottom: '20px' }}>
                         <SubmitButton text="Guardar" onClick={handleDescuentoSubmit} disabled={!isFormValid} />

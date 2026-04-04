@@ -28,7 +28,8 @@ const Descuentos = () => {
     handleDescuentoChange,
     handleDescuentoSubmit,
     handleDescuentoDelete,
-    handleDescuentoOk
+    handleDescuentoOk,
+    handleClick
   } = useDescuentosHandler();
 
 
@@ -98,7 +99,9 @@ const Descuentos = () => {
           ) : (
             <div className="descuentos-list">
               {filteredDescuentos.map((d) => (
-                <div key={d.id}>
+                <div key={d.id} onClick={() => {
+                  handleClick(d);
+                }}>
                   <div className="descuento-item">
 
                     <div className="descuento-item-main">

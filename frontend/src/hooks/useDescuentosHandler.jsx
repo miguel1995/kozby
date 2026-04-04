@@ -60,55 +60,55 @@ export const useDescuentosHandler = () => {
   const createNewDescuento = async (descuentoData) => {
     setLoading(true);
     try {
-        checkToken();
-        const data = await postDescuento(descuentoData);
-        resetValues();
-        fetchDescuentos();
+      checkToken();
+      const data = await postDescuento(descuentoData);
+      resetValues();
+      fetchDescuentos();
     } catch (err) {
-        setErrorData({
-            codeError: err.status || 500,
-            isOpen: true
-        });
+      setErrorData({
+        codeError: err.status || 500,
+        isOpen: true
+      });
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
-};
+  };
 
-const updateDescuento = async (id, descuentoData) => {
+  const updateDescuento = async (id, descuentoData) => {
     setLoading(true);
     try {
-        checkToken();
-        const data = await putDescuento(id, descuentoData);
-        resetValues();
-        fetchDescuentos();
+      checkToken();
+      const data = await putDescuento(id, descuentoData);
+      resetValues();
+      fetchDescuentos();
     } catch (err) {
-        setErrorData({
-            codeError: err.status || 500,
-            isOpen: true
-        })
+      setErrorData({
+        codeError: err.status || 500,
+        isOpen: true
+      })
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
-};
+  };
 
 
-const handleDescuentoSubmit = () => {
+  const handleDescuentoSubmit = () => {
 
-      if (editMode) {
-          updateDescuento(values.id.value, {
-                nombre: values.nombre.value,
-                tipo: values.tipo.value,
-                monto: values.monto.value,
-          });
-      } else {
-          createNewDescuento({
-              nombre: values.nombre.value,
-              tipo: values.tipo.value,
-              monto: values.monto.value,
-          });
-      }
-  
-}
+    if (editMode) {
+      updateDescuento(values.id.value, {
+        nombre: values.nombre.value,
+        tipo: values.tipo.value,
+        monto: values.monto.value,
+      });
+    } else {
+      createNewDescuento({
+        nombre: values.nombre.value,
+        tipo: values.tipo.value,
+        monto: values.monto.value,
+      });
+    }
+
+  }
 
   const resetValues = () => {
     setValues(initialDescuentosValues);
@@ -158,6 +158,30 @@ const handleDescuentoSubmit = () => {
     fetchDescuentos();
   }, []);
 
+  const handleClick = (descuento) => {
+    setValues({
+      id: {
+        value: descuento.id,
+        valid: true
+      },
+      nombre: {
+        value: descuento.nombre,
+        valid: true
+      },
+      tipo: {
+        value: descuento.tipo,
+        valid: true
+      },
+      monto: {
+        value: descuento.monto,
+        valid: true
+      },
+    });
+    setIsModalOpen(true);
+    setEditMode(true);
+  
+
+  };
   return {
     descuentos,
     loading,
@@ -176,5 +200,6 @@ const handleDescuentoSubmit = () => {
     resetValues,
     handleDescuentoDelete,
     handleDescuentoOk,
+    handleClick,
   };
 };
