@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { checkToken } from '../utils/authUtils';
 import { getProductoById } from '../services/productos.service';
+import { useOrder } from '../context/OrderContext';
 
 export const usePaymentProcess = () => {
+    const { addProduct } = useOrder();
+    const navigate = useNavigate();
 
     const { id } = useParams();
     const [product, setProduct] = useState({
@@ -20,13 +23,53 @@ export const usePaymentProcess = () => {
         isOpen: false
     });
     const [loading, setLoading] = useState(false);
+    const [total, setTotal] = useState(0.00);
 
+    const [amount, setAmount] = useState(1);
+
+    const [values, setValues] = useState({
+        currentVariant: {
+            value: null,
+            valid: false,
+        },
+        amount: {
+            value: 1,
+            valid: true,
+        },
+        notes: {
+            value: '',
+            valid: true,
+        },
+        discounts: {
+            value: '',
+            valid: true,
+        },
+    });
 
     useEffect(() => {
         if (id) {
             fetchProducto(id);
         }
     }, [id]);
+
+
+    useEffect(() => {
+
+        onChange('amount', amount);
+
+    }, [amount]);
+    useEffect(() => {
+        if (values.currentVariant.value && values.amount.value) {
+            const total = values.currentVariant.value?.precio * values.amount.value;
+            setTotal(total);
+        }
+    }, [values.currentVariant.value, values.amount.value]);
+
+    useEffect(() => {
+        if (product.variantes && product.variantes.length > 0) {
+            onChange('currentVariant', product.variantes[0]);
+        }
+    }, [product.variantes])
 
     const handleOk = () => {
         setErrorData({
@@ -62,11 +105,45 @@ export const usePaymentProcess = () => {
         }
     };
 
+    const onChange = (name, value) => {
+        setValues({
+            ...values,
+            [name]: {
+                value: value,
+                valid: true,
+            },
+        });
+    };
+
+    const handleAddProduct = () => {
+        if (values.currentVariant.valid && values.amount.valid && values.currentVariant.value) {
+            const variante = values.currentVariant.value;
+            addProduct({
+                productId: product.id,
+                productName: product.nombre,
+                variantId: variante.id,
+                variantName: variante.nombre,
+                precio: variante.precio,
+                cantidad: amount,
+                notes: values.notes.value,
+                discounts: values.discounts.value,
+            });
+            navigate('/proceso-pagos');
+        }
+    }
+
+
     return {
         product,
         errorData,
         loading,
-        handleOk
+        handleOk,
+        handleAddProduct,
+        total,
+        amount,
+        values,
+        setAmount,
+        onChange,
     }
 }
    

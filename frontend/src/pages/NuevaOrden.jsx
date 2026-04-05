@@ -10,77 +10,21 @@ import { message } from 'antd';
 import { ButtonAmount } from '../components/buttons/ButtonAmount';
 const NuevaOrden = () => {
     const navigate = useNavigate();
-    const { addProduct } = useOrder();
-    const { product, errorData, loading, handleOk } = usePaymentProcess();
-    const [values, setValues] = useState({
-        currentVariant: {
-            value: null,
-            valid: false,
-        },
-        amount: {
-            value: 1,
-            valid: true,
-        },
-        notes: {
-            value: '',
-            valid: true,
-        },
-        discounts: {
-            value: '',
-            valid: true,
-        },
-    });
-    const [total, setTotal] = useState(0.00);
-
-    const [amount, setAmount] = useState(1);
+    const { 
+        product, 
+        errorData, 
+        loading, 
+        handleOk,
+        handleAddProduct,
+        total,
+        amount,
+        values,
+        setAmount,
+        onChange,
+    } = usePaymentProcess();
 
 
-    useEffect(() => {
-
-        onChange('amount', amount);
-
-    }, [amount]);
-    useEffect(() => {
-        if (values.currentVariant.value && values.amount.value) {
-            const total = values.currentVariant.value?.precio * values.amount.value;
-            setTotal(total);
-        }
-    }, [values.currentVariant.value, values.amount.value]);
-
-    useEffect(() => {
-        if (product.variantes && product.variantes.length > 0) {
-            onChange('currentVariant', product.variantes[0]);
-        }
-    }, [product.variantes])
-
-
-    const onChange = (name, value) => {
-        setValues({
-            ...values,
-            [name]: {
-                value: value,
-                valid: true,
-            },
-        });
-    };
-
-    const handleAddProduct = () => {
-        if (values.currentVariant.valid && values.amount.valid && values.currentVariant.value) {
-            const variante = values.currentVariant.value;
-            addProduct({
-                productId: product.id,
-                productName: product.nombre,
-                variantId: variante.id,
-                variantName: variante.nombre,
-                precio: variante.precio,
-                cantidad: amount,
-                notes: values.notes.value,
-                discounts: values.discounts.value,
-            });
-            navigate('/proceso-pagos');
-        }
-    }
-
+    
     return (
         <div className='nueva-orden'>
             <div className='nueva-orden__header'>
