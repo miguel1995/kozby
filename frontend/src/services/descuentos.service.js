@@ -21,3 +21,10 @@ export const putDescuento = async (id, descuento) => {
   if (!res.ok) throw { status: res.status };
   return await res.json();
 };
+
+
+export const deleteDescuento = async (id) => {
+  const res = await fetch(`${API_URL}/${id}`, { headers: getAuthHeaders(), method: 'DELETE' });
+  if (!res.ok) throw { status: res.status };
+  return await res.json();
+};

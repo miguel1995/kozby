@@ -30,8 +30,19 @@ const putDescuento = async (req, res) => {
   }
 };
 
+const deleteDescuento = async (req, res) =>{
+  try {
+    const descuento = await descuentosService.deleteDescuento(req.params.id);
+    return res.status(200).json(descuento);
+  } catch (error) {
+    console.error('Error al eliminar descuento:', error);
+    return res.status(500).json({ message: 'Error al eliminar descuento' });
+  }
+}
+
 module.exports = {
   getDescuentos,
   postDescuento,
   putDescuento,
+  deleteDescuento
 };

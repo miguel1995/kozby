@@ -30,8 +30,14 @@ const putDescuento = async (id, descuento) => {
   return updatedDescuento;
 };
 
+const deleteDescuento = async (id) => {
+  const deletedDescuento = await Descuento.findByIdAndDelete(id);
+  return deletedDescuento;
+};
+
 module.exports = {
   getDescuentos,
   postDescuento,
   putDescuento,
+  deleteDescuento
 };

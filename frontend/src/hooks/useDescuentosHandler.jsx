@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { checkToken } from '../utils/authUtils';
-import { getDescuentos, postDescuento, putDescuento } from '../services/descuentos.service';
+import { getDescuentos, postDescuento, putDescuento, deleteDescuento } from '../services/descuentos.service';
 import { initialDescuentosValues } from '../utils/constants';
 
 export const useDescuentosHandler = () => {
@@ -17,24 +17,10 @@ export const useDescuentosHandler = () => {
   const [isFormValid, setIsFormValid] = useState(false);
 
   useEffect(() => {
-    console.log(values);
     setIsFormValid(Object.values(values).every(field => {
       return field.valid === true;
     }));
   }, [values]);
-
-  useEffect(() => {
-    console.log(isFormValid);
-    setValues((prev) => ({
-      ...prev,
-      monto: {
-        ...prev.monto,
-        value: "",
-        valid: false
-      },
-    }));
-
-  }, [values.tipo]);
 
   const handleDescuentoOk = () => {
     setIsModalOpen(false);
@@ -46,14 +32,26 @@ export const useDescuentosHandler = () => {
 
     const nextValue = value ?? '';
 
-    setValues((prev) => ({
-      ...prev,
-      [name]: {
-        ...prev[name],
-        value: nextValue,
-        valid: nextValue !== '',
-      },
-    }));
+    setValues((prev) => {
+      const next = {
+        ...prev,
+        [name]: {
+          ...prev[name],
+          value: nextValue,
+          valid: nextValue !== '',
+        },
+      };
+
+      if (name === 'tipo' && nextValue !== prev.tipo?.value) {
+        next.monto = {
+          ...prev.monto,
+          value: '',
+          valid: false,
+        };
+      }
+
+      return next;
+    });
   };
 
 
@@ -117,16 +115,11 @@ export const useDescuentosHandler = () => {
   }
 
   const handleDescuentoDelete = (id) => {
-    handleChange(
-      {
-        target: {
-          name: "descuentos",
-          action: DESCUENTOS_ACTIONS.DELETE,
-          value: id
-        }
-      });
+ 
+    deleteDescuento(id);
     handleDescuentoOk();
     resetValues();
+    fetchDescuentos();
   };
 
 
