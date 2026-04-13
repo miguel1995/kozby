@@ -4,82 +4,29 @@ import { useState, useEffect } from 'react';
 import { usePaymentProcess } from '../hooks/usePaymentProcess';
 import { useNavigate } from 'react-router-dom';
 import { PlusOutlined, MinusOutlined } from '@ant-design/icons';
-import { useOrder } from '../context/OrderContext';
 import { ModalError } from '../components/modals/ModalError';
-import { message } from 'antd';
+import { message, Switch } from 'antd';
+
+
 import { ButtonAmount } from '../components/buttons/ButtonAmount';
 const NuevaOrden = () => {
     const navigate = useNavigate();
-    const { addProduct } = useOrder();
-    const { product, errorData, loading, handleOk } = usePaymentProcess();
-    const [values, setValues] = useState({
-        currentVariant: {
-            value: null,
-            valid: false,
-        },
-        amount: {
-            value: 1,
-            valid: true,
-        },
-        notes: {
-            value: '',
-            valid: true,
-        },
-        discounts: {
-            value: '',
-            valid: true,
-        },
-    });
-    const [total, setTotal] = useState(0.00);
-
-    const [amount, setAmount] = useState(1);
+    const {
+        product,
+        errorData,
+        loading,
+        handleOk,
+        handleAddProduct,
+        total,
+        amount,
+        values,
+        setAmount,
+        onChange,
+        descuentos,
+        discountsSelected
+    } = usePaymentProcess();
 
 
-    useEffect(() => {
-
-        onChange('amount', amount);
-
-    }, [amount]);
-    useEffect(() => {
-        if (values.currentVariant.value && values.amount.value) {
-            const total = values.currentVariant.value?.precio * values.amount.value;
-            setTotal(total);
-        }
-    }, [values.currentVariant.value, values.amount.value]);
-
-    useEffect(() => {
-        if (product.variantes && product.variantes.length > 0) {
-            onChange('currentVariant', product.variantes[0]);
-        }
-    }, [product.variantes])
-
-
-    const onChange = (name, value) => {
-        setValues({
-            ...values,
-            [name]: {
-                value: value,
-                valid: true,
-            },
-        });
-    };
-
-    const handleAddProduct = () => {
-        if (values.currentVariant.valid && values.amount.valid && values.currentVariant.value) {
-            const variante = values.currentVariant.value;
-            addProduct({
-                productId: product.id,
-                productName: product.nombre,
-                variantId: variante.id,
-                variantName: variante.nombre,
-                precio: variante.precio,
-                cantidad: amount,
-                notes: values.notes.value,
-                discounts: values.discounts.value,
-            });
-            navigate('/proceso-pagos');
-        }
-    }
 
     return (
         <div className='nueva-orden'>
@@ -120,7 +67,7 @@ const NuevaOrden = () => {
                             className='nueva-orden__body--variant'
                             onChange={() => onChange('currentVariant', variante)}
                         >
-                            <span className='nueva-orden__body--variant--nombre'>{variante.nombre} <span> <ButtonAmount amount={variante.cantidad} showLabel={false} /> </span> </span> 
+                            <span className='nueva-orden__body--variant--nombre'>{variante.nombre} <span> <ButtonAmount amount={variante.cantidad} showLabel={false} /> </span> </span>
                             <div className='nueva-orden__body--row--price'>
                                 <span>${variante.precio}</span>
                                 <Radio
@@ -153,14 +100,13 @@ const NuevaOrden = () => {
                         <span className='nueva-orden__body-amount'>
                             {amount}
                         </span>
-                        
-                            <PlusOutlined onClick={
-                                () => 
-                                {
-                                        setAmount(amount + 1);
-                                    
-                                }
-                                } className='nueva-orden__body-plus' />
+
+                        <PlusOutlined onClick={
+                            () => {
+                                setAmount(amount + 1);
+
+                            }
+                        } className='nueva-orden__body-plus' />
 
                     </div>
 
@@ -181,6 +127,32 @@ const NuevaOrden = () => {
                 <div className='nueva-orden__body--row'>
                     <div className='nueva-orden__body--title'>
                         Descuentos
+                    </div>
+                    <div className="nueva-orden__descuentos--container">
+                        {descuentos.map(descuento => (
+                            <div key={descuento.id} className="nueva-orden__descuentos--item">
+                                <div>
+                                    <span className="nueva-orden__descuentos--nombre">{descuento.nombre}</span>
+                                    <span className="nueva-orden__descuentos--monto">
+                                        {' '}
+                                        {descuento.tipo === 'PORCENTAJE' ? `${descuento.monto}%` : `$${descuento.monto}`}
+                                        </span>
+                                </div>
+                                <Switch
+                                    className="nueva-orden__descuentos--switch"
+                                    checked={
+                                        discountsSelected.some(discount => discount.id === descuento.id)
+                                    }
+                                    onChange={
+                                        (checked) => {
+                                            onChange('discounts', {
+                                                discount: descuento,
+                                                action: (checked) ? "ADD_DISCOUNT" : "REMOVE_DISCOUNT"
+                                            });
+                                        }
+                                    } />
+                            </div>
+                        ))}
                     </div>
                     <Divider className='nueva-orden__body--divider' />
 

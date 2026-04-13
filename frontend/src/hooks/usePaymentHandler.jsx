@@ -6,7 +6,7 @@ import { checkToken } from '../utils/authUtils';
 
 export default function usePaymentHandler() {
 
-    const { total, setPaymentMethod, setCash, items, clearOrder } = useOrder();
+    const { total, setPaymentMethod, setCash, items, clearOrder, discountsSelected, subTotal } = useOrder();
     const [enabled, setEnabled] = useState(false);
     const [errorData, setErrorData] = useState({
         codeError: null,
@@ -70,24 +70,11 @@ export default function usePaymentHandler() {
             checkToken();
             await postTransaccion({
                 total: total.toFixed(2),
-                subtotal: 0.00, //TODO: agregar subtotal            
+                subtotal: subTotal.toFixed(2),            
                 monto: (values.paymentMethod.value === 'EFECTIVO') ? values.cash?.value || 0 : total,
                 cambio: (values.paymentMethod.value === 'EFECTIVO') ? (values.cash?.value || 0) - total : 0,
                 productos_descripcion: productoDescripcion,
-                descuentos: [
-                    {
-                    titulo: "vecinos 10% (10%)", //TODO: agregar descuento
-                    valor: 1.2
-                },
-                {
-                    titulo: "descuento navidad",
-                    valor: 2.00
-                },
-                {
-                    titulo: "descuento dia de la mujer",
-                    valor: 3.00
-                }
-            ],
+                descuentos: discountsSelected,                    
                 tipo_pago: values.paymentMethod.value,
                 productos: items.map(item => {
                     return {

@@ -1,0 +1,61 @@
+.ajustes-header-spacer {
+  display: inline-block;
+  width: 24px;
+  flex-shrink: 0;
+}
+
+.ajustes-content {
+  padding: 16px;
+}
+
+.ajustes-export-block {
+  max-width: 520px;
+}
+
+.ajustes-export-title {
+  margin: 0 0 8px;
+  font-size: 1.1rem;
+}
+
+.ajustes-export-hint {
+  margin: 0 0 16px;
+  font-size: 0.875rem;
+  color: #6b7280;
+  line-height: 1.45;
+}
+
+.ajustes-presets {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.ajustes-presets-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-right: 4px;
+}
+
+.ajustes-date-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.ajustes-date-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.875rem;
+  font-weight: 500;
+
+  input[type='date'] {
+    padding: 6px 10px;
+    border: 1px solid #d9d9d9;
+    border-radius: 6px;
+    font: inherit;
+  }
+}

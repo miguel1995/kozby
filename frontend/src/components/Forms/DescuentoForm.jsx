@@ -1,32 +1,57 @@
 import FloatLabel from "../FloatLabel";
 import { Input } from "antd";
 import { NumericInput } from "../NumericInput";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { Select } from 'antd';
+import { OPTIONS_TIPO_DESCUENTO } from '../../utils/constants';
 
-export const DescuentoForm = ({ values, handleVariantChange }) => {
+
+
+export const DescuentoForm = ({ values, handleDescuentoChange }) => {
+
+    const [isImporte, setIsImporte] = useState(false);
+
+    useEffect(() => {
+        if (values.tipo?.value === 'IMPORTE') {
+            setIsImporte(true);
+        } else {
+            setIsImporte(false);
+        }
+    }, [values.tipo]);
 
     return (
         <div className="example">
 
-            <FloatLabel label="Nombre de descuento" name="nombre" value={values.nombre?.value}>
+           <FloatLabel label="Nombre de descuento" name="nombre" value={values.nombre?.value}>
                 <Input
                     value={values.nombre?.value}
                     name="nombre"
                     maxLength={45}
-                    onChange={(e) => handleVariantChange(e)} />
+                    onChange={(e) => handleDescuentoChange(e)} />
 
             </FloatLabel>
 
 
-            <Select options={[{ label: 'Porcentaje', value: 'PORCENTAJE' }, { label: 'Importe', value: 'IMPORTE' }]} />
+            <Select
+            style={{ width: '100%', marginBottom: '12px' }}
+            options={OPTIONS_TIPO_DESCUENTO} 
+            onChange={(e) => handleDescuentoChange({
+                target: {
+                    name: "tipo",
+                    value: e
+                }
+            })} 
+            value={values.tipo?.value}
+            name="tipo"
+            />
 
-            <FloatLabel label="Monto" name="monto" value={values.importe?.value}>
-                <Input
+            <NumericInput
                     value={values.monto?.value}
                     name="monto"
-                    maxLength={10}
-                    onChange={(e) => handleVariantChange(e)} />
-            </FloatLabel>
+                    maxLength={isImporte ? 10 : 2}
+                    onChange={(e) => handleDescuentoChange(e)} 
+                    placeholder={isImporte ? "$1.50" : "50%"}
+                    />
         </div>
     );
 }

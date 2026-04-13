@@ -1,5 +1,10 @@
 export const PAGE_SIZE = 30;
 
+export const OPTIONS_TIPO_DESCUENTO = [
+  { label: 'Porcentaje', value: 'PORCENTAJE' },
+  { label: 'Importe', value: 'IMPORTE' }
+]
+
 export const initialFormValues = {
   nombre: {
     value: "",
@@ -71,7 +76,8 @@ export const PLUS_MENU_ITEMS = [
   { key: "3", label: "Transacciones", path: "/transacciones", icon: "tx" },
   { key: "4", label: "Descuentos", path: "/descuentos", icon: "discount" },
   { key: "5", label: "Usuarios", path: "/usuarios", icon: "users" },
-  { key: "6", label: "Cerrar Sesión", path: "/inicio-sesion", icon: "logout" }
+  { key: "6", label: "Ajustes", path: "/ajustes", icon: "settings" },
+  { key: "7", label: "Cerrar Sesión", path: "/inicio-sesion", icon: "logout" }
 ];
 
 
@@ -124,7 +130,7 @@ export const initialDescuentosValues = {
     valid: null
   },
   tipo: {
-    value: "PORCENTAJE",
+    value: OPTIONS_TIPO_DESCUENTO[0].value,
     valid: true
   },
   monto: {

@@ -13,7 +13,8 @@ const MenuBar = () => {
                 || location.pathname === '/productos'
                 || location.pathname === '/productos/archivados'
                 || location.pathname === '/transacciones'
-                || location.pathname === '/usuarios';
+                || location.pathname === '/usuarios'
+                || location.pathname === '/ajustes';
         }
         if (path === '/proceso-pagos') 
             return location.pathname === '/proceso-pagos'

@@ -83,3 +83,49 @@
     align-items: center;
     gap: 8px;
 }
+
+
+.nueva-orden__descuentos--container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-top: 16px;
+    padding-bottom: 16px;
+}
+
+
+.nueva-orden__descuentos--item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+ 
+}
+
+.nueva-orden__descuentos--nombre {
+    font-weight: 600;
+    color: #000;
+    
+}
+.nueva-orden__descuentos--monto {
+    
+}
+/*.nueva-orden__descuentos--switch {
+    margin-left: 8px;
+}
+
+// Sobreescribe los estilos del switch (usualmente es Ant Design Switch)
+.nueva-orden__descuentos--switch.ant-switch {
+    background: #ccc; // gris cuando está deshabilitado
+    border: none;
+}
+.nueva-orden__descuentos--switch.ant-switch-checked {
+    background: #000; // negro cuando está activo
+}
+// Opcional: Cambia el "dot" (el círculo blanco) según desees
+.nueva-orden__descuentos--switch .ant-switch-handle {
+    background: #fff;
+}
+.nueva-orden__descuentos--switch.ant-switch-checked .ant-switch-handle {
+    background: #fff;
+}*/

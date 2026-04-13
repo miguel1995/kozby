@@ -11,7 +11,7 @@ import { SubmitButton } from '../components/buttons/SubmitButton';
 const Cobro = () => {
 
     const navigate = useNavigate();
-    const { items, total, clearOrder } = useOrder();
+    const { items, total, clearOrder, discountsCalculated } = useOrder();
     
     return (
         <div className="cobro__container">
@@ -46,11 +46,22 @@ const Cobro = () => {
                             </div>
                         </div>
 
-                        <div className="cobro__item--price">${item.cantidad * item.precio}</div>
+                        <div className="cobro__item--price">${item.total.toFixed(2)}</div>
                     </div>
                 ))}
             </div>
             <Divider />
+            {discountsCalculated > 0 && (
+                <>
+                <div className="cobro__discounts">
+                    <div className="cobro__discounts--title">Descuentos</div>
+                    <div className="cobro__discounts--amount">${discountsCalculated.toFixed(2)}</div>
+                </div>
+                
+                <Divider />
+                </>
+
+            )}
             <div className="cobro__total">
                 <SubmitButton
                     text={`Cobrar $${total.toFixed(2)}`}

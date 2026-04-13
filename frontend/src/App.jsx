@@ -14,6 +14,7 @@ import Transacciones from './pages/transacciones';
 import TransaccionDetalle from './pages/TransaccionDetalle';
 import Descuentos from './pages/Descuentos';
 import Usuarios from './pages/Usuarios';
+import Ajustes from './pages/Ajustes';
 import PaymentMethod from './pages/PaymentMethod';
 
 import { OrderProvider } from './context/OrderContext';
@@ -44,6 +45,11 @@ function App() {
               <Descuentos />
             </MainLayout>
           } />
+            <Route path="/ajustes" element={
+              <MainLayout>
+                <Ajustes />
+              </MainLayout>
+            } />
           <Route path="/productos" element={
             <MainLayout>
               <Productos />
