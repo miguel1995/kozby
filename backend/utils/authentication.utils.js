@@ -4,9 +4,9 @@ import jwt from 'jsonwebtoken';
 export const createAccessToken = (user) => {
     const secret = process.env.JWT_SECRET;
     const token = jwt.sign(
-        { id: user._id, username: user.username },
+        { id: user._id, username: user.username, role: user.role },
         secret,
-        { expiresIn: '1h' }
+        { expiresIn: '3h' }
     );
     return token;
 }

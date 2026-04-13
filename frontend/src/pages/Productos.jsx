@@ -8,7 +8,7 @@ import Loader from '../components/Loader';
 import { ModalError } from '../components/modals/ModalError';
 import ListProductos from '../components/ListProductos';
 import {Input} from 'antd';
-
+import { canAccess } from '../utils/authUtils';
 
 function Productos() {
 
@@ -49,10 +49,13 @@ function Productos() {
                     {verArchivados ? (
                         <div className="products-page-archived-title">Artículos archivados</div>
                     ) : (
+                        
+                        canAccess() && (
                         <SubmitButton
                         text="Crear Artículo"
                         onClick={() => navigate('/nuevo-producto')}
                     />
+                    )
                     )}
                    
                 </div>

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Upload } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
+import { canAccess } from '../utils/authUtils';
 
 const { Dragger } = Upload;
 
@@ -40,6 +41,7 @@ export const ImageUpload = ({ value, onChange }) => {
 
   return (
     <div className="image-upload-container">
+      {canAccess() && (
       <Dragger
         beforeUpload={() => false} // Prevenir subida automática
         onChange={handleChange}
@@ -57,6 +59,7 @@ export const ImageUpload = ({ value, onChange }) => {
           La imagen se subirá cuando guardes el producto
         </p>
       </Dragger>
+      )}
       {previewUrl && (
         <div>
         <div style={{ marginTop: 16 }}>

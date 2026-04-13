@@ -13,6 +13,7 @@ import { Divider } from 'antd';
 import { ButtonDanger } from '../components/buttons/ButtonDanger';
 import { Modal, Space } from 'antd';
 import { useMemo } from 'react';
+import { canAccess } from '../utils/authUtils';
 
 
 
@@ -90,24 +91,31 @@ const FormProducto = ({ isEditMode = false }) => {
             <ButtonClose
               onClick={() => navigate(-1)}
             />
+            {canAccess() && (
             <SubmitButton
               text="Guardar"
               onClick={handleSubmit}
               disabled={loading}
             />
+            )}
           </div>
+        
+        
 
-          {isEditMode ? (
-            <>
-              <div className="form-producto-title">Editar artículo</div>
-              <div className="form-producto-subtitle">
-                <span>Artículo creado el {formatDate(fechaCreacion)}</span>
-                <span>Última modificación el {formatDate(fechaModificacion)}</span>
-              </div>
-            </>
-          ) : (
-            <div className="form-producto-title">Crear artículo</div>
-          )}
+              {isEditMode ? (
+                <>
+                  <div className="form-producto-title">Editar artículo</div>
+                  <div className="form-producto-subtitle">
+                    <span>Artículo creado el {formatDate(fechaCreacion)}</span>
+                    <span>Última modificación el {formatDate(fechaModificacion)}</span>
+                  </div>
+                </>
+              ) : (
+                <div className="form-producto-title">Crear artículo</div>
+              )}
+
+           
+          
         </div>
 
         <div className="form-producto-container">
@@ -131,7 +139,7 @@ const FormProducto = ({ isEditMode = false }) => {
 
           <ProductForm values={values} handleChange={handleChange} />
           <Variantes variantes={values.variantes.value} handleChange={handleChange} />
-          {isEditMode && (
+          {isEditMode && canAccess() && (
             <>
               <Divider />
 

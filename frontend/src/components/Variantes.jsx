@@ -8,6 +8,9 @@ import { ButtonAmount } from './buttons/ButtonAmount';
 import { ModalVariantForm } from './modals/ModalVariantForm';
 import { message } from 'antd';
 import ModalAditionalAmount from './modals/ModalAditionalAmount';
+import { canAccess } from '../utils/authUtils';
+
+
 const Variantes = ({ variantes, handleChange } = { variantes: [], handleChange: () => { } }) => {
 
 
@@ -148,7 +151,11 @@ const Variantes = ({ variantes, handleChange } = { variantes: [], handleChange: 
                                     </div>
                                     <div>
                                         <div className="variante-item-cantidad">
-                                            <ButtonAmount amount={variante.cantidad.value} clickHandler={() => { showAmountModal(variante) }} />
+                                            <ButtonAmount amount={variante.cantidad.value} clickHandler={() => { 
+                                                if (canAccess()) {
+                                                showAmountModal(variante) 
+                                                }
+                                                }} />
                                         </div>
                                     </div>
                                 </div>
@@ -159,6 +166,7 @@ const Variantes = ({ variantes, handleChange } = { variantes: [], handleChange: 
                 </>
             )}
 
+            {canAccess() && (
             <div className="variantes-add-button">
                 <ButtonSecundary
                     label="Agregar variante"
@@ -172,7 +180,7 @@ const Variantes = ({ variantes, handleChange } = { variantes: [], handleChange: 
                     }}
                 />
             </div>
-
+            )}
 
 
             <ModalVariantForm
