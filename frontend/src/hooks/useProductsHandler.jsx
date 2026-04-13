@@ -65,7 +65,9 @@ export const useProductsHandler = () => {
             precio: precio,
             cantidad: 1,
             notes: '',
-            discounts: ''
+            discounts: [],
+            subtotal: precio,
+            total: precio,
           });
           message.info('Artículo agregado');
           return;

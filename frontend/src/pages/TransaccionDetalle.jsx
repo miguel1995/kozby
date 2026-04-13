@@ -58,7 +58,7 @@ const TransaccionDetalle = () => {
 
   const numeroRecibo = transaccion?.id || '-';
   const descuentos = Array.isArray(transaccion?.descuentos) ? transaccion.descuentos : [];
-  const totalDescuentos = descuentos.reduce((acc, d) => acc + Number(d?.valor || 0), 0);
+  const totalDescuentos = descuentos.reduce((acc, d) => acc + Number(d?.monto || 0), 0);
 
 
   return (
@@ -161,12 +161,14 @@ const TransaccionDetalle = () => {
             <strong className="txd-col-total">Total</strong>
             <div className="txd-totals-table">
               {descuentos.map((d, idx) => (
-                <div key={`${d?.titulo || 'descuento'}-${idx}`} className="txd-products-row txd-totals-row">
+                <div key={`${d?.id || 'descuento'}-${idx}`} className="txd-products-row txd-totals-row">
                   <div className="txd-products-badge">
                     <TagOutlined className="txd-icon" />
                   </div>
-                  <div className="txd-totals-label">{d?.titulo || 'Descuento'}</div>
-                  <div className="txd-totals-value">- {formatMoney(d?.valor || 0)}</div>
+                  <div className="txd-totals-label">{d?.nombre || 'Descuento'}</div>
+                  <div className="txd-totals-value">- {' '}
+                    {d?.tipo === 'PORCENTAJE' ? `${d?.monto}%` : `$${d?.monto}`} 
+                    </div>
                 </div>
               ))}
 

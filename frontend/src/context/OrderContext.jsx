@@ -4,13 +4,33 @@ const OrderContext = createContext(null);
 
 export const OrderProvider = ({ children }) => {
     const [items, setItems] = useState([]);
+    const [discountsSelected, setDiscountsSelected] = useState([]);
+    const [discountsCalculated, setDiscountsCalculated] = useState(0.00);
     const [total, setTotal] = useState(0);
+    const [subTotal, setSubTotal] = useState(0);
     const [paymentMethod, setPaymentMethod] = useState(null);
     const [cash, setCash] = useState(0);
 
     useEffect(() => {
-        setTotal(items.reduce((acc, item) => acc + item.cantidad * item.precio, 0));
-    }, [items]);
+        const subTotal = items.reduce((acc, item) => acc + item.total, 0);
+
+        const discountsCalculated = discountsSelected.reduce((acc, discount) => {
+            if (discount.tipo === 'PORCENTAJE') {
+                return acc + (subTotal * Number(discount.monto) / 100);
+            } else {
+                return acc + Number(discount.monto);
+            }
+        }, 0.00);
+
+        setDiscountsCalculated(discountsCalculated);
+        setSubTotal(subTotal);
+        const total = subTotal - discountsCalculated;
+        setTotal(total);
+    }, [items, discountsSelected]);
+
+    useEffect(() => {
+        console.log(discountsCalculated);
+    }, [discountsCalculated]);
 
     const addProduct = (item) => {
         const lineItem = {
@@ -22,7 +42,9 @@ export const OrderProvider = ({ children }) => {
             precio: item.precio,
             cantidad: item.cantidad,
             notes: item.notes ?? '',
-            discounts: item.discounts ?? '',
+            discounts: item.discounts ?? [],
+            subtotal: item.subtotal,
+            total: item.total,
         };
         setItems((prev) => [...prev, lineItem]);
     };
@@ -33,11 +55,21 @@ export const OrderProvider = ({ children }) => {
 
     const clearOrder = () => {
         setItems([]);
+        setDiscountsSelected([]);
+    };
+
+    const addDiscount = (discount) => {
+        setDiscountsSelected((prev) => [...prev, discount]);
+    };
+
+    const removeDiscount = (id) => {
+        setDiscountsSelected((prev) => prev.filter((d) => d.id !== id));
     };
 
     const value = {
         items,
         total,
+        subTotal,
         addProduct,
         removeItem,
         clearOrder,
@@ -45,6 +77,11 @@ export const OrderProvider = ({ children }) => {
         cash,
         setPaymentMethod,
         setCash,
+        discountsSelected,
+        addDiscount,
+        removeDiscount,
+        discountsCalculated
+        
     };
 
     return (

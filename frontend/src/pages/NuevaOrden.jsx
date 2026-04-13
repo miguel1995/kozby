@@ -4,16 +4,17 @@ import { useState, useEffect } from 'react';
 import { usePaymentProcess } from '../hooks/usePaymentProcess';
 import { useNavigate } from 'react-router-dom';
 import { PlusOutlined, MinusOutlined } from '@ant-design/icons';
-import { useOrder } from '../context/OrderContext';
 import { ModalError } from '../components/modals/ModalError';
-import { message } from 'antd';
+import { message, Switch } from 'antd';
+
+
 import { ButtonAmount } from '../components/buttons/ButtonAmount';
 const NuevaOrden = () => {
     const navigate = useNavigate();
-    const { 
-        product, 
-        errorData, 
-        loading, 
+    const {
+        product,
+        errorData,
+        loading,
         handleOk,
         handleAddProduct,
         total,
@@ -21,10 +22,12 @@ const NuevaOrden = () => {
         values,
         setAmount,
         onChange,
+        descuentos,
+        discountsSelected
     } = usePaymentProcess();
 
 
-    
+
     return (
         <div className='nueva-orden'>
             <div className='nueva-orden__header'>
@@ -64,7 +67,7 @@ const NuevaOrden = () => {
                             className='nueva-orden__body--variant'
                             onChange={() => onChange('currentVariant', variante)}
                         >
-                            <span className='nueva-orden__body--variant--nombre'>{variante.nombre} <span> <ButtonAmount amount={variante.cantidad} showLabel={false} /> </span> </span> 
+                            <span className='nueva-orden__body--variant--nombre'>{variante.nombre} <span> <ButtonAmount amount={variante.cantidad} showLabel={false} /> </span> </span>
                             <div className='nueva-orden__body--row--price'>
                                 <span>${variante.precio}</span>
                                 <Radio
@@ -97,14 +100,13 @@ const NuevaOrden = () => {
                         <span className='nueva-orden__body-amount'>
                             {amount}
                         </span>
-                        
-                            <PlusOutlined onClick={
-                                () => 
-                                {
-                                        setAmount(amount + 1);
-                                    
-                                }
-                                } className='nueva-orden__body-plus' />
+
+                        <PlusOutlined onClick={
+                            () => {
+                                setAmount(amount + 1);
+
+                            }
+                        } className='nueva-orden__body-plus' />
 
                     </div>
 
@@ -125,6 +127,32 @@ const NuevaOrden = () => {
                 <div className='nueva-orden__body--row'>
                     <div className='nueva-orden__body--title'>
                         Descuentos
+                    </div>
+                    <div className="nueva-orden__descuentos--container">
+                        {descuentos.map(descuento => (
+                            <div key={descuento.id} className="nueva-orden__descuentos--item">
+                                <div>
+                                    <span className="nueva-orden__descuentos--nombre">{descuento.nombre}</span>
+                                    <span className="nueva-orden__descuentos--monto">
+                                        {' '}
+                                        {descuento.tipo === 'PORCENTAJE' ? `${descuento.monto}%` : `$${descuento.monto}`}
+                                        </span>
+                                </div>
+                                <Switch
+                                    className="nueva-orden__descuentos--switch"
+                                    checked={
+                                        discountsSelected.some(discount => discount.id === descuento.id)
+                                    }
+                                    onChange={
+                                        (checked) => {
+                                            onChange('discounts', {
+                                                discount: descuento,
+                                                action: (checked) ? "ADD_DISCOUNT" : "REMOVE_DISCOUNT"
+                                            });
+                                        }
+                                    } />
+                            </div>
+                        ))}
                     </div>
                     <Divider className='nueva-orden__body--divider' />
 

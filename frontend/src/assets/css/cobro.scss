@@ -46,3 +46,19 @@
 .cobro__total button{
     width: 100%;
 }
+
+.cobro__discounts {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+}
+
+.cobro__discounts--title {
+    font-weight: 600;
+}
+
+.cobro__discounts--amount {
+    font-weight: 500;
+    text-align: right;
+}

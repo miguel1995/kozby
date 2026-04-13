@@ -68,7 +68,7 @@ const Descuentos = () => {
         <div className="products-page-filters-and-actions">
           <div className="descuentos-page-header">
             <ButtonClose
-              onClick={() => navigate('/plus')}
+              onClick={() => navigate('/mas')}
             />
             <div className="products-page-archived-title">Descuentos</div>
 

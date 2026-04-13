@@ -3,11 +3,12 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { checkToken } from '../utils/authUtils';
 import { getProductoById } from '../services/productos.service';
 import { useOrder } from '../context/OrderContext';
+import { getDescuentos } from '../services/descuentos.service';
 
 export const usePaymentProcess = () => {
-    const { addProduct } = useOrder();
+    const { addProduct, addDiscount, removeDiscount, discountsSelected } = useOrder();
     const navigate = useNavigate();
-
+    const [descuentos, setDescuentos] = useState([]);
     const { id } = useParams();
     const [product, setProduct] = useState({
         id: null,
@@ -24,7 +25,6 @@ export const usePaymentProcess = () => {
     });
     const [loading, setLoading] = useState(false);
     const [total, setTotal] = useState(0.00);
-
     const [amount, setAmount] = useState(1);
 
     const [values, setValues] = useState({
@@ -39,18 +39,23 @@ export const usePaymentProcess = () => {
         notes: {
             value: '',
             valid: true,
-        },
-        discounts: {
-            value: '',
-            valid: true,
-        },
+        }
     });
+
+
+    useEffect(() => {
+        console.log(discountsSelected);
+    }, [discountsSelected]);
 
     useEffect(() => {
         if (id) {
             fetchProducto(id);
         }
     }, [id]);
+
+    useEffect(() => {
+        fetchDescuentos();
+    }, []);
 
 
     useEffect(() => {
@@ -60,7 +65,7 @@ export const usePaymentProcess = () => {
     }, [amount]);
     useEffect(() => {
         if (values.currentVariant.value && values.amount.value) {
-            const total = values.currentVariant.value?.precio * values.amount.value;
+            const total = values.currentVariant.value?.precio * values.amount.value;        
             setTotal(total);
         }
     }, [values.currentVariant.value, values.amount.value]);
@@ -84,16 +89,16 @@ export const usePaymentProcess = () => {
             checkToken();
             const data = await getProductoById(id);
 
-               
-                setProduct({
-                    id: data.id,
-                    nombre: data.nombre,
-                    precio: data.precio,
-                    cantidad: data.cantidad,
-                    descripcion: data.descripcion,
-                    imagen: data.imagen,
-                    variantes: data.variantes
-                });
+
+            setProduct({
+                id: data.id,
+                nombre: data.nombre,
+                precio: data.precio,
+                cantidad: data.cantidad,
+                descripcion: data.descripcion,
+                imagen: data.imagen,
+                variantes: data.variantes
+            });
         } catch (err) {
             setErrorData({
                 codeError: err.status || 500,
@@ -106,13 +111,25 @@ export const usePaymentProcess = () => {
     };
 
     const onChange = (name, value) => {
-        setValues({
-            ...values,
-            [name]: {
-                value: value,
-                valid: true,
-            },
-        });
+
+        if (name === 'discounts') {
+            if (value.action === 'ADD_DISCOUNT') {
+                addDiscount(value.discount);                
+            }
+            else if (value.action === 'REMOVE_DISCOUNT') {
+                removeDiscount(value.discount.id);
+            }
+        }
+        else {
+            setValues({
+                ...values,
+                [name]: {
+                    value: value,
+                    valid: true,
+                },
+            });
+        }
+
     };
 
     const handleAddProduct = () => {
@@ -125,12 +142,30 @@ export const usePaymentProcess = () => {
                 variantName: variante.nombre,
                 precio: variante.precio,
                 cantidad: amount,
-                notes: values.notes.value,
-                discounts: values.discounts.value,
+                notes: values.notes.value,                
+                total: total,
             });
             navigate('/proceso-pagos');
         }
     }
+
+    const fetchDescuentos = async () => {
+        setLoading(true);
+        try {
+            checkToken();
+            const data = await getDescuentos();
+            setDescuentos(data);
+        } catch (err) {
+            setErrorData({
+                codeError: err.status || 500,
+                isOpen: true
+            });
+        } finally {
+            setLoading(false);
+        }
+    }
+
+
 
 
     return {
@@ -144,6 +179,7 @@ export const usePaymentProcess = () => {
         values,
         setAmount,
         onChange,
+        descuentos,
+        discountsSelected
     }
 }
-   
