@@ -35,22 +35,18 @@ export const useTransaccionesExcelDownload = () => {
   }, []);
 
   const downloadExcel = useCallback(async () => {
+    if (!desdeYmd || !hastaYmd) {
+      message.warning('Seleccione un rango de fechas completo (desde y hasta).');
+      return;
+    }
+
     setLoading(true);
     try {
       checkToken();
-
-      let range;
-      if (desdeYmd && hastaYmd) {
-        range = {
-          desdeISO: startOfLocalDay(desdeYmd).toISOString(),
-          hastaISO: endOfLocalDay(hastaYmd).toISOString(),
-        };
-      } else if (desdeYmd || hastaYmd) {
-        message.warning('Seleccione fecha inicial y fecha final, o deje ambas vacías para exportar todo.');
-        return;
-      }
-
-      await downloadTransaccionesExcel(range);
+      await downloadTransaccionesExcel({
+        desdeISO: startOfLocalDay(desdeYmd).toISOString(),
+        hastaISO: endOfLocalDay(hastaYmd).toISOString(),
+      });
       message.success('Archivo descargado correctamente.');
     } catch (err) {
       const isUnauthorized = err?.status === 401;

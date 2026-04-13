@@ -2,33 +2,28 @@ const XLSX = require('xlsx');
 const Transaccion = require('../models/transaccion');
 
 /**
- * @param {{ desde?: string, hasta?: string }} [opts] - ISO 8601 o fechas parseables por Date.
- *   Si ambas faltan, exporta toda la colección.
+ * @param {{ desde: string, hasta: string }} opts - ISO 8601 o fechas parseables por Date.
  */
 const buildTransaccionesExcelBuffer = async (opts = {}) => {
   const { desde, hasta } = opts;
-  const filter = {};
-
-  if (desde || hasta) {
-    if (!desde || !hasta) {
-      const err = new Error('Debe indicar fecha inicial y fecha final');
-      err.code = 'BAD_RANGE';
-      throw err;
-    }
-    const dStart = new Date(desde);
-    const dEnd = new Date(hasta);
-    if (Number.isNaN(dStart.getTime()) || Number.isNaN(dEnd.getTime())) {
-      const err = new Error('Fechas inválidas');
-      err.code = 'BAD_RANGE';
-      throw err;
-    }
-    if (dStart > dEnd) {
-      const err = new Error('La fecha inicial no puede ser posterior a la final');
-      err.code = 'BAD_RANGE';
-      throw err;
-    }
-    filter.createdAt = { $gte: dStart, $lte: dEnd };
+  if (!desde || !hasta) {
+    const err = new Error('Debe indicar fecha inicial y fecha final');
+    err.code = 'BAD_RANGE';
+    throw err;
   }
+  const dStart = new Date(desde);
+  const dEnd = new Date(hasta);
+  if (Number.isNaN(dStart.getTime()) || Number.isNaN(dEnd.getTime())) {
+    const err = new Error('Fechas inválidas');
+    err.code = 'BAD_RANGE';
+    throw err;
+  }
+  if (dStart > dEnd) {
+    const err = new Error('La fecha inicial no puede ser posterior a la final');
+    err.code = 'BAD_RANGE';
+    throw err;
+  }
+  const filter = { createdAt: { $gte: dStart, $lte: dEnd } };
 
   const docs = await Transaccion.find(filter)
     .sort({ createdAt: -1 })

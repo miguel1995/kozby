@@ -38,16 +38,18 @@ const getExportExcel = async (req, res) => {
     const desde = req.query.desde ? String(req.query.desde).trim() : '';
     const hasta = req.query.hasta ? String(req.query.hasta).trim() : '';
 
+    if (!desde || !hasta) {
+      return res.status(400).json({
+        message: 'Indique fecha inicial (desde) y fecha final (hasta) en la consulta.',
+      });
+    }
+
     const buffer = await transaccionesExcelService.buildTransaccionesExcelBuffer({
-      desde: desde || undefined,
-      hasta: hasta || undefined,
+      desde,
+      hasta,
     });
 
-    const today = new Date().toISOString().slice(0, 10);
-    const filename =
-      desde && hasta
-        ? `transacciones-${desde.slice(0, 10)}_a_${hasta.slice(0, 10)}.xlsx`
-        : `transacciones-todo-${today}.xlsx`;
+    const filename = `transacciones-${desde.slice(0, 10)}_a_${hasta.slice(0, 10)}.xlsx`;
 
     res.setHeader(
       'Content-Type',

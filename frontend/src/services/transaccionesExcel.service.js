@@ -5,14 +5,15 @@ const getAuthHeaders = () => ({
 });
 
 /**
- * @param {{ desdeISO?: string, hastaISO?: string }} [range] - Si se omite, exporta toda la colección.
+ * @param {{ desdeISO: string, hastaISO: string }} range
  */
 export const downloadTransaccionesExcel = async (range) => {
-  const url = new URL(EXPORT_BASE);
-  if (range?.desdeISO && range?.hastaISO) {
-    url.searchParams.set('desde', range.desdeISO);
-    url.searchParams.set('hasta', range.hastaISO);
+  if (!range?.desdeISO || !range?.hastaISO) {
+    throw new Error('Debe indicar fecha inicial y fecha final.');
   }
+  const url = new URL(EXPORT_BASE);
+  url.searchParams.set('desde', range.desdeISO);
+  url.searchParams.set('hasta', range.hastaISO);
 
   const res = await fetch(url.toString(), {
     method: 'GET',

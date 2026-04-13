@@ -18,6 +18,8 @@ const Ajustes = () => {
     downloadExcel,
   } = useTransaccionesExcelDownload();
 
+  const canDownload = Boolean(desdeYmd && hastaYmd);
+
   return (
     <div className="page-container">
       <div className="products-page">
@@ -33,8 +35,8 @@ const Ajustes = () => {
           <div className="ajustes-export-block">
             <h3 className="ajustes-export-title">Exportar transacciones (Excel)</h3>
             <p className="ajustes-export-hint">
-              Elija un rango de fechas o use un atajo. Si deja las fechas vacías, se exportan{' '}
-              <strong>todas</strong> las transacciones (puede ser lento con muchos datos).
+              Elija un rango de fechas (desde y hasta) o use un atajo. La descarga solo está
+              disponible con un rango completo.
             </p>
 
             <div className="ajustes-presets">
@@ -75,7 +77,7 @@ const Ajustes = () => {
               label="Descargar Transacciones"
               onClick={downloadExcel}
               loading={loading}
-              disabled={loading}
+              disabled={loading || !canDownload}
             />
           </div>
         </div>
