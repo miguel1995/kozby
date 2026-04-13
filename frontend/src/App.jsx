@@ -12,6 +12,7 @@ import Cobro from './pages/Cobro';
 import Transacciones from './pages/transacciones';
 import TransaccionDetalle from './pages/TransaccionDetalle';
 import Descuentos from './pages/Descuentos';
+import Ajustes from './pages/Ajustes';
 import PaymentMethod from './pages/PaymentMethod';
 
 import { OrderProvider } from './context/OrderContext';
@@ -36,6 +37,11 @@ function App() {
             <Route path="/descuentos" element={
               <MainLayout>
                 <Descuentos />
+              </MainLayout>
+            } />
+            <Route path="/ajustes" element={
+              <MainLayout>
+                <Ajustes />
               </MainLayout>
             } />
             <Route path="/productos" element={
