@@ -1,19 +1,50 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { Input, Modal, message } from 'antd';
 import Loader from '../components/Loader';
 import { ModalError } from '../components/modals/ModalError';
 import { useTransaccionDetalleHandler } from '../hooks/useTransaccionDetalleHandler';
+import { ButtonSecundary } from '../components/buttons/ButtonSecundary';
+import { postEnviarCorreoTransaccion } from '../services/transacciones.service';
 import { ArrowLeftOutlined, CreditCardOutlined, DollarOutlined, FileTextOutlined, TagOutlined } from '@ant-design/icons';
 
 
 
 
 
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 const TransaccionDetalle = () => {
   const navigate = useNavigate();
   const { id } = useParams();
 
   const { transaccion, loading, errorData, handleOk } = useTransaccionDetalleHandler(id);
+  const [emailModalOpen, setEmailModalOpen] = useState(false);
+  const [emailTo, setEmailTo] = useState('');
+  const [sendingEmail, setSendingEmail] = useState(false);
+
+  const handleOpenEmailModal = () => {
+    setEmailTo('');
+    setEmailModalOpen(true);
+  };
+
+  const handleSendEmail = async () => {
+    const to = emailTo.trim();
+    if (!EMAIL_RE.test(to)) {
+      message.error('Introduce un correo electrónico válido.');
+      return;
+    }
+    setSendingEmail(true);
+    try {
+      await postEnviarCorreoTransaccion(id, { to });
+      message.success('Correo enviado correctamente.');
+      setEmailModalOpen(false);
+    } catch (err) {
+      message.error(err?.message || 'No se pudo enviar el correo.');
+    } finally {
+      setSendingEmail(false);
+    }
+  };
 
   const formatTipoPago = (value) => {
     if (!value) return '-';
@@ -58,8 +89,6 @@ const TransaccionDetalle = () => {
 
   const numeroRecibo = transaccion?.id || '-';
   const descuentos = Array.isArray(transaccion?.descuentos) ? transaccion.descuentos : [];
-  const totalDescuentos = descuentos.reduce((acc, d) => acc + Number(d?.monto || 0), 0);
-
 
   return (
     <div className="page-container">
@@ -89,6 +118,32 @@ const TransaccionDetalle = () => {
         ) : !transaccion ? (
           <div>No se encontró la transacción.</div>
         ) : (
+          <div>
+            <div className="txd-email-row" style={{ padding: '0 12px 12px' }}>
+              <ButtonSecundary onClick={handleOpenEmailModal} label="Enviar correo" />
+            </div>
+
+            <Modal
+              title="Enviar detalle por correo"
+              open={emailModalOpen}
+              onOk={handleSendEmail}
+              onCancel={() => !sendingEmail && setEmailModalOpen(false)}
+              okText="Enviar"
+              cancelText="Cancelar"
+              confirmLoading={sendingEmail}
+              destroyOnClose
+            >
+              <p style={{ marginBottom: 8 }}>Correo del destinatario:</p>
+              <Input
+                type="email"
+                placeholder="correo@ejemplo.com"
+                value={emailTo}
+                onChange={(e) => setEmailTo(e.target.value)}
+                onPressEnter={handleSendEmail}
+                autoComplete="email"
+              />
+            </Modal>
+
           <div className="products-table" style={{ padding: 12 }}>
             <div><strong>TIPO DE PAGO: {transaccion.tipo_pago || '-'}</strong></div>
             <div className="txd-date">{formatDateTime(transaccion.createdAt)}</div>
@@ -192,6 +247,7 @@ const TransaccionDetalle = () => {
             <hr />
 
 
+          </div>
           </div>
         )}
 

@@ -26,14 +26,34 @@ export const getTransaccionById = async (id) => {
 
 
 export const postTransaccion = async (transaccion) => {
-  const res = await fetch(API_URL, {
-    method: 'POST',
-    headers: getAuthHeaders(),
-    body: JSON.stringify(transaccion),
-  });
+    const res = await fetch(API_URL, {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(transaccion),
+    });
 
-  if (!res.ok) {
-    throw { status: res.status };
-  }
-  return await res.json();
+    if (!res.ok) {
+        throw { status: res.status };
+    }
+    return await res.json();
+};
+
+export const postEnviarCorreoTransaccion = async (id, { to }) => {
+    const res = await fetch(`${API_URL}/${id}/enviar-correo`, {
+        method: 'POST',
+        headers: {
+            ...getAuthHeaders(),
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ to }),
+    });
+    if (!res.ok) {
+        let message = 'No se pudo enviar el correo';
+        try {
+            const data = await res.json();
+            if (data && data.message) message = data.message;
+        } catch (_) { /* ignore */ }
+        throw { status: res.status, message };
+    }
+    return await res.json();
 };

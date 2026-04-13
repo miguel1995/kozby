@@ -28,9 +28,6 @@ export const OrderProvider = ({ children }) => {
         setTotal(total);
     }, [items, discountsSelected]);
 
-    useEffect(() => {
-        console.log(discountsCalculated);
-    }, [discountsCalculated]);
 
     const addProduct = (item) => {
         const lineItem = {

@@ -1,4 +1,7 @@
 const transaccionesService = require('../services/transacciones.service');
+const emailService = require('../services/email.service');
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const getTransacciones = async (req, res) => {
   try {
@@ -29,6 +32,32 @@ const getTransaccionById = async (req, res) => {
   }
 }
 
+const postEnviarCorreo = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const to = (req.body && req.body.to) ? String(req.body.to).trim() : '';
+
+    if (!to || !EMAIL_RE.test(to)) {
+      return res.status(400).json({ message: 'Indique un correo electrónico válido en "to"' });
+    }
+
+    const transaccion = await transaccionesService.getTransaccionById(id);
+    if (!transaccion) {
+      return res.status(404).json({ message: 'Transacción no encontrada' });
+    }
+
+    await emailService.sendTransaccionCorreo({ to, transaccion });
+    return res.status(200).json({ message: 'Correo enviado correctamente' });
+  } catch (error) {
+    console.error('Error al enviar correo de transacción:', error);
+    const msg =
+      error.message && error.message.includes('MAIL_USER')
+        ? error.message
+        : 'No se pudo enviar el correo. Revise la configuración SMTP.';
+    return res.status(500).json({ message: msg });
+  }
+};
+
 const postTransaccion = async (req, res) => {
   try {
     const transaccion = await transaccionesService.postTransaccion(req.body);
@@ -51,5 +80,6 @@ const postTransaccion = async (req, res) => {
 module.exports = {
   getTransacciones,
   getTransaccionById,
+  postEnviarCorreo,
   postTransaccion,
 };
