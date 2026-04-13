@@ -5,6 +5,7 @@ import { Plus } from './pages/Plus'
 import Productos from './pages/Productos'
 import FormProducto from './pages/FormProducto'
 import FormInicio from './pages/FormInicio';
+import FormUsuario from './pages/FormUsuario';
 import MainLayout from './layouts/MainLayout';
 import ProcesoPagos from './pages/ProcesoPagos';
 import NuevaOrden from './pages/NuevaOrden';
@@ -29,6 +30,9 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Navigate to="/inicio-sesion" />} />
+          <Route path="/nuevo-usuario" element={<FormUsuario />} />
+          <Route path="/editar-usuario/:id" element={<FormUsuario isEditMode={true} />} />
+
 
           <Route path="/transacciones" element={
             <MainLayout>

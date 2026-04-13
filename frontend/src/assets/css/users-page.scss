@@ -1,0 +1,87 @@
+.modal-delete-user .ant-modal-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+}
+
+.modal-delete-user .ant-modal-footer .ant-btn + .ant-btn {
+  margin-inline-start: 0;
+}
+
+.page-container {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 100%;
+}
+
+.users-page {
+  padding: 32px;
+  width: 100%;
+}
+
+.users-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.users-page-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #000;
+  margin: 0;
+}
+
+.users-page-create {
+  width: auto;
+  padding: 10px 16px;
+  border-radius: 24px;
+  border: 1px solid #e0e0e0;
+  background: #fff;
+  font-weight: 600;
+}
+
+.users-table {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.user-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid #eee;
+}
+
+.user-item-name {
+  font-weight: 600;
+}
+
+.user-item-role {
+  color: #666;
+  font-weight: 500;
+}
+
+.user-item-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.user-edit,
+.user-delete {
+  padding: 6px 12px;
+  border-radius: 16px;
+  border: 1px solid #ddd;
+  background: #fff;
+  font-weight: 600;
+}
+
+.user-selection-role{
+  width: 100%;
+}
