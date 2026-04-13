@@ -1,4 +1,5 @@
 const transaccionesService = require('../services/transacciones.service');
+const transaccionesExcelService = require('../services/transaccionesExcel.service');
 const emailService = require('../services/email.service');
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -31,6 +32,37 @@ const getTransaccionById = async (req, res) => {
     return res.status(500).json({ message: 'Error al obtener transacción por id' });
   }
 }
+
+const getExportExcel = async (req, res) => {
+  try {
+    const desde = req.query.desde ? String(req.query.desde).trim() : '';
+    const hasta = req.query.hasta ? String(req.query.hasta).trim() : '';
+
+    const buffer = await transaccionesExcelService.buildTransaccionesExcelBuffer({
+      desde: desde || undefined,
+      hasta: hasta || undefined,
+    });
+
+    const today = new Date().toISOString().slice(0, 10);
+    const filename =
+      desde && hasta
+        ? `transacciones-${desde.slice(0, 10)}_a_${hasta.slice(0, 10)}.xlsx`
+        : `transacciones-todo-${today}.xlsx`;
+
+    res.setHeader(
+      'Content-Type',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    );
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+    return res.status(200).send(buffer);
+  } catch (error) {
+    console.error('Error al exportar transacciones a Excel:', error);
+    if (error.code === 'BAD_RANGE') {
+      return res.status(400).json({ message: error.message });
+    }
+    return res.status(500).json({ message: 'Error al generar el archivo Excel' });
+  }
+};
 
 const postEnviarCorreo = async (req, res) => {
   try {
@@ -79,6 +111,7 @@ const postTransaccion = async (req, res) => {
 
 module.exports = {
   getTransacciones,
+  getExportExcel,
   getTransaccionById,
   postEnviarCorreo,
   postTransaccion,

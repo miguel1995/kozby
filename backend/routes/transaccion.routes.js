@@ -5,6 +5,12 @@ const authenticationUtils = require('../utils/authentication.utils');
 
 router.get('/', authenticationUtils.verifyToken, transaccionController.getTransacciones);
 
+router.get(
+  '/export/excel',
+  authenticationUtils.verifyToken,
+  transaccionController.getExportExcel
+);
+
 router.post(
   '/:id/enviar-correo',
   authenticationUtils.verifyToken,
