@@ -70,7 +70,7 @@ export const VARIANTES_ACTIONS = {
   DELETE: "delete"
 }
 
-export const PLUS_MENU_ITEMS = [
+export const PLUS_MENU_ITEMS_ADMIN = [
   { key: "1", label: "Articulos activos", path: "/productos", icon: "active" },
   { key: "2", label: "Articulos archivados", path: "/productos/archivados", icon: "archived" },
   { key: "3", label: "Transacciones", path: "/transacciones", icon: "tx" },
@@ -78,6 +78,14 @@ export const PLUS_MENU_ITEMS = [
   { key: "5", label: "Usuarios", path: "/usuarios", icon: "users" },
   { key: "6", label: "Ajustes", path: "/ajustes", icon: "settings" },
   { key: "7", label: "Cerrar Sesión", path: "/inicio-sesion", icon: "logout" }
+];
+
+export const PLUS_MENU_ITEMS_EMPLOYEE = [
+  { key: "1", label: "Articulos activos", path: "/productos", icon: "active" },
+  { key: "2", label: "Articulos archivados", path: "/productos/archivados", icon: "archived" },
+  { key: "3", label: "Transacciones", path: "/transacciones", icon: "tx" },
+  { key: "4", label: "Descuentos", path: "/descuentos", icon: "discount" },
+  { key: "5", label: "Cerrar Sesión", path: "/inicio-sesion", icon: "logout" }
 ];
 
 

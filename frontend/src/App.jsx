@@ -20,8 +20,7 @@ import PaymentMethod from './pages/PaymentMethod';
 import { OrderProvider } from './context/OrderContext';
 import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router';
-
-
+import { canAccess } from './utils/authUtils';
 
 
 function App() {
@@ -45,11 +44,12 @@ function App() {
               <Descuentos />
             </MainLayout>
           } />
-            <Route path="/ajustes" element={
-              <MainLayout>
+           <Route path="/ajustes" element={
+             canAccess() && <MainLayout>
                 <Ajustes />
               </MainLayout>
             } />
+            
           <Route path="/productos" element={
             <MainLayout>
               <Productos />
@@ -57,7 +57,7 @@ function App() {
           } />
 
           <Route path="/usuarios" element={
-            <MainLayout>
+            canAccess() && <MainLayout>
               <Usuarios />
             </MainLayout>
           } />

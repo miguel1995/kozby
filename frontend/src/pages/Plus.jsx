@@ -1,12 +1,17 @@
-import { PLUS_MENU_ITEMS } from "../utils/constants"
+import { PLUS_MENU_ITEMS_ADMIN, PLUS_MENU_ITEMS_EMPLOYEE } from "../utils/constants"
 import { useNavigate } from "react-router"
 
 import { UnorderedListOutlined, InboxOutlined, DollarOutlined, LogoutOutlined, PercentageOutlined, UserOutlined, SettingOutlined } from '@ant-design/icons';
 
 import { Divider } from 'antd';
+import { canAccess } from "../utils/authUtils";
 
 export const Plus = () => {
     const navigate = useNavigate();
+
+
+
+    const menuItems = canAccess() ? PLUS_MENU_ITEMS_ADMIN : PLUS_MENU_ITEMS_EMPLOYEE;
 
     const icons = {
         active: <UnorderedListOutlined />,
@@ -26,7 +31,7 @@ export const Plus = () => {
         <div className="plus-container">
             <div className="plus-welcome-text">Te damos la bienvenida de Nuevo</div>
 
-            {PLUS_MENU_ITEMS.map((item) => (
+            {menuItems.map((item) => (
 
                 <div key={item.key}>
                     <div
