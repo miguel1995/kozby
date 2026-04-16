@@ -4,7 +4,7 @@ import { useNavigate } from "react-router"
 import { UnorderedListOutlined, InboxOutlined, DollarOutlined, LogoutOutlined, PercentageOutlined, UserOutlined, SettingOutlined } from '@ant-design/icons';
 
 import { Divider } from 'antd';
-import { canAccess } from "../utils/authUtils";
+import { canAccess, getUserName } from "../utils/authUtils";
 
 export const Plus = () => {
     const navigate = useNavigate();
@@ -29,8 +29,8 @@ export const Plus = () => {
 
     return (
         <div className="plus-container">
-            <div className="plus-welcome-text">Te damos la bienvenida de Nuevo</div>
-
+            <div className="plus-welcome-text">Te damos la bienvenida de Nuevo {getUserName()}</div>
+            
             {menuItems.map((item) => (
 
                 <div key={item.key}>
