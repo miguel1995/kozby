@@ -59,30 +59,64 @@ const buildTransactionHtml = (transaccion) => {
     .join('');
 
   return `
-  <!DOCTYPE html>
-  <html><head><meta charset="utf-8" /></head>
-  <body style="font-family: system-ui, sans-serif; color: #111;">
-    <h2>Detalle de transacción</h2>
-    <p><strong>Recibo n.°</strong> ${escapeHtml(String(id))}</p>
-    <p><strong>Tipo de pago:</strong> ${escapeHtml(transaccion.tipo_pago || '-')}</p>
-    <p><strong>Fecha:</strong> ${escapeHtml(
-      transaccion.createdAt ? new Date(transaccion.createdAt).toLocaleString('es-CO') : '-'
-    )}</p>
-    <h3>Productos</h3>
-    <table border="1" cellpadding="8" cellspacing="0" style="border-collapse: collapse;">
-      <thead><tr><th>Producto</th><th>Variante</th><th>Cant.</th><th>Subtotal</th></tr></thead>
-      <tbody>${productosRows || '<tr><td colspan="4">Sin productos</td></tr>'}</tbody>
-    </table>
-    ${
-      descuentos.length
-        ? `<h3>Descuentos</h3><table border="1" cellpadding="8" cellspacing="0" style="border-collapse: collapse;">
-      <thead><tr><th>Nombre</th><th>Tipo</th><th>Monto</th></tr></thead>
-      <tbody>${descRows}</tbody></table>`
+  
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+</head>
+
+<body style="font-family: system-ui, sans-serif; background-color: #f3f4f6; display: flexbox; justify-content: center; ">
+    <div style="width: 500px; margin: auto; background-color: #ffffff;">
+        <div
+            style="background-color: #546376; display: flexbox; justify-content: center; padding-top: 20px; height: 50px;">
+            <div
+                style="background-color: #c0c4c7; border: solid 2 #fff; border-radius: 10%;  height: 50px; margin: auto; width: 50px; position: absolute; margin-left: 225px; margin-top: 20px;">
+                IMg</div>
+
+        </div>
+        <div style="color: #c0c4c7; margin: auto; width: fit-content; margin-top: 25px; font-weight: bold;">Kosby</div>
+        <div style="font-size: 64px; line-height: 31px; color: #3d454d; font-weight: 500px; text-align: center; margin: auto; margin-bottom: 32px; margin-top: 64px;">
+            ${formatMoney(transaccion.total)}</p>
+        </div>
+<div style="border-bottom: 1px solid #c0c4c7; margin-bottom: 32px;"/>
+        <p><strong>Recibo n.°</strong> ${escapeHtml(String(id))}</p>
+        <p><strong>Tipo de pago:</strong> ${escapeHtml(transaccion.tipo_pago || '-')}</p>
+        <p><strong>Fecha:</strong> ${escapeHtml(
+            transaccion.createdAt ? new Date(transaccion.createdAt).toLocaleString('es-CO') : '-'
+            )}</p>
+        <h3>Productos</h3>
+        <table border="1" cellpadding="8" cellspacing="0" style="border-collapse: collapse;">
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Variante</th>
+                    <th>Cant.</th>
+                    <th>Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>${productosRows || '<tr><td colspan="4">Sin productos</td></tr>'}</tbody>
+        </table>
+        ${descuentos.length ? `<h3>Descuentos</h3>
+        <table border="1" cellpadding="8" cellspacing="0" style="border-collapse: collapse;">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Tipo</th>
+                    <th>Monto</th>
+                </tr>
+            </thead>
+            <tbody>${descRows}</tbody>
+        </table>`
         : ''
-    }
-    <p><strong>Subtotal:</strong> ${formatMoney(transaccion.subtotal)}</p>
-    <p><strong>Total:</strong> ${formatMoney(transaccion.total)}</p>
-  </body></html>`;
+        }
+        <p><strong>Subtotal:</strong> ${formatMoney(transaccion.subtotal)}</p>
+
+    </div>
+</body>
+
+</html>`;
 };
 
 const buildTransactionText = (transaccion) => {

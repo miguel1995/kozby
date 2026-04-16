@@ -42,7 +42,7 @@ const Ajustes = () => {
             <div className="ajustes-presets">
               <span className="ajustes-presets-label">Atajos:</span>
               <Button size="small" onClick={applyPresetUltimoDia} disabled={loading}>
-                {'\u00DAltimo d\u00EDa'}
+                {'Hoy'}
               </Button>
               <Button size="small" onClick={applyPresetSemana} disabled={loading}>
                 {'\u00DAltima semana'}
