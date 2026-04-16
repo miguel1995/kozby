@@ -30,18 +30,16 @@ const buildTransaccionesExcelBuffer = async (opts = {}) => {
     .lean();
 
   const rows = docs.map((doc) => ({
-    id: doc._id?.toString?.() || '',
+    recibo: doc._id?.toString?.() || '',
     total: doc.total,
     subtotal: doc.subtotal,
+    descuento:  (Number(doc.subtotal) - Number(doc.total) ) || 0,
     tipo_pago: doc.tipo_pago ?? '',
     productos_descripcion: doc.productos_descripcion ?? '',
     monto: doc.monto,
     cambio: doc.cambio,
-    createdAt: doc.createdAt ? new Date(doc.createdAt).toISOString() : '',
-    updatedAt: doc.updatedAt ? new Date(doc.updatedAt).toISOString() : '',
-    productos_json: JSON.stringify(doc.productos ?? []),
-    descuentos_json: JSON.stringify(doc.descuentos ?? []),
-    descuento_json: JSON.stringify(doc.descuento ?? {}),
+    fecha: doc.createdAt ? new Date(doc.createdAt).toISOString() : '',        
+
   }));
 
   const sheetData = rows.length

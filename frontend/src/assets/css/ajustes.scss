@@ -27,9 +27,11 @@
 .ajustes-presets {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
+  align-items: flex-start;
   gap: 8px;
   margin-bottom: 16px;
+  flex-direction: column;
+
 }
 
 .ajustes-presets-label {
