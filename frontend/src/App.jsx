@@ -40,16 +40,24 @@ function App() {
             </MainLayout>
           } />
           <Route path="/descuentos" element={
-            <MainLayout>
-              <Descuentos />
-            </MainLayout>
+            canAccess() ? (
+              <MainLayout>
+                <Descuentos />
+              </MainLayout>
+            ) : (
+              <Navigate to="/inicio-sesion" />
+            )
           } />
            <Route path="/ajustes" element={
-             canAccess() && <MainLayout>
+            canAccess() ? (
+              <MainLayout>
                 <Ajustes />
               </MainLayout>
-            } />
-            
+            ) : (
+              <Navigate to="/inicio-sesion" />
+            )
+          } />
+
           <Route path="/productos" element={
             <MainLayout>
               <Productos />
@@ -57,9 +65,13 @@ function App() {
           } />
 
           <Route path="/usuarios" element={
-            canAccess() && <MainLayout>
-              <Usuarios />
-            </MainLayout>
+            canAccess() ? (
+              <MainLayout>
+                <Usuarios />
+              </MainLayout>
+            ) : (
+              <Navigate to="/inicio-sesion" />
+            )
           } />
 
 

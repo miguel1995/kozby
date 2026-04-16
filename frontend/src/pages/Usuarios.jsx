@@ -6,6 +6,7 @@ import { ButtonDanger } from "../components/buttons/ButtonDanger";
 import { useUsuariosHandler } from "../hooks/useUsuariosHandler";
 import { ModalError } from "../components/modals/ModalError";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
+import { SubmitButton } from "../components/buttons/SubmitButton";
 
 export default function Usuarios() {
   const navigate = useNavigate();
@@ -39,9 +40,10 @@ export default function Usuarios() {
       <div className="users-page">
         <div className="users-page-header">
           <div className="users-page-title">Usuarios</div>
-          <button className="users-page-create" onClick={() => navigate("/nuevo-usuario")}>
-            Crear usuario
-          </button>
+          <SubmitButton
+            text="Crear usuario"
+            onClick={() => navigate("/nuevo-usuario")}
+          />
         </div>
         <div className="users-table">
           {usuarios.map((u) => (

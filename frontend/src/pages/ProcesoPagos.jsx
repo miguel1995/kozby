@@ -9,6 +9,7 @@ import { useOrder } from '../context/OrderContext';
 import { Segmented } from 'antd';
 import Teclado from '../components/Teclado';
 import { OTRO_IMPORTE } from '../utils/constants';
+import { canAccess } from '../utils/authUtils';
 
 
 
@@ -76,11 +77,13 @@ const ProcesoPagos = () => {
 
                         )}
                     </div>
-                    <div className="create-article-new"
-                        onClick={() => {
-                            navigate('/nuevo-producto');
-                        }}
-                    ><span>Crear articulo nuevo</span></div>
+                    {canAccess() && (
+                      <div className="create-article-new"
+                          onClick={() => {
+                              navigate('/nuevo-producto');
+                          }}
+                      ><span>Crear articulo nuevo</span></div>
+                    )}
 
                 </div>
             </>}

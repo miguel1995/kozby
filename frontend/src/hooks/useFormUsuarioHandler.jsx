@@ -55,42 +55,45 @@ export const useFormUsuarioHandler = (isEditMode = false) => {
     }
   };
 
- const handleChange = (e) => {
-  
-  const name = e.target?.name;
-  if (!name) return;
+  const handleChange = (e) => {
+    const name = e.target?.name;
+    if (!name) return;
 
-  let value = e.target.value;
+    let value = e.target.value;
 
-  let isValid = true;
-  let error = null;
+    let isValid = true;
+    let error = null;
 
+    if (name === "username") {
+      if (value.includes(" ")) return;
 
-  if (name === "username") {
+      const regex = /^[^\s]{1,20}$/;
+      isValid = regex.test(value);
+      error = isValid ? null : "Máx 20 caracteres y sin espacios";
+    } else if (name === "password") {
+      if (!value) {
+        isValid = values.password.required ? false : true;
+        error = isValid ? null : "Mín 5 y máx 20 caracteres";
+      } else {
+        const regex = /^.{5,20}$/;
+        isValid = regex.test(value);
+        error = isValid ? null : "Mín 5 y máx 20 caracteres";
+      }
+    } else {
+      isValid = value !== "";
+      error = isValid ? null : values[name].error;
+    }
 
-    if (value.includes(" ")) return;
-
-    const regex = /^[^\s]{1,20}$/;
-
-    isValid = regex.test(value);
-    error = isValid ? null : "Máx 20 caracteres y sin espacios";
-  }
-
-  else {
-    isValid = value !== "";
-    error = isValid ? null : values[name].error;
-  }
-
-  setValues({
-    ...values,
-    [name]: {
-      ...values[name],
-      value,
-      valid: isValid,
-      error,
-    },
-  });
-};
+    setValues({
+      ...values,
+      [name]: {
+        ...values[name],
+        value,
+        valid: isValid,
+        error,
+      },
+    });
+  };
 
   const handleSubmit = async () => {
     setSubmitted(true);

@@ -12,10 +12,18 @@ export function checkToken() {
 export function canAccess() {
     const token = localStorage.getItem('token');
     if (!token) {
-        throw { status: 401 };
+        return false;
     }
 
-    const payload = token.split('.')[1];
-    const decoded = JSON.parse(atob(payload));
-    return decoded.role === 'Administrador' || decoded.role === 'Master';
+    try {
+        const payload = token.split('.')[1];
+        if (!payload) {
+            return false;
+        }
+
+        const decoded = JSON.parse(atob(payload));
+        return decoded?.role === 'Administrador' || decoded?.role === 'Master';
+    } catch (err) {
+        return false;
+    }
 }

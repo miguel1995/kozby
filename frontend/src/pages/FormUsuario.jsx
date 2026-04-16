@@ -16,16 +16,20 @@ const FormUsuario = ({ isEditMode = false }) => {
 
   return (
     <div style={{ position: "relative" }}>
-      <div className="form-producto-actions">
+      <div className="form-producto-actions" style={{ margin: '20px 16px 8px' }}>
         <ButtonClose onClick={() => navigate(-1)} />
-        <SubmitButton text="Guardar" onClick={onSave} />
+        <SubmitButton
+          text="Guardar"
+          onClick={onSave}
+          style={!isEditMode ? { backgroundColor: '#000', borderColor: '#000', color: '#fff' } : undefined}
+        />
       </div>
 
-      <div className="form-producto-title">
+      <div className="form-producto-title" >
         {isEditMode ? "Editar usuario" : "Crear usuario"}
       </div>
 
-      <div className="form-producto-container">
+      <div className="form-producto-container" >
         <UsuarioForm values={values} handleChange={handleChange} submitted={submitted} />
       </div>
 
