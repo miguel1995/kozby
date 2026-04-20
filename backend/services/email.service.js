@@ -1,4 +1,17 @@
+const fs = require('fs');
+const path = require('path');
 const nodemailer = require('nodemailer');
+
+/** Adjunto inline para <img src="cid:..."> — debe coincidir con el HTML */
+const EMAIL_MAP_CID = 'email_map@kozby';
+const EMAIL_MAP_PATH = path.join(__dirname, '..', 'assets', 'images', 'email_map.png');
+
+const EMAIL_LOGO_CID = 'email_logo@kozby';
+const EMAIL_LOGO_PATH = path.join(__dirname, '..', 'assets', 'images', 'email_icon.png');
+
+const EMAIL_CASH_CID = 'email_cash@kozby';
+const EMAIL_CASH_PATH = path.join(__dirname, '..', 'assets', 'images', 'email_cash_icon.png');
+
 
 /**
  * Gmail SMTP: usa una "Contraseña de aplicación" (no la contraseña normal).
@@ -67,17 +80,22 @@ const buildTransactionHtml = (transaccion) => {
 </head>
 
 <body style="font-family: system-ui, sans-serif; color: #111; display: flexbox; justify-content: center; ">
-    <div style="width: 375px; margin: auto;">
+    <div style="display: flex; justify-content: center; width: 499px; margin: auto; background-color: #f3f4f6;">
+    <div style="width: 375px; margin: auto; background-color: #ffffff;">
         <div
             style="background-color: #546376; display: flexbox; justify-content: center; padding-top: 20px; height: 50px;">
             <div
-                style="background-color: #c0c4c7; border: solid 2 #fff; border-radius: 10%;  height: 50px; margin: auto; width: 50px; position: absolute; margin-left: 225px; margin-top: 20px;">
-                IMg</div>
+                style="background-color: #546376; border: solid 4px #fff; border-radius: 10%;  height: 50px; margin: auto; width: 50px; position: absolute; left: 50%; transform: translateX(-50%); margin-top: 20px;">
+                
+                <img src="cid:${EMAIL_LOGO_CID}" width="50" height="50" alt="Kozby" style="border: 0; border-radius: 10%; display: block; max-width: 100%; height: auto;" />
+                </div>
 
         </div>
-        <div style="color: #c0c4c7; margin: auto; width: fit-content; margin-top: 25px; font-weight: bold;">Kozby</div>
-        <div style="font-size: 64px;  color: #3d454d; font-weight: 600; padding-top: 32px; display: flex; justify-content: center;">
+        <div style="color: #546376; margin: auto; width: fit-content; margin-top: 25px; font-weight: bold;">Kozby</div>
+        <div style="font-size: 64px;  color: #3d454d; font-weight: 600; padding-top: 32px; text-align: center;">
+        
             ${formatMoney(transaccion.total)}
+            
         </div>
 
         <div style="border-top: dashed 2px #546376; width: 100%; height: 1px; margin-top: 16px;"></div>
@@ -113,7 +131,7 @@ const buildTransactionHtml = (transaccion) => {
             </tbody>
         </table>
 
-        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3311.5249468147285!2d-84.20621351122001!3d33.901886579828926!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x88f5a7e32d57b765%3A0x9fb0b0cab16fafff!2sKOZBY%20HAIR%20SALON!5e0!3m2!1ses-419!2sco!4v1776658884513!5m2!1ses-419!2sco" width="375" height="120" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        ${getMapImageHtml()}
 
          <table border="1" cellpadding="8" cellspacing="0" style="border: none; width: 100%;">
             <thead>
@@ -121,9 +139,14 @@ const buildTransactionHtml = (transaccion) => {
             </thead>
             <tbody>            
             <tr><td style="border-style: hidden; ">${escapeHtml(transaccion.tipo_pago.toUpperCase() || '-')}</td> <td style="border-style: hidden;"></td><td style="border-style: hidden; text-align: right;">${escapeHtml(transaccion.createdAt ? new Date(transaccion.createdAt).toLocaleString('es-CO') : '-')}</td></tr>
-            <tr><td style="border-style: hidden; font-weight: bold;">Recibo</td> <td style="border-style: hidden; "></td><td style="border-style: hidden; text-align: right;">${escapeHtml(String(id))}</td> </tr>
+            <tr><td style="border-style: hidden; font-weight: bold;">
+            
+                <img src="cid:${EMAIL_CASH_CID}" width="40" height="16" alt="Kozby" style="border: 0; display: block; " />
+            
+            </td> <td style="border-style: hidden; "></td><td style="border-style: hidden; text-align: right;">${escapeHtml(String(id))}</td> </tr>
             </tbody>
         </table>
+    </div>
     </div>
 </body>
 
@@ -153,6 +176,42 @@ function escapeHtml(s) {
     .replace(/"/g, '&quot;');
 }
 
+/** Imagen local incrustada vía CID (los clientes de correo no muestran iframes) */
+function getMapImageHtml() {
+  if (!fs.existsSync(EMAIL_MAP_PATH)) {
+    return '';
+  }
+  return `
+        <div style="margin-top: 16px;">
+          <a href="https://www.google.com/maps/place/KOZBY+HAIR+SALON/@33.9018866,-84.2062135,17z/data=!4m6!3m5!1s0x88f5a7e32d57b765:0x9fb0b0cab16fafff!8m2!3d33.9018307!4d-84.2063532!16s%2Fg%2F11f5_ktc8n?entry=ttu&g_ep=EgoyMDI2MDQxNS4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noopener noreferrer" style="text-decoration: none;">
+            <img src="cid:${EMAIL_MAP_CID}" width="375" height="120" alt="Ubicación KOZBY HAIR SALON" style="border: 0; display: block; max-width: 100%; height: auto;" />
+          </a>
+        </div>`;
+}
+
+function getMapAttachment() {
+  if (!fs.existsSync(EMAIL_MAP_PATH)) {
+    return [];
+  }
+  return [
+    {
+      filename: 'email_logo.png',
+      path: EMAIL_LOGO_PATH,
+      cid: EMAIL_LOGO_CID,
+    },
+    {
+      filename: 'email_map.png',
+      path: EMAIL_MAP_PATH,
+      cid: EMAIL_MAP_CID,
+    },
+    {
+      filename: 'email_cash.png',
+      path: EMAIL_CASH_PATH,
+      cid: EMAIL_CASH_CID,
+    },
+  ];
+}
+
 const sendTransaccionCorreo = async ({ to, transaccion }) => {
   const from = process.env.MAIL_FROM || process.env.MAIL_USER;
   const transporter = getTransporter();
@@ -160,11 +219,12 @@ const sendTransaccionCorreo = async ({ to, transaccion }) => {
   const subject = `Recibo Kozby — ${transaccion.id || 'transacción'} `;
 
   await transporter.sendMail({
-    from: `"Kozby" < ${from}> `,
+    from: `"Kozby" <${from}>`,
     to,
     subject,
     text: buildTransactionText(transaccion),
     html: buildTransactionHtml(transaccion),
+    attachments: getMapAttachment(),
   });
 };
 
