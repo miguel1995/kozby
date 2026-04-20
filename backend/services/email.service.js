@@ -38,9 +38,7 @@ const buildTransactionHtml = (transaccion) => {
   const productosRows = productos
     .map(
       (p) =>
-        `<tr><td>${escapeHtml(p.producto_nombre || '-')}</td><td>${escapeHtml(
-          String(p.variante_nombre || '')
-        )}</td><td>${p.cantidad ?? 1}</td><td>${formatMoney(
+        `<tr><td style="border-style: hidden;"><div>${escapeHtml(p.producto_nombre || '-')}</div><div>${escapeHtml(String(p.variante_nombre || ''))}</div></td><td style="border-style: hidden;">x ${p.cantidad ?? 1}</td><td style="border-style: hidden; text-align: right;">${formatMoney(
           (Number(p.precio) || 0) * (Number(p.cantidad) || 1)
         )}</td></tr>`
     )
@@ -50,16 +48,17 @@ const buildTransactionHtml = (transaccion) => {
     .map((d) => {
       const val =
         (d?.tipo || '').toUpperCase() === 'PORCENTAJE'
-          ? `${d?.monto ?? '-'}%`
+          ? formatMoney((transaccion.total * (d?.monto ?? 0) / 100))
           : formatMoney(d?.monto);
-      return `<tr><td>${escapeHtml(d?.nombre || 'Descuento')}</td><td>${escapeHtml(
-        d?.tipo || ''
-      )}</td><td>- ${val}</td></tr>`;
+
+      const valTipo = (d?.tipo || '').toUpperCase() === 'PORCENTAJE' ? `${d?.monto ?? '-'}%` : '';
+
+      return `<tr><td  style="border-style: hidden;">${escapeHtml(d?.nombre || 'Descuento')}</td><td style="border-style: hidden;">${escapeHtml(
+        valTipo || ''
+      )}</td><td  style="border-style: hidden; text-align: right;">- ${val}</td></tr>`;
     })
     .join('');
-
   return `
-  
 <!DOCTYPE html>
 <html>
 
@@ -67,8 +66,8 @@ const buildTransactionHtml = (transaccion) => {
     <meta charset="utf-8" />
 </head>
 
-<body style="font-family: system-ui, sans-serif; background-color: #f3f4f6; display: flexbox; justify-content: center; ">
-    <div style="width: 500px; margin: auto; background-color: #ffffff;">
+<body style="font-family: system-ui, sans-serif; color: #111; display: flexbox; justify-content: center; ">
+    <div style="width: 375px; margin: auto;">
         <div
             style="background-color: #546376; display: flexbox; justify-content: center; padding-top: 20px; height: 50px;">
             <div
@@ -76,60 +75,72 @@ const buildTransactionHtml = (transaccion) => {
                 IMg</div>
 
         </div>
-        <div style="color: #c0c4c7; margin: auto; width: fit-content; margin-top: 25px; font-weight: bold;">Kosby</div>
-        <div style="font-size: 64px; line-height: 31px; color: #3d454d; font-weight: 500px; text-align: center; margin: auto; margin-bottom: 32px; margin-top: 64px;">
-            ${formatMoney(transaccion.total)}</p>
+        <div style="color: #c0c4c7; margin: auto; width: fit-content; margin-top: 25px; font-weight: bold;">Kozby</div>
+        <div style="font-size: 64px;  color: #3d454d; font-weight: 600; padding-top: 32px; display: flex; justify-content: center;">
+            ${formatMoney(transaccion.total)}
         </div>
-<div style="border-bottom: 1px solid #c0c4c7; margin-bottom: 32px;"/>
-        <p><strong>Recibo n.°</strong> ${escapeHtml(String(id))}</p>
-        <p><strong>Tipo de pago:</strong> ${escapeHtml(transaccion.tipo_pago || '-')}</p>
-        <p><strong>Fecha:</strong> ${escapeHtml(
-            transaccion.createdAt ? new Date(transaccion.createdAt).toLocaleString('es-CO') : '-'
-            )}</p>
-        <h3>Productos</h3>
-        <table border="1" cellpadding="8" cellspacing="0" style="border-collapse: collapse;">
+
+        <div style="border-top: dashed 2px #546376; width: 100%; height: 1px; margin-top: 16px;"></div>
+
+        <table border="1" cellpadding="8" cellspacing="0" style="border: none; width: 100%;">
             <thead>
-                <tr>
-                    <th>Producto</th>
-                    <th>Variante</th>
-                    <th>Cant.</th>
-                    <th>Subtotal</th>
-                </tr>
+                
             </thead>
             <tbody>${productosRows || '<tr><td colspan="4">Sin productos</td></tr>'}</tbody>
         </table>
-        ${descuentos.length ? `<h3>Descuentos</h3>
-        <table border="1" cellpadding="8" cellspacing="0" style="border-collapse: collapse;">
+         ${descuentos.length
+      ? `<h3>Descuentos</h3>
+        <table border="1" cellpadding="8" cellspacing="0" style="border: none; width: 100%;">
             <thead>
-                <tr>
-                    <th>Nombre</th>
-                    <th>Tipo</th>
-                    <th>Monto</th>
-                </tr>
+               
             </thead>
             <tbody>${descRows}</tbody>
         </table>`
-        : ''
-        }
-        <p><strong>Subtotal:</strong> ${formatMoney(transaccion.subtotal)}</p>
+      : ''
+    }
 
+        <div style="border-top: dashed 2px #546376; width: 100%; height: 1px; margin-top: 16px;"></div>
+
+        
+
+         <table border="1" cellpadding="8" cellspacing="0" style="border: none; width: 100%;">
+            <thead>
+               
+            </thead>
+            <tbody>
+            <tr><td style="border-style: hidden; font-weight: bold;">Total</td><td style="border-style: hidden;"></td><td style="border-style: hidden; text-align: right; font-weight: bold;">${formatMoney(transaccion.total)}</td></tr>
+            <tr><td style="border-style: hidden; font-weight: bold;">Tipo de pago</td><td style="border-style: hidden;">${escapeHtml(transaccion.tipo_pago.toUpperCase() || '-')}</td><td style="border-style: hidden; text-align: right; font-weight: bold;"></td></tr>            
+            </tbody>
+        </table>
+
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3311.5249468147285!2d-84.20621351122001!3d33.901886579828926!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x88f5a7e32d57b765%3A0x9fb0b0cab16fafff!2sKOZBY%20HAIR%20SALON!5e0!3m2!1ses-419!2sco!4v1776658884513!5m2!1ses-419!2sco" width="375" height="120" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+
+         <table border="1" cellpadding="8" cellspacing="0" style="border: none; width: 100%;">
+            <thead>
+               
+            </thead>
+            <tbody>            
+            <tr><td style="border-style: hidden; ">${escapeHtml(transaccion.tipo_pago.toUpperCase() || '-')}</td> <td style="border-style: hidden;"></td><td style="border-style: hidden; text-align: right;">${escapeHtml(transaccion.createdAt ? new Date(transaccion.createdAt).toLocaleString('es-CO') : '-')}</td></tr>
+            <tr><td style="border-style: hidden; font-weight: bold;">Recibo</td> <td style="border-style: hidden; "></td><td style="border-style: hidden; text-align: right;">${escapeHtml(String(id))}</td> </tr>
+            </tbody>
+        </table>
     </div>
 </body>
 
 </html>`;
+
 };
 
 const buildTransactionText = (transaccion) => {
   const lines = [
-    `Recibo: ${transaccion.id}`,
-    `Tipo de pago: ${transaccion.tipo_pago || '-'}`,
-    `Fecha: ${
-      transaccion.createdAt
-        ? new Date(transaccion.createdAt).toLocaleString('es-CO')
-        : '-'
-    }`,
-    `Subtotal: ${formatMoney(transaccion.subtotal)}`,
-    `Total: ${formatMoney(transaccion.total)}`,
+    `Recibo: ${transaccion.id} `,
+    `Tipo de pago: ${transaccion.tipo_pago || '-'} `,
+    `Fecha: ${transaccion.createdAt
+      ? new Date(transaccion.createdAt).toLocaleString('es-CO')
+      : '-'
+    } `,
+    `Subtotal: ${formatMoney(transaccion.subtotal)} `,
+    `Total: ${formatMoney(transaccion.total)} `,
   ];
   return lines.join('\n');
 };
@@ -146,10 +157,10 @@ const sendTransaccionCorreo = async ({ to, transaccion }) => {
   const from = process.env.MAIL_FROM || process.env.MAIL_USER;
   const transporter = getTransporter();
 
-  const subject = `Recibo Kozby — ${transaccion.id || 'transacción'}`;
+  const subject = `Recibo Kozby — ${transaccion.id || 'transacción'} `;
 
   await transporter.sendMail({
-    from: `"Kozby" <${from}>`,
+    from: `"Kozby" < ${from}> `,
     to,
     subject,
     text: buildTransactionText(transaccion),

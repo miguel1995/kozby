@@ -17,7 +17,7 @@ export const verifyToken = (req, res, next) => {
     const token = authHeader && authHeader.split(' ')[1];
 
     if (!token) {
-        return res.status(401).json({ message: 'Acceso denegado: Token no proporcionado' });
+        return res.status(401).json({ message: 'Inicie sesión nuevamente' });
     }
 
     try {
@@ -25,6 +25,6 @@ export const verifyToken = (req, res, next) => {
         req.user = verified;
         next();
     } catch (error) {
-        res.status(401).json({ message: 'Token inválido o expirado' });
+        res.status(401).json({ message: 'Inicie sesión nuevamente' });
     }
 };
