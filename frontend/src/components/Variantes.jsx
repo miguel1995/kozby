@@ -22,7 +22,7 @@ const Variantes = ({ variantes, handleChange } = { variantes: [], handleChange: 
 
     const [amountReceived, setAmountReceived] = useState(0);
     const [isAmountModalOpen, setIsAmountModalOpen] = useState(false);
-
+    const isAdmin = canAccess();
 
     useEffect(() => {
         setIsFormValid(Object.values(values).every(value => value.valid));
@@ -192,6 +192,7 @@ const Variantes = ({ variantes, handleChange } = { variantes: [], handleChange: 
                 values={values}
                 handleVariantChange={handleVariantChange}
                 handleVariantDelete={handleVariantDelete}
+                isAdmin={isAdmin}
             />
 
 

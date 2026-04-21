@@ -131,7 +131,7 @@ const TransaccionDetalle = () => {
               okText="Enviar"
               cancelText="Cancelar"
               confirmLoading={sendingEmail}
-              destroyOnClose
+              destroyOnHidden
             >
               <p style={{ marginBottom: 8 }}>Correo del destinatario:</p>
               <Input

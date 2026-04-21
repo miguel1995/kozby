@@ -16,6 +16,7 @@ import Descuentos from './pages/Descuentos';
 import Usuarios from './pages/Usuarios';
 import Ajustes from './pages/Ajustes';
 import PaymentMethod from './pages/PaymentMethod';
+import PaymentResult from './pages/PaymentResult';
 
 import { OrderProvider } from './context/OrderContext';
 import { useEffect } from 'react';
@@ -48,7 +49,7 @@ function App() {
               <Navigate to="/inicio-sesion" />
             )
           } />
-           <Route path="/ajustes" element={
+          <Route path="/ajustes" element={
             canAccess() ? (
               <MainLayout>
                 <Ajustes />
@@ -107,6 +108,11 @@ function App() {
           <Route path="/cobro" element={
             <MainLayout>
               <Cobro />
+            </MainLayout>
+          } />
+          <Route path="/resultado-pago/:transactionId" element={
+            <MainLayout>
+              <PaymentResult />
             </MainLayout>
           } />
           <Route path="/metodo-pago" element={

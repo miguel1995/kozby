@@ -12,7 +12,8 @@ export const ModalVariantForm = ({
     editMode,
     values,
     handleVariantChange,
-    handleVariantDelete
+    handleVariantDelete,
+    isAdmin = false
 }) => {
 
     return (
@@ -32,9 +33,10 @@ export const ModalVariantForm = ({
                     <div>
                         {editMode ? "Modificar Variante" : "Agregar Variante"}
                     </div>
-                    <div style={{ marginBottom: '20px' }}>
-                        <SubmitButton text="Guardar" onClick={handleVariantCreate} disabled={!isFormValid} />
-                    </div>
+                        <div style={{ marginBottom: '20px' }}>
+                            {isAdmin && (<SubmitButton text="Guardar" onClick={handleVariantCreate} disabled={!isFormValid} />
+                        )}</div>
+                    
                 </div>
             </div>
 
@@ -42,7 +44,7 @@ export const ModalVariantForm = ({
 
 
         <VariantForm values={values} handleVariantChange={handleVariantChange} />
-        {editMode && (
+        {editMode && isAdmin && (
             <>
             <Divider />
             <div className="modal-delete-button">
