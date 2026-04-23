@@ -40,6 +40,8 @@ export const Plus = () => {
                             if (item.icon === 'logout') {
                                 localStorage.clear();
                                 navigate('/inicio-sesion');
+                                
+                                
                             } else {
                                 navigate(item.path);
                             }

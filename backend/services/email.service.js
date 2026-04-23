@@ -44,7 +44,7 @@ const formatMoney = (value) =>
   })}`;
 
 const buildTransactionHtml = (transaccion) => {
-  const id = transaccion.id || '-';
+  const id = transaccion.recibo || '-';
   const productos = Array.isArray(transaccion.productos) ? transaccion.productos : [];
   const descuentos = Array.isArray(transaccion.descuentos) ? transaccion.descuentos : [];
 
@@ -156,7 +156,7 @@ const buildTransactionHtml = (transaccion) => {
 
 const buildTransactionText = (transaccion) => {
   const lines = [
-    `Recibo: ${transaccion.id} `,
+    `Recibo: ${transaccion.recibo || 'transacción'} `,
     `Tipo de pago: ${transaccion.tipo_pago || '-'} `,
     `Fecha: ${transaccion.createdAt
       ? new Date(transaccion.createdAt).toLocaleString('es-CO')
@@ -216,7 +216,7 @@ const sendTransaccionCorreo = async ({ to, transaccion }) => {
   const from = process.env.MAIL_FROM || process.env.MAIL_USER;
   const transporter = getTransporter();
 
-  const subject = `Recibo Kozby — ${transaccion.id || 'transacción'} `;
+  const subject = `Recibo Kozby — ${transaccion.recibo || 'transacción'} `;
 
   await transporter.sendMail({
     from: `"Kozby" <${from}>`,

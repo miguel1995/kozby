@@ -12,6 +12,8 @@ export default function Usuarios() {
   const navigate = useNavigate();
   const { usuarios, eliminarUsuario, errorData, handleOk } = useUsuariosHandler();
 
+  const usuariosFiltrados = usuarios.filter((u) => u.role !== "Master");
+
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState({
     open: false,
     nombre: "",
@@ -46,7 +48,7 @@ export default function Usuarios() {
           />
         </div>
         <div className="users-table">
-          {usuarios.map((u) => (
+          {usuariosFiltrados.map((u) => (
             <div key={u.id} className="user-item">
 
               <div className="user-info">

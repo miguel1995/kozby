@@ -10,6 +10,7 @@ const transaccionSchema = new mongoose.Schema({
     tipo_pago : {type: String, default: ''},
     monto: {type: Number, default: 0},
     cambio: {type: Number, default: 0},
+    recibo: {type: String, required: true, unique: true},
 },
 {
     timestamps: true,

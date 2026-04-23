@@ -87,7 +87,7 @@ const TransaccionDetalle = () => {
   const getIniciales = (nombre = '') => nombre.trim().slice(0, 2).toUpperCase();
 
 
-  const numeroRecibo = transaccion?.id || '-';
+  const numeroRecibo = transaccion?.recibo || '-';
   const descuentos = Array.isArray(transaccion?.descuentos) ? transaccion.descuentos : [];
 
   return (

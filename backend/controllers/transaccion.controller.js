@@ -4,6 +4,10 @@ const emailService = require('../services/email.service');
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+function generarReciboCorto() {
+  return Date.now().toString(36).toUpperCase();
+}
+
 const getTransacciones = async (req, res) => {
   try {
     const { limit, createdAt, lastId } = req.query;
@@ -94,6 +98,7 @@ const postEnviarCorreo = async (req, res) => {
 
 const postTransaccion = async (req, res) => {
   try {
+    req.body.recibo = generarReciboCorto();
     const transaccion = await transaccionesService.postTransaccion(req.body);
     return res.status(200).json(transaccion);
   } catch (error) {

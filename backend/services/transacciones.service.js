@@ -29,6 +29,7 @@ const getTransacciones = async ({ limit = 10, createdAt = null, lastId = null } 
 
     const items = page.map((transaccion) => ({
       id: transaccion._id?.toString?.() || transaccion._id,
+      recibo: transaccion.recibo || '',
       total: transaccion.total,
       subtotal: transaccion.subtotal,
       productos_descripcion: transaccion.productos_descripcion,
@@ -60,6 +61,7 @@ const getTransaccionById = async (id) => {
 
     return {
       id: transaccion._id?.toString?.() || transaccion._id,
+      recibo: transaccion.recibo || '',
       total: transaccion.total,
       subtotal: transaccion.subtotal,
       productos_descripcion: transaccion.productos_descripcion,

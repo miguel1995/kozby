@@ -30,7 +30,7 @@ const buildTransaccionesExcelBuffer = async (opts = {}) => {
     .lean();
 
   const rows = docs.map((doc) => ({
-    recibo: doc._id?.toString?.() || '',
+    recibo: doc.recibo || '',
     total: doc.total,
     subtotal: doc.subtotal,
     descuento:  (Number(doc.subtotal) - Number(doc.total) ) || 0,
