@@ -47,7 +47,7 @@ const Teclado = ({ handlePlus }) => {
         </button>
         <button type="button" className="teclado-key teclado-key--danger"
           onClick={
-            () => handlePlus(rawPrice)
+            () => handlePlus(normalizedPrice)
           }>
           +
         </button>

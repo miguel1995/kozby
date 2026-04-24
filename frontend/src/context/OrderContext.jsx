@@ -28,6 +28,14 @@ export const OrderProvider = ({ children }) => {
         setTotal(total);
     }, [items, discountsSelected]);
 
+    useEffect(() => {
+        console.log('items', items);
+        console.log('discountsSelected', discountsSelected);
+        console.log('discountsCalculated', discountsCalculated);
+        console.log('subTotal', subTotal);
+        console.log('total', total);
+    }, [items, discountsSelected, discountsCalculated, subTotal, total]);
+
 
     const addProduct = (item) => {
         const lineItem = {
