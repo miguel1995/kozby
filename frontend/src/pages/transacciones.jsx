@@ -1,15 +1,11 @@
-import React, { useMemo, useState } from 'react';
-import { Input } from 'antd';
-import {
-  SearchOutlined,
-  CloseOutlined,
-  CreditCardOutlined,
-  DollarOutlined,
-} from '@ant-design/icons';
+import React, { useMemo, useState, useRef } from 'react';
+import { Input, message } from 'antd';
+import {SearchOutlined, CloseOutlined,CreditCardOutlined,DollarOutlined,} from '@ant-design/icons';
 import Loader from '../components/Loader';
 import { ButtonSecundary } from '../components/buttons/ButtonSecundary';
 import { ModalError } from '../components/modals/ModalError';
 import { useTransaccionHandler } from '../hooks/useTransaccionHandler';
+import { getTransaccionByRecibo } from '../services/transacciones.service';
 import { useNavigate } from 'react-router-dom';
 
 
@@ -19,6 +15,9 @@ function Transacciones() {
   const { transacciones, loading, loadingMore, hasMore, loadMore, errorData, handleOk } = useTransaccionHandler();
 
   const [search, setSearch] = useState('');
+  const [reciboResult, setReciboResult] = useState(null);
+  const [reciboLoading, setReciboLoading] = useState(false);
+  const lastSearchRef = useRef('');
 
 
 
@@ -61,12 +60,41 @@ function Transacciones() {
     return null;
   };
 
+  React.useEffect(() => {
+    const term = search.trim();
+    setReciboResult(null);
+    if (/^[a-zA-Z0-9]{6,}$/.test(term)) {
+      lastSearchRef.current = term;
+      setReciboLoading(true);
+      getTransaccionByRecibo(term)
+        .then((tx) => {
+
+          if (lastSearchRef.current === term) {
+            setReciboResult(tx);
+          }
+        })
+        .catch((err) => {
+          if (lastSearchRef.current === term) {
+            setReciboResult(null);
+            if (err.status !== 404) message.error('Error buscando recibo');
+          }
+        })
+        .finally(() => {
+          if (lastSearchRef.current === term) setReciboLoading(false);
+        });
+    } else {
+      setReciboResult(null);
+      setReciboLoading(false);
+    }
+  }, [search]);
+
   const filteredTransacciones = useMemo(() => {
     const term = search.trim().toLowerCase();
     if (!term) return transacciones;
-
+    if (reciboResult) return [reciboResult];
     return transacciones.filter((tx) => {
       const searchable = [
+        tx?.recibo,
         tx?.tipo_pago,
         tx?.productos_descripcion,
         String(tx?.total ?? ''),
@@ -76,10 +104,9 @@ function Transacciones() {
       ]
         .join(' ')
         .toLowerCase();
-
       return searchable.includes(term);
     });
-  }, [transacciones, search]);
+  }, [transacciones, search, reciboResult]);
 
   const groupedByDay = useMemo(() => {
     return filteredTransacciones.reduce((acc, tx) => {
@@ -116,7 +143,7 @@ function Transacciones() {
         </div>
 
         <div className="products-table">
-          {loading ? (
+          {loading || reciboLoading ? (
             <Loader message="Cargando transacciones..." />
           ) : Object.keys(groupedByDay).length === 0 ? (
             <div>No hay transacciones para mostrar.</div>

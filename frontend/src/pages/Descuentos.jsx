@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
-import { Input } from 'antd';
-import { SearchOutlined, CloseOutlined, TagOutlined, PlusOutlined } from '@ant-design/icons';
+import { SearchInput } from '../components/SearchInput';
+import { TagOutlined, PlusOutlined } from '@ant-design/icons';
 import Loader from '../components/Loader';
 import { ModalError } from '../components/modals/ModalError';
 import { useDescuentosHandler } from '../hooks/useDescuentosHandler';
@@ -81,13 +81,11 @@ const Descuentos = () => {
               }}
             />
           </div>
-          <Input
+          <SearchInput
             placeholder="Buscar"
             className="products-page-search-input"
-            prefix={<SearchOutlined />}
-            suffix={search ? <CloseOutlined onClick={() => setSearch('')} /> : null}
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={setSearch}
           />
         </div>
 

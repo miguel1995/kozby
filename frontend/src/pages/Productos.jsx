@@ -1,13 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 
 import { useProductsHandler } from '../hooks/useProductsHandler';
-import { SearchOutlined, CloseOutlined } from '@ant-design/icons';
+import { SearchInput } from '../components/SearchInput';
 import { SubmitButton } from '../components/buttons/SubmitButton';
 import { useLocation, useNavigate } from 'react-router';
 import Loader from '../components/Loader';
 import { ModalError } from '../components/modals/ModalError';
 import ListProductos from '../components/ListProductos';
-import {Input} from 'antd';
 import { canAccess } from '../utils/authUtils';
 
 function Productos() {
@@ -27,6 +26,17 @@ function Productos() {
     const location = useLocation();
     const navigate = useNavigate();
 
+        const filteredProductos = useMemo(() => {
+            const term = search.trim().toLowerCase();
+            if (!term) return productos;
+            return productos.filter((p) => {
+                const searchable = [p?.nombre, p?.descripcion, String(p?.precio ?? ''), String(p?.cantidad ?? '')]
+                    .join(' ')
+                    .toLowerCase();
+                return searchable.includes(term);
+            });
+        }, [productos, search]);
+
     useEffect(() => {
         const esArchivos = location.pathname.includes('archivados');
         setVerArchivados(esArchivos);
@@ -39,12 +49,11 @@ function Productos() {
         <div className="page-container">
             <div className="products-page">
                 <div className="products-page-filters-and-actions">
-                    <Input placeholder="Buscar"
+                    <SearchInput
+                        placeholder="Buscar"
                         className="products-page-search-input"
-                        prefix={<SearchOutlined />}
-                        suffix={search ? <CloseOutlined onClick={() => setSearch('')} /> : null}
                         value={search}
-                        onChange={(e) => setSearch(e.target.value)}
+                        onChange={setSearch}
                     />
                     {verArchivados ? (
                         <div className="products-page-archived-title">Artículos archivados</div>
@@ -66,7 +75,7 @@ function Productos() {
                         <Loader message="Cargando productos..." />
                     ) : (      
                         <ListProductos 
-                        productos={productos} 
+                        productos={filteredProductos} 
                         hacerClickCallback={hacerClick}
                         clickAction="edit"
                         />

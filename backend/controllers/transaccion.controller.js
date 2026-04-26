@@ -1,3 +1,20 @@
+
+const getTransaccionByRecibo = async (req, res) => {
+  try {
+    const { recibo } = req.params;
+    if (!recibo) {
+      return res.status(400).json({ message: 'Debe proporcionar el número de recibo' });
+    }
+    const transaccion = await transaccionesService.getTransaccionByRecibo(recibo);
+    if (!transaccion) {
+      return res.status(404).json({ message: 'Transacción no encontrada' });
+    }
+    return res.status(200).json(transaccion);
+  } catch (error) {
+    console.error('Error al buscar transacción por recibo:', error);
+    return res.status(500).json({ message: 'Error al buscar transacción por recibo' });
+  }
+};
 const transaccionesService = require('../services/transacciones.service');
 const transaccionesExcelService = require('../services/transaccionesExcel.service');
 const emailService = require('../services/email.service');
@@ -122,4 +139,5 @@ module.exports = {
   getTransaccionById,
   postEnviarCorreo,
   postTransaccion,
+  getTransaccionByRecibo,
 };

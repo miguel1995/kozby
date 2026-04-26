@@ -1,3 +1,20 @@
+
+const getTransaccionByRecibo = async (recibo) => {
+  if (!recibo) return null;
+  const transaccion = await Transaccion.findOne({ recibo }).lean();
+  if (!transaccion) return null;
+  return {
+    id: transaccion._id?.toString?.() || transaccion._id,
+    recibo: transaccion.recibo || '',
+    total: transaccion.total,
+    subtotal: transaccion.subtotal,
+    productos_descripcion: transaccion.productos_descripcion,
+    descuento: transaccion.descuento || {},
+    descuentos: transaccion.descuentos || [],
+    tipo_pago: transaccion.tipo_pago,
+    createdAt: transaccion.createdAt,
+  };
+};
 const mongoose = require('mongoose');
 const Transaccion = require('../models/transaccion');
 const productosService = require('./productos.service');
@@ -112,4 +129,5 @@ module.exports = {
   getTransacciones,
   getTransaccionById,
   postTransaccion,
+  getTransaccionByRecibo,
 };
