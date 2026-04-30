@@ -62,3 +62,20 @@
     font-weight: 500;
     text-align: right;
 }
+
+.cobro__agregar-descuento {
+    cursor: pointer;
+    font-weight: 600;
+    color: #000;
+    padding: 16px 8px 32px 8px;
+}
+
+.add-discount__container {
+    padding: 16px;
+}
+
+.add-discount__button-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 16px;
+}

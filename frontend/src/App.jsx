@@ -22,6 +22,7 @@ import { OrderProvider } from './context/OrderContext';
 import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import { canAccess } from './utils/authUtils';
+import AddDiscount from './pages/AddDiscount';
 
 
 function App() {
@@ -118,6 +119,12 @@ function App() {
           <Route path="/metodo-pago" element={
             <MainLayout>
               <PaymentMethod />
+            </MainLayout>
+          } />
+
+          <Route path="/agregar-descuento" element={
+            <MainLayout>
+              <AddDiscount />
             </MainLayout>
           } />
 

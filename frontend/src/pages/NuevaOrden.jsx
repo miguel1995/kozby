@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { PlusOutlined, MinusOutlined } from '@ant-design/icons';
 import { ModalError } from '../components/modals/ModalError';
 import { message, Switch } from 'antd';
+import { Discounts } from '../components/Discounts';
 
 
 import { ButtonAmount } from '../components/buttons/ButtonAmount';
@@ -128,32 +129,7 @@ const NuevaOrden = () => {
                     <div className='nueva-orden__body--title'>
                         Descuentos
                     </div>
-                    <div className="nueva-orden__descuentos--container">
-                        {descuentos.map(descuento => (
-                            <div key={descuento.id} className="nueva-orden__descuentos--item">
-                                <div>
-                                    <span className="nueva-orden__descuentos--nombre">{descuento.nombre}</span>
-                                    <span className="nueva-orden__descuentos--monto">
-                                        {' '}
-                                        {descuento.tipo === 'PORCENTAJE' ? `${descuento.monto}%` : `$${descuento.monto}`}
-                                        </span>
-                                </div>
-                                <Switch
-                                    className="nueva-orden__descuentos--switch"
-                                    checked={
-                                        discountsSelected.some(discount => discount.id === descuento.id)
-                                    }
-                                    onChange={
-                                        (checked) => {
-                                            onChange('discounts', {
-                                                discount: descuento,
-                                                action: (checked) ? "ADD_DISCOUNT" : "REMOVE_DISCOUNT"
-                                            });
-                                        }
-                                    } />
-                            </div>
-                        ))}
-                    </div>
+                    <Discounts discounts={descuentos} discountsSelected={discountsSelected} onChange={onChange} />
                     <Divider className='nueva-orden__body--divider' />
 
                 </div>

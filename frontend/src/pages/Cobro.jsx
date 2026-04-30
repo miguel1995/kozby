@@ -19,7 +19,7 @@ const Cobro = () => {
                 <div>
 
                     <ButtonClose
-                        onClick={() => navigate(-1)}
+                        onClick={() => navigate('/proceso-pagos')}
                     />
 
                 </div>
@@ -53,7 +53,10 @@ const Cobro = () => {
             <Divider />
             {discountsCalculated > 0 && (
                 <>
-                <div className="cobro__discounts">
+                <div className="cobro__discounts"
+                            onClick={() => navigate('/agregar-descuento')}
+
+                >
                     <div className="cobro__discounts--title">Descuentos</div>
                     <div className="cobro__discounts--amount">${discountsCalculated.toFixed(2)}</div>
                 </div>
@@ -61,6 +64,15 @@ const Cobro = () => {
                 <Divider />
                 </>
 
+
+            )}
+            {items.length > 0 && (
+            <div
+            className="cobro__agregar-descuento"
+            onClick={() => navigate('/agregar-descuento')}
+            >
+                Agregar descuento
+            </div>
             )}
             <div className="cobro__total">
                 <SubmitButton
