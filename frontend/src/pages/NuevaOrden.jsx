@@ -2,7 +2,7 @@ import { Input, Radio, Divider } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 import { useState, useEffect } from 'react';
 import { usePaymentProcess } from '../hooks/usePaymentProcess';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { PlusOutlined, MinusOutlined } from '@ant-design/icons';
 import { ModalError } from '../components/modals/ModalError';
 import { message, Switch } from 'antd';
@@ -10,7 +10,7 @@ import { Discounts } from '../components/Discounts';
 
 
 import { ButtonAmount } from '../components/buttons/ButtonAmount';
-const NuevaOrden = () => {
+const NuevaOrden = ({ isEditMode = false }) => {
     const navigate = useNavigate();
     const {
         product,
@@ -25,7 +25,8 @@ const NuevaOrden = () => {
         onChange,
         descuentos,
         discountsSelected
-    } = usePaymentProcess();
+    } = usePaymentProcess(isEditMode);
+
 
 
 

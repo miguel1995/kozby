@@ -106,6 +106,11 @@ function App() {
               <NuevaOrden />
             </MainLayout>
           } />
+          <Route path="/editar-nueva-orden/:id" element={
+            <MainLayout>
+              <NuevaOrden isEditMode={true} />
+            </MainLayout>
+          } />
           <Route path="/cobro" element={
             <MainLayout>
               <Cobro />

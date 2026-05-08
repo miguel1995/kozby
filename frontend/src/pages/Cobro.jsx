@@ -12,7 +12,7 @@ const Cobro = () => {
 
     const navigate = useNavigate();
     const { items, total, clearOrder, discountsCalculated } = useOrder();
-    
+
     return (
         <div className="cobro__container">
             <div className="cobro__header">
@@ -36,7 +36,15 @@ const Cobro = () => {
             </div>
             <div className="cobro__body">
                 {items.map((item) => (
-                    <div key={item.id} className="cobro__item">
+                    <div key={item.id}
+                        className="cobro__item"
+                        onClick={
+
+                            () => {
+                                navigate(`/editar-nueva-orden/${item.productId}?itemId=${item.id}`)
+                            }
+                        }
+                    >
                         <div >
                             <div className="cobro__item--name-container">
                                 <div className="cobro__item--name">{item.productName}</div> x <div className="cobro__item-quantity">{item.cantidad}</div>
@@ -53,26 +61,26 @@ const Cobro = () => {
             <Divider />
             {discountsCalculated > 0 && (
                 <>
-                <div className="cobro__discounts"
-                            onClick={() => navigate('/agregar-descuento')}
+                    <div className="cobro__discounts"
+                        onClick={() => navigate('/agregar-descuento')}
 
-                >
-                    <div className="cobro__discounts--title">Descuentos</div>
-                    <div className="cobro__discounts--amount">${discountsCalculated.toFixed(2)}</div>
-                </div>
-                
-                <Divider />
+                    >
+                        <div className="cobro__discounts--title">Descuentos</div>
+                        <div className="cobro__discounts--amount">${discountsCalculated.toFixed(2)}</div>
+                    </div>
+
+                    <Divider />
                 </>
 
 
             )}
             {items.length > 0 && (
-            <div
-            className="cobro__agregar-descuento"
-            onClick={() => navigate('/agregar-descuento')}
-            >
-                Agregar descuento
-            </div>
+                <div
+                    className="cobro__agregar-descuento"
+                    onClick={() => navigate('/agregar-descuento')}
+                >
+                    Agregar descuento
+                </div>
             )}
             <div className="cobro__total">
                 <SubmitButton

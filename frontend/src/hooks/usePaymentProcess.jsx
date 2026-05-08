@@ -4,12 +4,16 @@ import { checkToken } from '../utils/authUtils';
 import { getProductoById } from '../services/productos.service';
 import { useOrder } from '../context/OrderContext';
 import { getDescuentos } from '../services/descuentos.service';
+import { useSearchParams } from 'react-router-dom';
 
-export const usePaymentProcess = () => {
-    const { addProduct, addDiscount, removeDiscount, discountsSelected } = useOrder();
+export const usePaymentProcess = (isEditMode = false) => {
+    const { addProduct, addDiscount, removeDiscount, discountsSelected, items } = useOrder();
     const navigate = useNavigate();
     const [descuentos, setDescuentos] = useState([]);
     const { id } = useParams();
+    const [searchParams] = useSearchParams();
+    const itemId = searchParams.get('itemId');
+
     const [product, setProduct] = useState({
         id: null,
         nombre: null,
@@ -42,10 +46,9 @@ export const usePaymentProcess = () => {
         }
     });
 
-
-    useEffect(() => {
-        console.log(discountsSelected);
-    }, [discountsSelected]);
+useEffect(() => {
+    console.log('>>> values', values);
+}, [values]);
 
     useEffect(() => {
         if (id) {
@@ -59,13 +62,14 @@ export const usePaymentProcess = () => {
 
 
     useEffect(() => {
-
+        console.log('>>> amount', amount);
         onChange('amount', amount);
 
     }, [amount]);
+
     useEffect(() => {
         if (values.currentVariant.value && values.amount.value) {
-            const total = values.currentVariant.value?.precio * values.amount.value;        
+            const total = values.currentVariant.value?.precio * values.amount.value;
             setTotal(total);
         }
     }, [values.currentVariant.value, values.amount.value]);
@@ -75,6 +79,53 @@ export const usePaymentProcess = () => {
             onChange('currentVariant', product.variantes[0]);
         }
     }, [product.variantes])
+
+    useEffect(() => {
+        console.log('>>> product', product);
+        if (product.id && isEditMode && itemId) {
+
+            console.log('>>> itemId', itemId);
+
+            const item = items.find(item => item.id === itemId);
+            console.log('>>> item', item);
+
+            if (item) {
+
+                if (item.variantId) {
+                    const filteredVariantes = product.variantes.find(
+                        variant => variant.id === item.variantId
+                    );
+                    console.log('>>> filteredVariantes', filteredVariantes);
+                    onChange('currentVariant', filteredVariantes);
+                }
+                if (item.cantidad) {
+                    setAmount(item.cantidad);
+                }
+                if (item.notes) {
+                    onChange('notes', item.notes);
+                }
+
+                /*setValues({
+                    currentVariant: {
+                        value: item.variantId,
+                        valid: true,
+                    },
+                    amount: {
+                        value: item.cantidad,
+                        valid: true,
+                    },
+                    notes: {
+                        value: item.notes,
+                        valid: true,
+                    },
+                    discounts: {
+                        value: item.discounts,
+                        valid: true,
+                    },
+                });*/
+            }
+        }
+    }, [product, isEditMode, items, itemId]);
 
     const handleOk = () => {
         setErrorData({
@@ -88,7 +139,6 @@ export const usePaymentProcess = () => {
         try {
             checkToken();
             const data = await getProductoById(id);
-
 
             setProduct({
                 id: data.id,
@@ -112,9 +162,11 @@ export const usePaymentProcess = () => {
 
     const onChange = (name, value) => {
 
+        console.log('>>> onChange', name, value);
+
         if (name === 'discounts') {
             if (value.action === 'ADD_DISCOUNT') {
-                addDiscount(value.discount);                
+                addDiscount(value.discount);
             }
             else if (value.action === 'REMOVE_DISCOUNT') {
                 removeDiscount(value.discount.id);
@@ -142,7 +194,7 @@ export const usePaymentProcess = () => {
                 variantName: variante.nombre,
                 precio: variante.precio,
                 cantidad: amount,
-                notes: values.notes.value,                
+                notes: values.notes.value,
                 total: total,
             });
             navigate('/proceso-pagos');
