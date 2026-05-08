@@ -9,7 +9,12 @@ export const ProductForm = ({ values, handleChange }) => {
 
     return (
         <div className="example">
-
+            <ImageUpload
+                value={values.imagen.value}
+                onChange={handleChange}
+            />
+            <br />
+            <br />
             <FloatLabel label="Nombre (requerido)" name="nombre" value={values.nombre.value}>
                 <Input
                     value={values.nombre.value}
@@ -37,7 +42,7 @@ export const ProductForm = ({ values, handleChange }) => {
                 />
             </FloatLabel>
 
-            <FloatLabel label="Cantidad" name="cantidad" value={values.cantidad.value }>
+            <FloatLabel label="Cantidad" name="cantidad" value={values.cantidad.value}>
 
                 <NumericInput
                     value={values.cantidad?.value}
@@ -46,9 +51,6 @@ export const ProductForm = ({ values, handleChange }) => {
                     maxLength={10}
                 /> </FloatLabel>
 
-            <ImageUpload
-                value={values.imagen.value}
-                onChange={handleChange}
-            />
+
         </div>);
 }
