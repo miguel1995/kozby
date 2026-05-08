@@ -54,6 +54,23 @@ export const OrderProvider = ({ children }) => {
         setItems((prev) => [...prev, lineItem]);
     };
 
+    const updateProduct = (id, item) => {
+        const lineItem = {
+            id: `item-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+            productId: item.productId,
+            productName: item.productName,
+            variantId: item.variantId,
+            variantName: item.variantName,
+            precio: item.precio,
+            cantidad: item.cantidad,
+            notes: item.notes ?? '',
+            discounts: item.discounts ?? [],
+            subtotal: item.subtotal,
+            total: item.total,
+        };
+        setItems((prev) => prev.map((i) => i.id === id ? lineItem : i));
+    };
+
     const removeItem = (id) => {
         setItems((prev) => prev.filter((i) => i.id !== id));
     };
@@ -76,6 +93,7 @@ export const OrderProvider = ({ children }) => {
         total,
         subTotal,
         addProduct,
+        updateProduct,
         removeItem,
         clearOrder,
         paymentMethod,

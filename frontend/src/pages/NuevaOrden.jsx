@@ -19,9 +19,7 @@ const NuevaOrden = ({ isEditMode = false }) => {
         handleOk,
         handleAddProduct,
         total,
-        amount,
         values,
-        setAmount,
         onChange,
         descuentos,
         discountsSelected
@@ -38,14 +36,16 @@ const NuevaOrden = ({ isEditMode = false }) => {
                 /></div>
                 <div>{product.nombre} ${total.toFixed(2)}</div>
                 <div onClick={() => {
-                    if (Number(values.currentVariant.value?.cantidad) >= amount) {
+                    if (Number(values.currentVariant.value?.cantidad) >= values.amount.value) {
                         handleAddProduct();
                     } else {
                         message.error('No hay suficiente stock');
                     }
                 }}
                     className='nueva-orden__header--add'
-                >Agregar</div>
+                >
+                    {isEditMode ? 'Guardar' : 'Agregar'}
+                </div>
             </div>
 
             <div className='nueva-orden__body'>
@@ -93,19 +93,19 @@ const NuevaOrden = ({ isEditMode = false }) => {
                     <div className='nueva-orden__body--row--amount'>
                         <MinusOutlined onClick={() => {
 
-                            if (amount > 1) {
-                                setAmount(amount - 1);
+                            if (values.amount.value > 1) {
+                                onChange('amount', values.amount.value - 1);
                             }
 
                         }}
                             className='nueva-orden__body-minus' />
                         <span className='nueva-orden__body-amount'>
-                            {amount}
+                            {values.amount.value}
                         </span>
 
                         <PlusOutlined onClick={
                             () => {
-                                setAmount(amount + 1);
+                                onChange('amount', values.amount.value + 1);
 
                             }
                         } className='nueva-orden__body-plus' />

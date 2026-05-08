@@ -7,7 +7,12 @@ import { getDescuentos } from '../services/descuentos.service';
 import { useSearchParams } from 'react-router-dom';
 
 export const usePaymentProcess = (isEditMode = false) => {
-    const { addProduct, addDiscount, removeDiscount, discountsSelected, items } = useOrder();
+    const { addProduct, 
+        addDiscount, 
+        removeDiscount, 
+        discountsSelected, 
+        items, 
+        updateProduct } = useOrder();
     const navigate = useNavigate();
     const [descuentos, setDescuentos] = useState([]);
     const { id } = useParams();
@@ -29,7 +34,6 @@ export const usePaymentProcess = (isEditMode = false) => {
     });
     const [loading, setLoading] = useState(false);
     const [total, setTotal] = useState(0.00);
-    const [amount, setAmount] = useState(1);
 
     const [values, setValues] = useState({
         currentVariant: {
@@ -46,9 +50,9 @@ export const usePaymentProcess = (isEditMode = false) => {
         }
     });
 
-useEffect(() => {
-    console.log('>>> values', values);
-}, [values]);
+    useEffect(() => {
+        console.log('>>> values', values);
+    }, [values]);
 
     useEffect(() => {
         if (id) {
@@ -61,11 +65,10 @@ useEffect(() => {
     }, []);
 
 
-    useEffect(() => {
+    /*useEffect(() => {
         console.log('>>> amount', amount);
         onChange('amount', amount);
-
-    }, [amount]);
+    }, [amount]);*/
 
     useEffect(() => {
         if (values.currentVariant.value && values.amount.value) {
@@ -75,10 +78,12 @@ useEffect(() => {
     }, [values.currentVariant.value, values.amount.value]);
 
     useEffect(() => {
-        if (product.variantes && product.variantes.length > 0) {
-            onChange('currentVariant', product.variantes[0]);
+        if (!isEditMode) {
+            if (product.variantes && product.variantes.length > 0) {
+                onChange('currentVariant', product.variantes[0]);
+            }
         }
-    }, [product.variantes])
+    }, [product.variantes, isEditMode])
 
     useEffect(() => {
         console.log('>>> product', product);
@@ -91,24 +96,30 @@ useEffect(() => {
 
             if (item) {
 
-                if (item.variantId) {
+                /*if (item.variantId) {
                     const filteredVariantes = product.variantes.find(
                         variant => variant.id === item.variantId
                     );
                     console.log('>>> filteredVariantes', filteredVariantes);
                     onChange('currentVariant', filteredVariantes);
                 }
+
                 if (item.cantidad) {
-                    setAmount(item.cantidad);
+                    //setAmount(item.cantidad);
+                    onChange('amount', item.cantidad);
                 }
                 if (item.notes) {
                     onChange('notes', item.notes);
-                }
+                }*/
 
-                /*setValues({
+                const filteredVariantes = product.variantes.find(
+                    variant => variant.id === item.variantId
+                );
+
+                setValues({
                     currentVariant: {
-                        value: item.variantId,
-                        valid: true,
+                        value: filteredVariantes ?? null,
+                        valid: filteredVariantes ? true : false,
                     },
                     amount: {
                         value: item.cantidad,
@@ -118,11 +129,8 @@ useEffect(() => {
                         value: item.notes,
                         valid: true,
                     },
-                    discounts: {
-                        value: item.discounts,
-                        valid: true,
-                    },
-                });*/
+                });
+
             }
         }
     }, [product, isEditMode, items, itemId]);
@@ -173,6 +181,8 @@ useEffect(() => {
             }
         }
         else {
+            console.log('>>> onChange 2', name, value);
+
             setValues({
                 ...values,
                 [name]: {
@@ -187,17 +197,37 @@ useEffect(() => {
     const handleAddProduct = () => {
         if (values.currentVariant.valid && values.amount.valid && values.currentVariant.value) {
             const variante = values.currentVariant.value;
-            addProduct({
-                productId: product.id,
-                productName: product.nombre,
-                variantId: variante.id,
-                variantName: variante.nombre,
-                precio: variante.precio,
-                cantidad: amount,
-                notes: values.notes.value,
-                total: total,
-            });
-            navigate('/proceso-pagos');
+
+            if (isEditMode) {
+                updateProduct(itemId,{
+                    productId: product.id,
+                    productName: product.nombre,
+                    variantId: variante.id,
+                    variantName: variante.nombre,
+                    precio: variante.precio,
+                    cantidad: values.amount.value,
+                    notes: values.notes.value,
+                    total: total,
+                });
+
+                navigate('/cobro');
+
+            } else {
+                addProduct({
+                    productId: product.id,
+                    productName: product.nombre,
+                    variantId: variante.id,
+                    variantName: variante.nombre,
+                    precio: variante.precio,
+                    cantidad: values.amount.value,
+                    notes: values.notes.value,
+                    total: total,
+                });
+
+                navigate('/proceso-pagos');
+
+
+            }
         }
     }
 
@@ -227,9 +257,7 @@ useEffect(() => {
         handleOk,
         handleAddProduct,
         total,
-        amount,
         values,
-        setAmount,
         onChange,
         descuentos,
         discountsSelected
