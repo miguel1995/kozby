@@ -4,12 +4,23 @@ import { checkToken } from '../utils/authUtils';
 import { getProductoById } from '../services/productos.service';
 import { useOrder } from '../context/OrderContext';
 import { getDescuentos } from '../services/descuentos.service';
+import { useSearchParams } from 'react-router-dom';
 
-export const usePaymentProcess = () => {
-    const { addProduct, addDiscount, removeDiscount, discountsSelected } = useOrder();
+export const usePaymentProcess = (isEditMode = false) => {
+    const { addProduct, 
+        addDiscount, 
+        removeDiscount, 
+        discountsSelected, 
+        items, 
+        updateProduct,
+        removeItem
+    } = useOrder();
     const navigate = useNavigate();
     const [descuentos, setDescuentos] = useState([]);
     const { id } = useParams();
+    const [searchParams] = useSearchParams();
+    const itemId = searchParams.get('itemId');
+
     const [product, setProduct] = useState({
         id: null,
         nombre: null,
@@ -25,7 +36,6 @@ export const usePaymentProcess = () => {
     });
     const [loading, setLoading] = useState(false);
     const [total, setTotal] = useState(0.00);
-    const [amount, setAmount] = useState(1);
 
     const [values, setValues] = useState({
         currentVariant: {
@@ -42,10 +52,9 @@ export const usePaymentProcess = () => {
         }
     });
 
-
     useEffect(() => {
-        console.log(discountsSelected);
-    }, [discountsSelected]);
+        console.log('>>> values', values);
+    }, [values]);
 
     useEffect(() => {
         if (id) {
@@ -58,23 +67,75 @@ export const usePaymentProcess = () => {
     }, []);
 
 
-    useEffect(() => {
-
+    /*useEffect(() => {
+        console.log('>>> amount', amount);
         onChange('amount', amount);
+    }, [amount]);*/
 
-    }, [amount]);
     useEffect(() => {
         if (values.currentVariant.value && values.amount.value) {
-            const total = values.currentVariant.value?.precio * values.amount.value;        
+            const total = values.currentVariant.value?.precio * values.amount.value;
             setTotal(total);
         }
     }, [values.currentVariant.value, values.amount.value]);
 
     useEffect(() => {
-        if (product.variantes && product.variantes.length > 0) {
-            onChange('currentVariant', product.variantes[0]);
+        if (!isEditMode) {
+            if (product.variantes && product.variantes.length > 0) {
+                onChange('currentVariant', product.variantes[0]);
+            }
         }
-    }, [product.variantes])
+    }, [product.variantes, isEditMode])
+
+    useEffect(() => {
+        console.log('>>> product', product);
+        if (product.id && isEditMode && itemId) {
+
+            console.log('>>> itemId', itemId);
+
+            const item = items.find(item => item.id === itemId);
+            console.log('>>> item', item);
+
+            if (item) {
+
+                /*if (item.variantId) {
+                    const filteredVariantes = product.variantes.find(
+                        variant => variant.id === item.variantId
+                    );
+                    console.log('>>> filteredVariantes', filteredVariantes);
+                    onChange('currentVariant', filteredVariantes);
+                }
+
+                if (item.cantidad) {
+                    //setAmount(item.cantidad);
+                    onChange('amount', item.cantidad);
+                }
+                if (item.notes) {
+                    onChange('notes', item.notes);
+                }*/
+
+                const filteredVariantes = product.variantes.find(
+                    variant => variant.id === item.variantId
+                );
+
+                setValues({
+                    currentVariant: {
+                        value: filteredVariantes ?? null,
+                        valid: filteredVariantes ? true : false,
+                    },
+                    amount: {
+                        value: item.cantidad,
+                        valid: true,
+                    },
+                    notes: {
+                        value: item.notes,
+                        valid: true,
+                    },
+                });
+
+            }
+        }
+    }, [product, isEditMode, items, itemId]);
 
     const handleOk = () => {
         setErrorData({
@@ -88,7 +149,6 @@ export const usePaymentProcess = () => {
         try {
             checkToken();
             const data = await getProductoById(id);
-
 
             setProduct({
                 id: data.id,
@@ -112,15 +172,19 @@ export const usePaymentProcess = () => {
 
     const onChange = (name, value) => {
 
+        console.log('>>> onChange', name, value);
+
         if (name === 'discounts') {
             if (value.action === 'ADD_DISCOUNT') {
-                addDiscount(value.discount);                
+                addDiscount(value.discount);
             }
             else if (value.action === 'REMOVE_DISCOUNT') {
                 removeDiscount(value.discount.id);
             }
         }
         else {
+            console.log('>>> onChange 2', name, value);
+
             setValues({
                 ...values,
                 [name]: {
@@ -135,17 +199,44 @@ export const usePaymentProcess = () => {
     const handleAddProduct = () => {
         if (values.currentVariant.valid && values.amount.valid && values.currentVariant.value) {
             const variante = values.currentVariant.value;
-            addProduct({
-                productId: product.id,
-                productName: product.nombre,
-                variantId: variante.id,
-                variantName: variante.nombre,
-                precio: variante.precio,
-                cantidad: amount,
-                notes: values.notes.value,                
-                total: total,
-            });
-            navigate('/proceso-pagos');
+
+            if (isEditMode) {
+                updateProduct(itemId,{
+                    productId: product.id,
+                    productName: product.nombre,
+                    variantId: variante.id,
+                    variantName: variante.nombre,
+                    precio: variante.precio,
+                    cantidad: values.amount.value,
+                    notes: values.notes.value,
+                    total: total,
+                });
+
+                navigate('/cobro');
+
+            } else {
+                addProduct({
+                    productId: product.id,
+                    productName: product.nombre,
+                    variantId: variante.id,
+                    variantName: variante.nombre,
+                    precio: variante.precio,
+                    cantidad: values.amount.value,
+                    notes: values.notes.value,
+                    total: total,
+                });
+
+                navigate('/proceso-pagos');
+
+
+            }
+        }
+    }
+
+    const handleRemoveProduct = () => {
+        if (itemId) {
+            removeItem(itemId);
+            navigate('/cobro');
         }
     }
 
@@ -175,11 +266,10 @@ export const usePaymentProcess = () => {
         handleOk,
         handleAddProduct,
         total,
-        amount,
         values,
-        setAmount,
         onChange,
         descuentos,
-        discountsSelected
+        discountsSelected,
+        handleRemoveProduct
     }
 }
