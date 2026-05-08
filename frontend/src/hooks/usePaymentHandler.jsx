@@ -28,7 +28,7 @@ export default function usePaymentHandler() {
     useEffect(() => {
         setEnabled(false);
 
-        if (values.paymentMethod.valid) {
+        if (values.paymentMethod.valid && total != 0        ) {
             if (values.paymentMethod.value === 'EFECTIVO') {
                 if (values.cash.value > 0) {
                     setEnabled(true);

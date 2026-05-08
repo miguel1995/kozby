@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { AppstoreOutlined, MenuOutlined } from '@ant-design/icons';
+import { AppstoreOutlined, MenuOutlined, SwapOutlined } from '@ant-design/icons';
 import { useNavigate, useLocation } from 'react-router';
 
 const MenuBar = () => {
@@ -11,10 +11,12 @@ const MenuBar = () => {
         if (path === '/mas') {
             return location.pathname === '/mas'
                 || location.pathname === '/productos'
-                || location.pathname === '/productos/archivados'
-                || location.pathname === '/transacciones'
+                || location.pathname === '/productos/archivados'         
                 || location.pathname === '/usuarios'
                 || location.pathname === '/ajustes';
+        }
+        if (path === '/transacciones') {
+            return location.pathname === '/transacciones';
         }
         if (path === '/proceso-pagos') 
             return location.pathname === '/proceso-pagos'
@@ -36,7 +38,15 @@ const MenuBar = () => {
                 <AppstoreOutlined />
                 <span>Proceso de pagos</span>
             </button>
-
+            <button
+                type="button"
+                className={`main-layout-nav-item ${isActive('/transacciones') ? 'active' : ''}`}
+                onClick={() => navigate('/transacciones')}
+                aria-label="Transacciones"
+            >
+                <SwapOutlined/>
+                <span>Transacciones</span>
+            </button>
             <button
                 type="button"
                 className={`main-layout-nav-item ${isActive('/mas') ? 'active' : ''}`}
