@@ -10,6 +10,7 @@ import { Discounts } from '../components/Discounts';
 
 
 import { ButtonAmount } from '../components/buttons/ButtonAmount';
+import { ButtonDanger } from '../components/buttons/ButtonDanger';
 const NuevaOrden = ({ isEditMode = false }) => {
     const navigate = useNavigate();
     const {
@@ -22,7 +23,8 @@ const NuevaOrden = ({ isEditMode = false }) => {
         values,
         onChange,
         descuentos,
-        discountsSelected
+        discountsSelected,
+        handleRemoveProduct
     } = usePaymentProcess(isEditMode);
 
 
@@ -141,6 +143,15 @@ const NuevaOrden = ({ isEditMode = false }) => {
                                 Descripcion del articulo
                             </div>
                             {product.descripcion}
+                        </div>
+                    )}
+                {
+                    isEditMode && (
+                        <div className='nueva-orden__btn--remove'>
+                            <ButtonDanger
+                                label="Borrar articulo"
+                                onClick={handleRemoveProduct}
+                            />
                         </div>
                     )}
             </div>

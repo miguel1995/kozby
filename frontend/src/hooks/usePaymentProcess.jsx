@@ -12,7 +12,9 @@ export const usePaymentProcess = (isEditMode = false) => {
         removeDiscount, 
         discountsSelected, 
         items, 
-        updateProduct } = useOrder();
+        updateProduct,
+        removeItem
+    } = useOrder();
     const navigate = useNavigate();
     const [descuentos, setDescuentos] = useState([]);
     const { id } = useParams();
@@ -231,6 +233,13 @@ export const usePaymentProcess = (isEditMode = false) => {
         }
     }
 
+    const handleRemoveProduct = () => {
+        if (itemId) {
+            removeItem(itemId);
+            navigate('/cobro');
+        }
+    }
+
     const fetchDescuentos = async () => {
         setLoading(true);
         try {
@@ -260,6 +269,7 @@ export const usePaymentProcess = (isEditMode = false) => {
         values,
         onChange,
         descuentos,
-        discountsSelected
+        discountsSelected,
+        handleRemoveProduct
     }
 }
