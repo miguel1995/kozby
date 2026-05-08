@@ -21,7 +21,7 @@ export const endOfLocalDay = (ymd) => {
 /** Ayer (calendario local), mismo dia desde/hasta */
 export const presetUltimoDiaCalendario = () => {
   const hoy = new Date();
-  hoy.setDate(hoy.getDate() - 1);
+  hoy.setDate(hoy.getDate());
   const ymd = toLocalYMD(hoy);
   return { desde: ymd, hasta: ymd };
 };
