@@ -7,9 +7,9 @@ const ListProductos = ({ productos, hacerClickCallback, clickAction }) => {
         <div className="productos-list">
             {productos.map((producto) => (
                 <div key={producto.id}>
-                    <div className="producto-item" onClick={() => { 
-                        hacerClickCallback(clickAction, producto) 
-                        }}>
+                    <div className="producto-item" onClick={() => {
+                        hacerClickCallback(clickAction, producto)
+                    }}>
                         <div className="producto-item-info-container" >
                             <div>
                                 <img src={producto.imagen} alt="" style={{ width: 39, height: 'auto', objectFit: 'cover' }} />
@@ -17,15 +17,17 @@ const ListProductos = ({ productos, hacerClickCallback, clickAction }) => {
                             <div>
                                 <div className="producto-item-nombre">{producto.nombre}</div>
                                 <div className="producto-item-precio">$ {producto.precio}</div>
-                                <ButtonAmount amount={producto.cantidad} clickHandler={() => { }} />
+
+                                {producto.variantes.length == 0 && <ButtonAmount amount={producto.cantidad} clickHandler={() => { }} />}
+                                
                             </div>
 
                         </div>
                         <div>
                             <div className="producto-item-cantidad">
                                 {producto.variantes.length > 0 ?
-                                 <div>{producto.variantes.length} precios</div> 
-                                 : <div>${producto.precio}</div>}
+                                    <div>{producto.variantes.length} precios</div>
+                                    : <div>${producto.precio}</div>}
                             </div>
                         </div>
                     </div>
