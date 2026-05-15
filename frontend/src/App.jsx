@@ -19,8 +19,6 @@ import PaymentMethod from './pages/PaymentMethod';
 import PaymentResult from './pages/PaymentResult';
 
 import { OrderProvider } from './context/OrderContext';
-import { useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router';
 import { canAccess } from './utils/authUtils';
 import AddDiscount from './pages/AddDiscount';
 
@@ -42,13 +40,9 @@ function App() {
             </MainLayout>
           } />
           <Route path="/descuentos" element={
-            canAccess() ? (
               <MainLayout>
                 <Descuentos />
-              </MainLayout>
-            ) : (
-              <Navigate to="/inicio-sesion" />
-            )
+              </MainLayout>          
           } />
           <Route path="/ajustes" element={
             canAccess() ? (

@@ -11,7 +11,7 @@ import { useNavigate } from 'react-router';
 import { ModalDescuentoForm } from '../components/modals/ModalDescuentoForm';
 import { initialDescuentosValues } from '../utils/constants';
 import { useEffect } from 'react';
-
+import { canAccess } from '../utils/authUtils';
 
 const Descuentos = () => {
   const { descuentos,
@@ -71,15 +71,16 @@ const Descuentos = () => {
               onClick={() => navigate('/mas')}
             />
             <div className="products-page-archived-title">Descuentos</div>
-
-            <PlusOutlined
-              className="descuentos-page-plus-icon"
-              onClick={() => {
-                setIsModalOpen(true);
-                setEditMode(false);
-                setValues(initialDescuentosValues);
-              }}
-            />
+            {canAccess() && (
+              <PlusOutlined
+                className="descuentos-page-plus-icon"
+                onClick={() => {
+                  setIsModalOpen(true);
+                  setEditMode(false);
+                  setValues(initialDescuentosValues);
+                }}
+              />
+            )}
           </div>
           <SearchInput
             placeholder="Buscar"
@@ -88,6 +89,7 @@ const Descuentos = () => {
             onChange={setSearch}
           />
         </div>
+
 
         <div className="products-table">
           {loading ? (
@@ -98,7 +100,9 @@ const Descuentos = () => {
             <div className="descuentos-list">
               {filteredDescuentos.map((d) => (
                 <div key={d.id} onClick={() => {
-                  handleClick(d);
+                  if (canAccess()) {
+                    handleClick(d);
+                  }
                 }}>
                   <div className="descuento-item">
 
