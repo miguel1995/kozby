@@ -1,3 +1,5 @@
+const API_URL = import.meta.env.VITE_API_URL_BASE + '/transaccion';
+
 // Buscar transacción por número de recibo
 export const getTransaccionByRecibo = async (recibo) => {
     if (!recibo) throw new Error('Debe proporcionar el número de recibo');
@@ -6,7 +8,6 @@ export const getTransaccionByRecibo = async (recibo) => {
     if (!res.ok) throw { status: res.status };
     return await res.json();
 };
-const API_URL = import.meta.env.VITE_API_URL_BASE + '/transaccion';
 
 const getAuthHeaders = () => ({
   Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -44,6 +45,52 @@ export const postTransaccion = async (transaccion) => {
         throw { status: res.status };
     }
     return await res.json();
+};
+
+const parseReciboPngError = async (res) => {
+  let msg = 'No se pudo obtener el recibo';
+  try {
+    const data = await res.json();
+    if (data?.message) msg = data.message;
+  } catch (_) {
+    /* respuesta no JSON */
+  }
+  return msg;
+};
+
+export const fetchReciboPngWithMeta = async (id) => {
+  const res = await fetch(`${API_URL}/${id}/recibo.png`, {
+    method: 'GET',
+    headers: getAuthHeaders(),
+  });
+  if (!res.ok) {
+    throw new Error(await parseReciboPngError(res));
+  }
+  const cd = res.headers.get('Content-Disposition');
+  let filename = `recibo-${id}.png`;
+  if (cd) {
+    const match = /filename="([^"]+)"/.exec(cd) || /filename=([^;]+)/.exec(cd);
+    if (match) filename = match[1].trim();
+  }
+  const blob = await res.blob();
+  return { blob, filename };
+};
+
+export const fetchReciboPngBlob = async (id) => {
+  const { blob } = await fetchReciboPngWithMeta(id);
+  return blob;
+};
+
+export const downloadReciboPng = async (id) => {
+  const { blob, filename } = await fetchReciboPngWithMeta(id);
+  const blobUrl = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = blobUrl;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(blobUrl);
 };
 
 export const postEnviarCorreoTransaccion = async (id, { to }) => {

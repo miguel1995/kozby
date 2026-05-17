@@ -127,7 +127,7 @@ const buildTransactionHtml = (transaccion) => {
             </thead>
             <tbody>
             <tr><td style="border-style: hidden; font-weight: bold;">Total</td><td style="border-style: hidden;"></td><td style="border-style: hidden; text-align: right; font-weight: bold;">${formatMoney(transaccion.total)}</td></tr>
-            <tr><td style="border-style: hidden; font-weight: bold;">Tipo de pago</td><td style="border-style: hidden;">${escapeHtml(transaccion.tipo_pago.toUpperCase() || '-')}</td><td style="border-style: hidden; text-align: right; font-weight: bold;"></td></tr>            
+            <tr><td style="border-style: hidden; font-weight: bold;">Tipo de pago</td><td style="border-style: hidden;">${escapeHtml(String(transaccion.tipo_pago || '').toUpperCase() || '-')}</td><td style="border-style: hidden; text-align: right; font-weight: bold;"></td></tr>            
             </tbody>
         </table>
 
@@ -138,7 +138,7 @@ const buildTransactionHtml = (transaccion) => {
                
             </thead>
             <tbody>            
-            <tr><td style="border-style: hidden; ">${escapeHtml(transaccion.tipo_pago.toUpperCase() || '-')}</td> <td style="border-style: hidden;"></td><td style="border-style: hidden; text-align: right;">${escapeHtml(transaccion.createdAt ? new Date(transaccion.createdAt).toLocaleString('es-CO') : '-')}</td></tr>
+            <tr><td style="border-style: hidden; ">${escapeHtml(String(transaccion.tipo_pago || '').toUpperCase() || '-')}</td> <td style="border-style: hidden;"></td><td style="border-style: hidden; text-align: right;">${escapeHtml(transaccion.createdAt ? new Date(transaccion.createdAt).toLocaleString('es-CO') : '-')}</td></tr>
             <tr><td style="border-style: hidden; font-weight: bold;">
             
                 <img src="cid:${EMAIL_CASH_CID}" width="40" height="16" alt="Kozby" style="border: 0; display: block; " />
@@ -189,6 +189,26 @@ function getMapImageHtml() {
         </div>`;
 }
 
+/** Sustituye cid: por data URI para renderizar el mismo HTML en Puppeteer */
+function inlineEmailAssetsIntoHtml(html) {
+  let result = html;
+  const pairs = [
+    [EMAIL_LOGO_CID, EMAIL_LOGO_PATH],
+    [EMAIL_MAP_CID, EMAIL_MAP_PATH],
+    [EMAIL_CASH_CID, EMAIL_CASH_PATH],
+  ];
+  for (const [cid, filePath] of pairs) {
+    if (fs.existsSync(filePath)) {
+      const b64 = fs.readFileSync(filePath).toString('base64');
+      result = result.split(`cid:${cid}`).join(`data:image/png;base64,${b64}`);
+    }
+  }
+  return result;
+}
+
+const getReciboHtmlForImageExport = (transaccion) =>
+  inlineEmailAssetsIntoHtml(buildTransactionHtml(transaccion));
+
 function getMapAttachment() {
   if (!fs.existsSync(EMAIL_MAP_PATH)) {
     return [];
@@ -230,4 +250,5 @@ const sendTransaccionCorreo = async ({ to, transaccion }) => {
 
 module.exports = {
   sendTransaccionCorreo,
+  getReciboHtmlForImageExport,
 };

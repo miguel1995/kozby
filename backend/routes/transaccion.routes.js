@@ -19,6 +19,12 @@ router.post(
   transaccionController.postEnviarCorreo
 );
 
+router.get(
+  '/:id/recibo.png',
+  authenticationUtils.verifyToken,
+  transaccionController.getReciboPng
+);
+
 router.get('/:id', authenticationUtils.verifyToken, transaccionController.getTransaccionById);
 
 router.post('/', authenticationUtils.verifyToken, transaccionController.postTransaccion);

@@ -1,3 +1,13 @@
+const transaccionesService = require('../services/transacciones.service');
+const transaccionesExcelService = require('../services/transaccionesExcel.service');
+const emailService = require('../services/email.service');
+const reciboImageService = require('../services/reciboImage.service');
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function generarReciboCorto() {
+  return Date.now().toString(36).toUpperCase();
+}
 
 const getTransaccionByRecibo = async (req, res) => {
   try {
@@ -15,15 +25,6 @@ const getTransaccionByRecibo = async (req, res) => {
     return res.status(500).json({ message: 'Error al buscar transacción por recibo' });
   }
 };
-const transaccionesService = require('../services/transacciones.service');
-const transaccionesExcelService = require('../services/transaccionesExcel.service');
-const emailService = require('../services/email.service');
-
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-function generarReciboCorto() {
-  return Date.now().toString(36).toUpperCase();
-}
 
 const getTransacciones = async (req, res) => {
   try {
@@ -36,23 +37,39 @@ const getTransacciones = async (req, res) => {
   }
 };
 
-
 const getTransaccionById = async (req, res) => {
-  try{
+  try {
     const { id } = req.params;
 
     const transaccion = await transaccionesService.getTransaccionById(id);
-    if (!transaccion){
+    if (!transaccion) {
       return res.status(500).json({ message: 'Transacción no encontrada' });
     }
 
     return res.status(200).json(transaccion);
-
   } catch (error) {
     console.error('Error al obtener transacción por id:', error);
     return res.status(500).json({ message: 'Error al obtener transacción por id' });
   }
-}
+};
+
+const getReciboPng = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const transaccion = await transaccionesService.getTransaccionById(id);
+    if (!transaccion) {
+      return res.status(404).json({ message: 'Transacción no encontrada' });
+    }
+    const buffer = await reciboImageService.generateReciboPngBuffer(transaccion);
+    const safeName = String(transaccion.recibo || id).replace(/[^\w.-]+/g, '_');
+    res.setHeader('Content-Type', 'image/png');
+    res.setHeader('Content-Disposition', `attachment; filename="recibo-${safeName}.png"`);
+    return res.status(200).send(buffer);
+  } catch (error) {
+    console.error('Error al generar imagen de recibo:', error);
+    return res.status(500).json({ message: 'Error al generar la imagen del recibo' });
+  }
+};
 
 const getExportExcel = async (req, res) => {
   try {
@@ -90,7 +107,7 @@ const getExportExcel = async (req, res) => {
 const postEnviarCorreo = async (req, res) => {
   try {
     const { id } = req.params;
-    const to = (req.body && req.body.to) ? String(req.body.to).trim() : '';
+    const to = req.body && req.body.to ? String(req.body.to).trim() : '';
 
     if (!to || !EMAIL_RE.test(to)) {
       return res.status(400).json({ message: 'Indique un correo electrónico válido en "to"' });
@@ -121,11 +138,10 @@ const postTransaccion = async (req, res) => {
   } catch (error) {
     console.error('Error al crear transaccion:', error);
     const isStockError =
-      error.message && (
-        error.message.includes('Stock insuficiente') ||
+      error.message &&
+      (error.message.includes('Stock insuficiente') ||
         error.message.includes('no encontrado') ||
-        error.message.includes('Variante no encontrada')
-      );
+        error.message.includes('Variante no encontrada'));
     if (isStockError) {
       return res.status(500).json({ message: error.message });
     }
@@ -137,6 +153,7 @@ module.exports = {
   getTransacciones,
   getExportExcel,
   getTransaccionById,
+  getReciboPng,
   postEnviarCorreo,
   postTransaccion,
   getTransaccionByRecibo,

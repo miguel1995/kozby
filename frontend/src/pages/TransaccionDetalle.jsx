@@ -5,7 +5,8 @@ import Loader from '../components/Loader';
 import { ModalError } from '../components/modals/ModalError';
 import { useTransaccionDetalleHandler } from '../hooks/useTransaccionDetalleHandler';
 import { ButtonSecundary } from '../components/buttons/ButtonSecundary';
-import { postEnviarCorreoTransaccion } from '../services/transacciones.service';
+import { postEnviarCorreoTransaccion, downloadReciboPng, fetchReciboPngBlob } from '../services/transacciones.service';
+import { checkToken } from '../utils/authUtils';
 import { ArrowLeftOutlined, CreditCardOutlined, DollarOutlined, FileTextOutlined, TagOutlined } from '@ant-design/icons';
 
 
@@ -13,6 +14,67 @@ import { ArrowLeftOutlined, CreditCardOutlined, DollarOutlined, FileTextOutlined
 
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+/** Imprime el PNG en un iframe oculto (sin ventana emergente en blanco). */
+const printReciboBlob = (blob) =>
+  new Promise((resolve, reject) => {
+    const objectUrl = URL.createObjectURL(blob);
+    const iframe = document.createElement('iframe');
+    iframe.setAttribute('title', 'Imprimir recibo');
+    iframe.style.cssText =
+      'position:fixed;right:0;bottom:0;width:0;height:0;border:0;visibility:hidden;pointer-events:none';
+    document.body.appendChild(iframe);
+
+    const win = iframe.contentWindow;
+    const doc = win.document;
+    let cleaned = false;
+
+    const teardown = () => {
+      if (cleaned) return;
+      cleaned = true;
+      URL.revokeObjectURL(objectUrl);
+      iframe.remove();
+    };
+
+    const fail = (msg) => {
+      teardown();
+      reject(new Error(msg));
+    };
+
+    doc.open();
+    doc.write(
+      '<!DOCTYPE html><html><head><meta charset="utf-8"><title>Recibo</title>' +
+        '<style>@page{margin:10mm}body{margin:0;text-align:center;background:#fff}' +
+        'img{max-width:100%;height:auto}</style></head><body>' +
+        `<img id="recibo" src="${objectUrl}" alt="Recibo" /></body></html>`
+    );
+    doc.close();
+
+    const img = doc.getElementById('recibo');
+    const runPrint = () => {
+      try {
+        win.focus();
+        win.print();
+      } catch {
+        fail('No se pudo abrir el diálogo de impresión.');
+        return;
+      }
+      const onDone = () => {
+        win.removeEventListener('afterprint', onDone);
+        teardown();
+      };
+      win.addEventListener('afterprint', onDone);
+      window.setTimeout(onDone, 60000);
+      resolve();
+    };
+
+    if (img.complete && img.naturalWidth > 0) {
+      runPrint();
+    } else {
+      img.onload = runPrint;
+      img.onerror = () => fail('No se pudo cargar el recibo para imprimir.');
+    }
+  });
 
 const TransaccionDetalle = () => {
   const navigate = useNavigate();
@@ -22,6 +84,42 @@ const TransaccionDetalle = () => {
   const [emailModalOpen, setEmailModalOpen] = useState(false);
   const [emailTo, setEmailTo] = useState('');
   const [sendingEmail, setSendingEmail] = useState(false);
+  const [downloadingRecibo, setDownloadingRecibo] = useState(false);
+  const [printingRecibo, setPrintingRecibo] = useState(false);
+
+  const handleImprimirRecibo = async () => {
+    setPrintingRecibo(true);
+    try {
+      checkToken();
+      const blob = await fetchReciboPngBlob(id);
+      await printReciboBlob(blob);
+    } catch (err) {
+      if (err?.status === 401) {
+        message.error('Sesión no válida. Inicie sesión de nuevo.');
+      } else {
+        message.error(err?.message || 'No se pudo preparar la impresión del recibo.');
+      }
+    } finally {
+      setPrintingRecibo(false);
+    }
+  };
+
+  const handleDescargarRecibo = async () => {
+    setDownloadingRecibo(true);
+    try {
+      checkToken();
+      await downloadReciboPng(id);
+      message.success('Recibo descargado.');
+    } catch (err) {
+      if (err?.status === 401) {
+        message.error('Sesión no válida. Inicie sesión de nuevo.');
+      } else {
+        message.error(err?.message || 'No se pudo descargar el recibo.');
+      }
+    } finally {
+      setDownloadingRecibo(false);
+    }
+  };
 
   const handleOpenEmailModal = () => {
     setEmailTo('');
@@ -119,6 +217,22 @@ const TransaccionDetalle = () => {
           <div>No se encontró la transacción.</div>
         ) : (
           <div>
+              <div className="txd-email-row" style={{ padding: '0 12px 12px' }}>
+              <ButtonSecundary
+                onClick={handleImprimirRecibo}
+                label="Imprimir recibo"
+                loading={printingRecibo}
+                disabled={printingRecibo}
+              />
+            </div>
+            <div className="txd-email-row" style={{ padding: '0 12px 12px' }}>
+              <ButtonSecundary
+                onClick={handleDescargarRecibo}
+                label="Descargar recibo"
+                loading={downloadingRecibo}
+                disabled={downloadingRecibo}
+              />
+            </div>
             <div className="txd-email-row" style={{ padding: '0 12px 12px' }}>
               <ButtonSecundary onClick={handleOpenEmailModal} label="Enviar correo" />
             </div>
