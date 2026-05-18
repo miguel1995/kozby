@@ -1,8 +1,12 @@
+import { useState } from 'react';
 import { CheckCircleOutlined, LoadingOutlined } from '@ant-design/icons';
-import { Spin, Button, Input } from 'antd';
+import { Spin, Button, Input, message } from 'antd';
 import { usePaymentResult } from '../hooks/usePaymentResult';
 import { useParams, useNavigate } from 'react-router-dom';
 import { SubmitButton } from '../components/buttons/SubmitButton';
+import { downloadReciboPng, fetchReciboPngBlob } from '../services/transacciones.service';
+import { checkToken } from '../utils/authUtils';
+import { printReciboBlob } from '../utils/printRecibo';
 
 const PaymentResult = () => {
   const navigate = useNavigate();
@@ -16,6 +20,48 @@ const PaymentResult = () => {
     sendingEmail,
     handleSendEmail,
   } = usePaymentResult(transactionId, 1500);
+
+  const [downloadingRecibo, setDownloadingRecibo] = useState(false);
+  const [printingRecibo, setPrintingRecibo] = useState(false);
+
+  const reciboBusy = printingRecibo || downloadingRecibo;
+  const reciboDisabled = !transactionId || reciboBusy || sendingEmail;
+
+  const handleImprimirRecibo = async () => {
+    if (!transactionId) return;
+    setPrintingRecibo(true);
+    try {
+      checkToken();
+      const blob = await fetchReciboPngBlob(transactionId);
+      await printReciboBlob(blob);
+    } catch (err) {
+      if (err?.status === 401) {
+        message.error('Sesión no válida. Inicie sesión de nuevo.');
+      } else {
+        message.error(err?.message || 'No se pudo preparar la impresión del recibo.');
+      }
+    } finally {
+      setPrintingRecibo(false);
+    }
+  };
+
+  const handleDescargarRecibo = async () => {
+    if (!transactionId) return;
+    setDownloadingRecibo(true);
+    try {
+      checkToken();
+      await downloadReciboPng(transactionId);
+      message.success('Recibo descargado.');
+    } catch (err) {
+      if (err?.status === 401) {
+        message.error('Sesión no válida. Inicie sesión de nuevo.');
+      } else {
+        message.error(err?.message || 'No se pudo descargar el recibo.');
+      }
+    } finally {
+      setDownloadingRecibo(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -70,9 +116,26 @@ const PaymentResult = () => {
             <SubmitButton
               onClick={handleSendEmail}
               loading={sendingEmail}
+              disabled={!transactionId || sendingEmail || reciboBusy}
               text="Enviar recibo"
               style={{ minWidth: 160 }}
             />
+            <div className="payment-result__receipt-actions">
+              <SubmitButton
+                onClick={handleImprimirRecibo}
+                loading={printingRecibo}
+                disabled={reciboDisabled}
+                text="Imprimir recibo"
+                style={{ minWidth: 160 }}
+              />
+              <SubmitButton
+                onClick={handleDescargarRecibo}
+                loading={downloadingRecibo}
+                disabled={reciboDisabled}
+                text="Descargar recibo"
+                style={{ minWidth: 160 }}
+              />
+            </div>
           </div>
 
           {receiptOption === 'none' && <p>No se generará recibo.</p>}
