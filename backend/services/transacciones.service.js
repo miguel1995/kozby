@@ -18,6 +18,7 @@ const getTransaccionByRecibo = async (recibo) => {
 const mongoose = require('mongoose');
 const Transaccion = require('../models/transaccion');
 const productosService = require('./productos.service');
+const reembolsoService = require('./reembolso.service');
 
 const getTransacciones = async ({ limit = 10, createdAt = null, lastId = null } = {}) => {
   try {
@@ -76,6 +77,8 @@ const getTransaccionById = async (id) => {
     const transaccion = await Transaccion.findById(id).lean();
     if (!transaccion) return null;
 
+    const reembolsos = await reembolsoService.getReembolsosPorTransaccion(id);
+
     return {
       id: transaccion._id?.toString?.() || transaccion._id,
       recibo: transaccion.recibo || '',
@@ -85,6 +88,14 @@ const getTransaccionById = async (id) => {
       productos: transaccion.productos || [],
       descuento: transaccion.descuento || {},
       descuentos: transaccion.descuentos || [],
+      reembolsos: Array.isArray(reembolsos) ? reembolsos.map((r) => ({
+        id: r._id?.toString?.() || r._id,
+        tipo: r.tipo,
+        articulosDevueltos: r.articulosDevueltos || [],
+        montoDevuelto: r.montoDevuelto || 0,
+        fecha: r.fecha || r.createdAt,
+        createdAt: r.createdAt,
+      })) : [],
 
       tipo_pago: transaccion.tipo_pago,
       createdAt: transaccion.createdAt,
