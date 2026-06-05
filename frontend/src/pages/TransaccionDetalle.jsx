@@ -5,8 +5,9 @@ import Loader from '../components/Loader';
 import { ModalError } from '../components/modals/ModalError';
 import { useTransaccionDetalleHandler } from '../hooks/useTransaccionDetalleHandler';
 import { ButtonSecundary } from '../components/buttons/ButtonSecundary';
-import { postEnviarCorreoTransaccion } from '../services/transacciones.service';
-
+import { postEnviarCorreoTransaccion, downloadReciboPng, fetchReciboPngBlob } from '../services/transacciones.service';
+import { checkToken } from '../utils/authUtils';
+import { printReciboBlob } from '../utils/printRecibo';
 import { ArrowLeftOutlined, CreditCardOutlined, DollarOutlined, FileTextOutlined, TagOutlined } from '@ant-design/icons';
 
 
@@ -25,8 +26,46 @@ const TransaccionDetalle = () => {
   const [emailTo, setEmailTo] = useState('');
   const [sendingEmail, setSendingEmail] = useState(false);
 
+
+  const [downloadingRecibo, setDownloadingRecibo] = useState(false);
+  const [printingRecibo, setPrintingRecibo] = useState(false);
+
   const handleGoToReembolso = () => {
     navigate(`/transacciones/${id}/reembolso`);
+  };
+
+  const handleImprimirRecibo = async () => {
+    setPrintingRecibo(true);
+    try {
+      checkToken();
+      const blob = await fetchReciboPngBlob(id);
+      await printReciboBlob(blob);
+    } catch (err) {
+      if (err?.status === 401) {
+        message.error('Sesión no válida. Inicie sesión de nuevo.');
+      } else {
+        message.error(err?.message || 'No se pudo preparar la impresión del recibo.');
+      }
+    } finally {
+      setPrintingRecibo(false);
+    }
+  };
+
+  const handleDescargarRecibo = async () => {
+    setDownloadingRecibo(true);
+    try {
+      checkToken();
+      await downloadReciboPng(id);
+      message.success('Recibo descargado.');
+    } catch (err) {
+      if (err?.status === 401) {
+        message.error('Sesión no válida. Inicie sesión de nuevo.');
+      } else {
+        message.error(err?.message || 'No se pudo descargar el recibo.');
+      }
+    } finally {
+      setDownloadingRecibo(false);
+    }
   };
 
   const handleOpenEmailModal = () => {
@@ -128,6 +167,22 @@ const TransaccionDetalle = () => {
           <div>
             <div className="txd-refund" style={{ padding: '0 12px 12px' }}>
               <ButtonSecundary label="Emitir reembolso" onClick={handleGoToReembolso} />
+            </div>
+              <div className="txd-email-row" style={{ padding: '0 12px 12px' }}>
+              <ButtonSecundary
+                onClick={handleImprimirRecibo}
+                label="Imprimir recibo"
+                loading={printingRecibo}
+                disabled={printingRecibo}
+              />
+            </div>
+            <div className="txd-email-row" style={{ padding: '0 12px 12px' }}>
+              <ButtonSecundary
+                onClick={handleDescargarRecibo}
+                label="Descargar recibo"
+                loading={downloadingRecibo}
+                disabled={downloadingRecibo}
+              />
             </div>
             <div className="txd-email-row" style={{ padding: '0 12px 12px' }}>
               <ButtonSecundary onClick={handleOpenEmailModal} label="Enviar correo" />
