@@ -54,6 +54,9 @@ const Reembolso = () => {
       }
     });
     setReembolsadosKeys(keys);
+
+console.log(productos);
+
   }, [productos, reembolsos]);
 
 
@@ -203,8 +206,8 @@ const Reembolso = () => {
                               <CheckCircleTwoTone twoToneColor="#52c41a" title="Artículo ya reembolsado" />
                             </div>
                             <div style={{ fontSize: 13, color: '#555', marginLeft: 24 }}>
-                              Precio unitario: ${item.precio_unitario ?? item.precio ?? '-'}<br />
-                              Subtotal: ${item.subtotal ?? (item.precio_unitario && item.cantidad ? (item.precio_unitario * item.cantidad).toFixed(2) : '-')}
+                              Precio unitario: ${item.precio ?? '-'}<br />
+                              Subtotal: ${(item.precio && item.cantidad).toFixed(2)}
                               {item.cupon || item.descuento || (item.cupones && item.cupones.length > 0) ? (
                                 <div style={{ marginTop: 2 }}>
                                   {item.cupon && <span> Cupón: <b>{item.cupon}</b> </span>}
