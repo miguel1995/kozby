@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { checkToken } from '../utils/authUtils';
 import { getTransaccionById } from '../services/transacciones.service';
 
-export const useTransaccionDetalleHandler = (id) => {
+export const useTransaccionDetalleHandler = (id, refreshKey = null) => {
   const [transaccion, setTransaccion] = useState(null);
   const [loading, setLoading] = useState(true);
   const [errorData, setErrorData] = useState({ codeError: null, isOpen: false });
@@ -25,7 +25,7 @@ export const useTransaccionDetalleHandler = (id) => {
     };
 
     fetchTransaccion();
-  }, [id]);
+  }, [id, refreshKey]);
 
   return { transaccion, loading, errorData, handleOk };
 };

@@ -1,0 +1,54 @@
+.reembolso-page {
+  width: 100%;
+}
+
+.reembolso-content {
+  width: 100%;
+}
+
+.reembolso-toggle-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.reembolso-toggle-btn {
+  width: 100%;
+  border-radius: 24px;
+  padding: 12px 16px;
+  font-weight: 700;
+  background: #eeeded !important;
+  border-color: #e9e2e2 !important;
+  color: #111827 !important;
+  height: auto;
+}
+
+.reembolso-toggle-btn--active {
+  background: #000 !important;
+  border-color: #000 !important;
+  color: #fff !important;
+}
+
+.reembolso-panel {
+  margin-top: 4px;
+  margin-bottom: 12px;
+}
+
+.reembolso-items {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.reembolso-item-row {
+  padding: 8px 10px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+}
+
+.reembolso-actions {
+  margin-top: 8px;
+}
+

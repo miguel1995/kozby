@@ -1,5 +1,5 @@
 import './App.css'
-import { BrowserRouter, Routes, Route, Navigate } from "react-router";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Plus } from './pages/Plus'
 
 import Productos from './pages/Productos'
@@ -12,6 +12,7 @@ import NuevaOrden from './pages/NuevaOrden';
 import Cobro from './pages/Cobro';
 import Transacciones from './pages/transacciones';
 import TransaccionDetalle from './pages/TransaccionDetalle';
+import Reembolso from './pages/Reembolso';
 import Descuentos from './pages/Descuentos';
 import Usuarios from './pages/Usuarios';
 import Ajustes from './pages/Ajustes';
@@ -80,6 +81,11 @@ function App() {
           <Route path="/transacciones/:id" element={
             <MainLayout>
               <TransaccionDetalle />
+            </MainLayout>
+          } />
+          <Route path="/transacciones/:id/reembolso" element={
+            <MainLayout>
+              <Reembolso />
             </MainLayout>
           } />
 

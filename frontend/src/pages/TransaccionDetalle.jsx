@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { Input, Modal, message } from 'antd';
 import Loader from '../components/Loader';
 import { ModalError } from '../components/modals/ModalError';
 import { useTransaccionDetalleHandler } from '../hooks/useTransaccionDetalleHandler';
 import { ButtonSecundary } from '../components/buttons/ButtonSecundary';
 import { postEnviarCorreoTransaccion } from '../services/transacciones.service';
+
 import { ArrowLeftOutlined, CreditCardOutlined, DollarOutlined, FileTextOutlined, TagOutlined } from '@ant-design/icons';
 
 
@@ -16,12 +17,17 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const TransaccionDetalle = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { id } = useParams();
 
-  const { transaccion, loading, errorData, handleOk } = useTransaccionDetalleHandler(id);
+  const { transaccion, loading, errorData, handleOk } = useTransaccionDetalleHandler(id, location?.search);
   const [emailModalOpen, setEmailModalOpen] = useState(false);
   const [emailTo, setEmailTo] = useState('');
   const [sendingEmail, setSendingEmail] = useState(false);
+
+  const handleGoToReembolso = () => {
+    navigate(`/transacciones/${id}/reembolso`);
+  };
 
   const handleOpenEmailModal = () => {
     setEmailTo('');
@@ -89,6 +95,7 @@ const TransaccionDetalle = () => {
 
   const numeroRecibo = transaccion?.recibo || '-';
   const descuentos = Array.isArray(transaccion?.descuentos) ? transaccion.descuentos : [];
+  const reembolsos = Array.isArray(transaccion?.reembolsos) ? transaccion.reembolsos : [];
 
   return (
     <div className="page-container">
@@ -119,6 +126,9 @@ const TransaccionDetalle = () => {
           <div>No se encontró la transacción.</div>
         ) : (
           <div>
+            <div className="txd-refund" style={{ padding: '0 12px 12px' }}>
+              <ButtonSecundary label="Emitir reembolso" onClick={handleGoToReembolso} />
+            </div>
             <div className="txd-email-row" style={{ padding: '0 12px 12px' }}>
               <ButtonSecundary onClick={handleOpenEmailModal} label="Enviar correo" />
             </div>
@@ -245,6 +255,57 @@ const TransaccionDetalle = () => {
             </div>
 
             <hr />
+
+            <strong className="txd-col-total">Reembolsos</strong>
+            {reembolsos.length === 0 ? (
+              <div style={{ marginTop: 8 }}>Sin reembolsos.</div>
+            ) : (
+              <div className="txd-totals-table">
+                {reembolsos.map((r, idx) => {
+                  const key = r?.id || `reembolso-${idx}`;
+                  const fecha = r?.fecha || r?.createdAt;
+                  if (r?.tipo === 'monto') {
+                    return (
+                      <div key={key} className="txd-products-row txd-totals-row">
+                        <div className="txd-products-badge">
+                          <DollarOutlined className="txd-icon" />
+                        </div>
+                        <div className="txd-totals-label">
+                          Reembolso por monto
+                          {fecha ? <div className="txd-date">{formatDateTime(fecha)}</div> : null}
+                        </div>
+                        <div className="txd-totals-value">{formatMoney(r?.montoDevuelto || 0)}</div>
+                      </div>
+                    );
+                  }
+                  return Array.isArray(r.articulosDevueltos) && r.articulosDevueltos.length > 0 ? (
+                    r.articulosDevueltos.map((art, aidx) => (
+                      <div key={`${key}-articulo-${aidx}`} className="txd-products-row txd-totals-row" style={{ background: '#f6f6f6', opacity: 0.9 }}>
+                        <div className="txd-products-badge" style={{ background: '#52c41a' }}>D</div>
+                        <div className="txd-totals-label">
+                          <span className="txd-products-title">{art.producto_nombre || '-'}</span>
+                          {art.variante_nombre ? <span className="txd-products-variant"> {art.variante_nombre}</span> : null}
+                          <span className="txd-products-qty"> x{art.cantidad ?? 1}</span>
+                          {fecha && aidx === 0 ? <div className="txd-date">{formatDateTime(fecha)}</div> : null}
+                        </div>
+                        <div className="txd-totals-value">
+                          {formatMoney((Number(art.precio_unitario ?? art.precio) || 0) * (Number(art.cantidad) || 1))}
+                          {art.cupon || art.descuento || (art.cupones && art.cupones.length > 0) ? (
+                            <div style={{ fontSize: 12, color: '#888', marginTop: 2 }}>
+                              {art.cupon && <span> Cupón: <b>{art.cupon}</b> </span>}
+                              {art.descuento && <span> Descuento: <b>{art.descuento}</b> </span>}
+                              {art.cupones && art.cupones.length > 0 && (
+                                <span> Cupones: <b>{art.cupones.join(', ')}</b> </span>
+                              )}
+                            </div>
+                          ) : null}
+                        </div>
+                      </div>
+                    ))
+                  ) : null;
+                })}
+              </div>
+            )}
 
 
           </div>
