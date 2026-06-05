@@ -1,6 +1,6 @@
 import React, { useMemo, useState, useRef } from 'react';
 import { Input, message } from 'antd';
-import {SearchOutlined, CloseOutlined,CreditCardOutlined,DollarOutlined,} from '@ant-design/icons';
+import {SearchOutlined, CloseOutlined,CreditCardOutlined,DollarOutlined,ArrowLeftOutlined,} from '@ant-design/icons';
 import Loader from '../components/Loader';
 import { ButtonSecundary } from '../components/buttons/ButtonSecundary';
 import { ModalError } from '../components/modals/ModalError';
@@ -59,6 +59,8 @@ function Transacciones() {
 
     return null;
   };
+
+  const hasRefundIcon = (tx) => Boolean(tx?.hasReembolsos);
 
   React.useEffect(() => {
     const term = search.trim();
@@ -164,6 +166,11 @@ function Transacciones() {
                       <div className="tx-item-total-and-time">
                         <div className="tx-total-left">
                           {getPaymentIcon(tx.tipo_pago)}
+                          {hasRefundIcon(tx) ? (
+                            <span className="tx-refund-icon" title="Tiene reembolso">
+                              <ArrowLeftOutlined />
+                            </span>
+                          ) : null}
                           <div className="tx-item-total">
                             $ {Number(tx.total || 0).toLocaleString('es-CO')}
 

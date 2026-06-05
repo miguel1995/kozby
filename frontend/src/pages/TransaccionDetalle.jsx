@@ -278,7 +278,6 @@ const TransaccionDetalle = () => {
                       </div>
                     );
                   }
-                  // Si es por artículos, mostrar cada artículo como fila de tabla
                   return Array.isArray(r.articulosDevueltos) && r.articulosDevueltos.length > 0 ? (
                     r.articulosDevueltos.map((art, aidx) => (
                       <div key={`${key}-articulo-${aidx}`} className="txd-products-row txd-totals-row" style={{ background: '#f6f6f6', opacity: 0.9 }}>

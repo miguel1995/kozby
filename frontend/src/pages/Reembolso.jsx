@@ -187,7 +187,7 @@ const Reembolso = () => {
                     <div style={{ color: '#888', marginBottom: 8 }}>No hay artículos disponibles para reembolso.</div>
                   )}
 
-                  {/* Artículos ya reembolsados */}
+                  
                   {productos.filter((item, idx) => reembolsadosKeys.includes(getItemKey(item, idx))).length > 0 && (
                     <div style={{ marginTop: 24 }}>
                       <div style={{ fontWeight: 600, marginBottom: 8 }}>Artículos reembolsados</div>
