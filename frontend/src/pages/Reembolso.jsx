@@ -24,6 +24,7 @@ const Reembolso = () => {
   const productos = Array.isArray(transaccion?.productos) ? transaccion.productos : [];
   const [reembolsos, setReembolsos] = useState([]);
   const [reembolsadosKeys, setReembolsadosKeys] = useState([]);
+  const [totalPorDevolver, setTotalPorDevolver] = useState(0);
 
 
   useEffect(() => {
@@ -31,9 +32,34 @@ const Reembolso = () => {
     getReembolsosPorTransaccion(id)
       .then((data) => setReembolsos(data))
       .catch(() => setReembolsos([]));
+
+      setTotalPorDevolver(transaccion?.total || 0);
   }, [id, transaccion]);
 
-  
+  useEffect(() => {
+    if (transaccion && reembolsos.length > 0){
+    let totalReembolsados = 0;
+    reembolsos.forEach((r) => {
+      if (r.tipo === 'articulos' && Array.isArray(r.articulosDevueltos)) {
+        r.articulosDevueltos.forEach((item) => {
+          console.log(">> AAAAA ", Number(mostrarDescuentos(item.precio * item.cantidad)));
+
+          totalReembolsados +=  Number(mostrarDescuentos(item.precio * item.cantidad));
+        });
+      } else if (r.tipo === 'monto') {
+        console.log(">> BBBBB ", r.montoDevuelto);
+        totalReembolsados += Number(r.montoDevuelto);
+      }
+    });
+
+    console.log(">> CCCCC ", totalReembolsados);
+    console.log(">> DDDDD ", transaccion.total - totalReembolsados);
+
+    setTotalPorDevolver(transaccion.total - totalReembolsados);
+    }
+  }, [reembolsos]);
+
+
   useEffect(() => {
     const keys = [];
     const productosMarcados = productos.map((p, idx) => ({ ...p, _idx: idx, _reembolsado: false }));
@@ -55,7 +81,7 @@ const Reembolso = () => {
     });
     setReembolsadosKeys(keys);
 
-console.log(productos);
+    console.log(productos);
 
   }, [productos, reembolsos]);
 
@@ -66,8 +92,8 @@ console.log(productos);
     setSelectedItemKeys(
       checked
         ? productos
-            .map((item, idx) => getItemKey(item, idx))
-            .filter((key) => !reembolsadosKeys.includes(key))
+          .map((item, idx) => getItemKey(item, idx))
+          .filter((key) => !reembolsadosKeys.includes(key))
         : []
     );
   };
@@ -80,18 +106,32 @@ console.log(productos);
   };
 
   const handleProcesarReembolso = async () => {
-    if (tipoReembolso === 'articulos' && selectedItemKeys.length === 0) {
-      message.error('Selecciona al menos un artículo.');
-      return;
+    if (tipoReembolso === 'articulos') {
+
+
+      if (selectedItemKeys.length === 0) {
+        message.error('Selecciona al menos un artículo.');
+        return;
+      }
+      if (selectedItemKeys.length > 0) {
+
+        const articulosSeleccionados = productos.filter((item, idx) => selectedItemKeys.includes(getItemKey(item, idx)));
+        const totalArticulosSeleccionados = articulosSeleccionados.reduce((acc, item) => acc + item.precio * item.cantidad, 0);
+        const totalDescuentos = mostrarDescuentos(totalArticulosSeleccionados);
+        if (totalDescuentos > totalPorDevolver) {
+          message.error(`El monto máximo a devolver es $${totalPorDevolver.toFixed(2)}`);
+          return;
+        }
+      }
     }
     if (tipoReembolso === 'monto') {
-      const max = Number(transaccion?.total || 0);
+      
       if (!montoReembolso || isNaN(montoReembolso) || Number(montoReembolso) <= 0) {
         message.error('Ingresa un monto válido.');
         return;
       }
-      if (Number(montoReembolso) > max) {
-        message.error(`El monto máximo a devolver es $${max}`);
+      if (Number(montoReembolso) > totalPorDevolver) {
+        message.error(`El monto máximo a devolver es $${totalPorDevolver.toFixed(2)}`);
         return;
       }
     }
@@ -114,6 +154,30 @@ console.log(productos);
       setProcessing(false);
     }
   };
+
+  const mostrarDescuentos = (totalItem) => {
+    let descuentos = Number(totalItem);
+
+    console.log("descuentos", descuentos);
+    if(transaccion?.descuentos.length > 0){
+      transaccion?.descuentos.forEach((d) => {
+        if(d.tipo === 'PORCENTAJE'){
+          console.log("descuento porcentaje", (totalItem * d.monto / 100));
+          descuentos -= (totalItem * d.monto / 100);
+        }else{
+          console.log("d.monto", d.monto);
+          console.log("transaccion?.total", transaccion?.subtotal);
+          const porcentajeImporte = ( (d.monto * 100) / transaccion?.subtotal);
+
+          console.log("porcentajeImporte", porcentajeImporte);
+
+          console.log("descuento importe", (totalItem * porcentajeImporte/100));
+          descuentos -=  (totalItem * porcentajeImporte/100);
+        }
+      });
+    }
+    return descuentos.toFixed(2);
+  }
 
   return (
     <div className="page-container">
@@ -161,6 +225,10 @@ console.log(productos);
 
             {tipoReembolso === 'articulos' && (
               <div className="reembolso-panel">
+                <p style={{ marginBottom: 8 }}>
+                  Selecciona los artículos a devolver (máx: ${totalPorDevolver.toFixed(2)}):
+                </p>
+
                 <Checkbox
                   checked={selectedItemKeys.length === productos.length && productos.length > 0}
                   indeterminate={selectedItemKeys.length > 0 && selectedItemKeys.length < productos.length}
@@ -180,8 +248,16 @@ console.log(productos);
                           <Checkbox
                             checked={selectedItemKeys.includes(itemKey)}
                             onChange={(e) => handleSelectItem(itemKey, e.target.checked)}
+                            className="reembolso-item-checkbox"
                           >
-                            {item.producto_nombre} {item.variante_nombre ? `(${item.variante_nombre})` : ''} x{item.cantidad}
+                            <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%'}}>
+                            <span>
+                              {item.producto_nombre} {item.variante_nombre ? `(${item.variante_nombre})` : ''} x{item.cantidad}
+                            </span>
+                            <span>
+                              ${mostrarDescuentos( item.precio * item.cantidad)}
+                            </span>
+                            </div>
                           </Checkbox>
                         </div>
                       );
@@ -190,7 +266,7 @@ console.log(productos);
                     <div style={{ color: '#888', marginBottom: 8 }}>No hay artículos disponibles para reembolso.</div>
                   )}
 
-                  
+
                   {productos.filter((item, idx) => reembolsadosKeys.includes(getItemKey(item, idx))).length > 0 && (
                     <div style={{ marginTop: 24 }}>
                       <div style={{ fontWeight: 600, marginBottom: 8 }}>Artículos reembolsados</div>
@@ -206,8 +282,8 @@ console.log(productos);
                               <CheckCircleTwoTone twoToneColor="#52c41a" title="Artículo ya reembolsado" />
                             </div>
                             <div style={{ fontSize: 13, color: '#555', marginLeft: 24 }}>
-                              Precio unitario: ${item.precio ?? '-'}<br />
-                              Subtotal: ${(item.precio && item.cantidad).toFixed(2)}
+                              Precio unitario: ${item.precio ?? '-'}<br />                           
+                              Subtotal: ${(item.precio * item.cantidad).toFixed(2)}
                               {item.cupon || item.descuento || (item.cupones && item.cupones.length > 0) ? (
                                 <div style={{ marginTop: 2 }}>
                                   {item.cupon && <span> Cupón: <b>{item.cupon}</b> </span>}
@@ -230,7 +306,7 @@ console.log(productos);
             {tipoReembolso === 'monto' && (
               <div className="reembolso-panel">
                 <p style={{ marginBottom: 8 }}>
-                  Ingresa el monto a devolver (máx: ${Number(transaccion?.total || 0)}):
+                  Ingresa el monto a devolver (máx: ${totalPorDevolver.toFixed(2)}):
                 </p>
                 <Input
                   type="number"
