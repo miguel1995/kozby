@@ -26,6 +26,8 @@
 .tx-item-title {
   margin-left: 32px; 
   grid-column: 1 / 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .tx-total-left {
